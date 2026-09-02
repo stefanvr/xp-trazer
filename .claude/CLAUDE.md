@@ -18,3 +18,6 @@ Start with asking the goal of the session.
 ### Understanding the project
 
 This project keeps its decisions in `doc/`. Each document owns exactly one kind of decision.
+
+`doc/guide-override.md` holds what currently outranks the general principles. Read it together with
+`doc/guide-general.md`, never instead of it.
