@@ -14,6 +14,7 @@ Start with asking the goal of the session.
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
 * Always let the user approve a merge to main for release
+* After a merge to main, delete local and remote feature branch
 
 ### Understanding the project
 
