@@ -8,6 +8,20 @@ Read it **before running any command**: doc/setup-ai-env.md
 
 Start with asking the goal of the session.
 
+### Bootstrap
+
+A project is brought into being in this order:
+
+1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
+   Everything it produces is draft and lands in `doc/brainstorm/`.
+2. **Scope the first version.**
+3. **Write the minimal specs** — `doc/spec-domain.md`, `doc/spec-app.md`, `doc/spec-style.md`,
+   `doc/spec-tech.md` — **in any order**. No dependency is implied between them, so none of them
+   blocks another.
+
+A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
+something missing.
+
 ### GIT
 
 * Always create a branch before starting new goal
