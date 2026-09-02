@@ -249,9 +249,9 @@ the configuration imports.
 #### SF-11 · A build from a dirty working tree stamps a commit that does not describe it
 `git rev-parse HEAD` names the last commit, not the files that were actually compiled. Build with
 uncommitted changes and the artefact carries an identifier that is *almost* true: right about the
-history, wrong about the contents. Nothing marks the difference, and the deployment check in
-[setup-app-env.md](setup-app-env.md) still passes — the identifier matches the branch exactly as it
-is supposed to.
+history, wrong about the contents. Nothing marks the difference, and a deployment check that compares
+the built identifier against the branch still passes — the identifier matches exactly as it is
+supposed to.
 
 Observed on the first deployment here: the working tree held uncommitted hosting configuration while
 the built page reported the previous commit. Harmless that time, because nothing uncommitted reached
