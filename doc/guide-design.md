@@ -1,144 +1,95 @@
 # Design guidelines
 
-**Owns.** How the code is shaped: what the parts are, which way the dependencies point, where state
-lives, and what has to stay testable.
+**Owns.** How the code is shaped: its modules, its seams, and what has to stay testable.
 
-**Not here.** *Which* runtime, framework, renderer or test tool implements any of this — that is
-[spec-tech.md](spec-tech.md), which is deliberately still empty. What the game is to play — rules,
-levels, feel — is not owned by any document yet, and does not belong here when it is. Which principle
-wins when two of these rules disagree is [guide-general.md](guide-general.md).
+**Not here.** Which technologies implement any of it — [spec-tech.md](spec-tech.md) — and this
+project's own architectural rules, which are its application of what follows. What the game is to
+play is not owned by any document yet, and does not belong here when it is. Which principle wins when
+two of these disagree is [guide-general.md](guide-general.md).
 
-**Written before the stack, on purpose.** Nothing below names a technology, and that is a constraint
-rather than an accident: it forces each rule to be about the shape of the program instead of the habits
-of a library. It also gives the rules a use — they are what the stack choice in
-[spec-tech.md](spec-tech.md) will be judged against, rather than something retrofitted to justify it.
-**If a rule here cannot be stated without naming a framework, it is a technology decision in disguise
-and belongs in spec-tech.**
+**The test for belonging here.** A rule belongs here if it would still be true on a completely
+different project. If it names a technology, a store, or a domain concept, it is this project's rule
+and belongs in spec-tech. *"The domain imports no infrastructure"* is here; *"the simulation steps at
+a fixed interval"* is not.
 
----
+**Every rule carries its "when not to".** A rule with no stated exception eventually meets a case it
+does not fit, gets quietly ignored, and takes the credibility of every other rule here with it. The
+exception is what makes the rule survivable.
 
-## The one rule
-
-> **The game is a function of state and input. Everything else is a projection of state.**
-
-```
-next_state = step(previous_state, input, dt)
-```
-
-`step` is pure: same inputs, same output, every time. It reads no clock, no keyboard, no random source,
-no file. Input is *captured into a value* before the step runs, never read from inside it. Rendering
-reads state and produces pixels; it never writes state back.
-
-**Why this one is first.** It is what turns a bug from a story into a value. "The ball sometimes escapes
-through the corner" is unfixable; a state and an input sequence that reproduce it every time is a test.
-Every other rule below exists to keep this one true.
+**This document ships filled in**, unlike the specifications. It is a standing preference rather than
+a per-project decision: amend it when a convention proves itself, do not empty it to start.
 
 ---
 
-## Dependency direction
+## Structure
 
-| Layer | May depend on | Holds |
-|---|---|---|
-| **core** | nothing — no I/O, no clock, no globals, no framework | the rules: ball, paddle, bricks, collision, scoring, level state |
-| **adapters** | core | renderer, input source, audio, storage, the real clock |
-| **composition root** | core and adapters | the single place the two meet, and the only place that wires them |
+- **Build modular.** The test is whether a unit can be tested and replaced without opening its
+  neighbours — not whether it has a file of its own.
+- **Single responsibility at every level**: a function, a module, a document, a commit, a goal. Can
+  you name what it does without using "and"? *Not when* two things always change together — splitting
+  those produces coupling with extra steps.
+- **The domain imports no infrastructure.** Domain logic is pure functions over plain types.
+  Everything outside the process — a store, the network, the clock, the filesystem, the screen — is
+  reached through an interface the **domain** owns and an adapter supplies, wired at the edge. The
+  payoff is not swappability, which is usually hypothetical; it is that the domain becomes testable
+  at all. *Not when* there is exactly one such dependency, never swapped, with no logic worth testing
+  without it — record that in spec-tech in one line, so the next reader sees a decision rather than
+  an oversight.
+- **The clock is an input.** Code that reads "now" for itself cannot be tested for what it does at
+  midnight.
+- **Pure computation lives outside the renderer.** Replacing a renderer should mean replacing a draw
+  function, not rewriting the interaction.
+- **Commands mutate, queries read.** A function either changes state or answers a question, never
+  both. A query that quietly mutates is the defect that survives every review, because the call site
+  reads as a question. *Not when* the mutation is invisible to the caller — a cache fill, a lazily
+  built index — where the answer is the same whether or not it happened.
+- **CQRS where it earns it: nothing reads canonical state directly.** Reads go through one projection
+  function, and that single seam is where filtering lives instead of leaking into every consumer ad
+  hoc. Command and event names are the domain's own, with no translation layer — a shared vocabulary
+  is lost the first time a name is improved in transit. *Not when* the state has no meaningful
+  transitions, or has one consumer: a read model there is ceremony.
+- **DRY applies to business rules, not to code that looks alike.** Two functions with the same shape
+  and different reasons to change are not duplication. Deduplicate the **rule**, so one place decides
+  and everywhere else asks. *Not when* the resemblance is coincidence — extracting a helper from two
+  unrelated call sites couples them, and the bill arrives later, when one has to change and cannot.
+- **What is allowed to be global: constants.** That is the whole list.
+- **Fail loudly where it is cheap.** Assert invalid state and let it crash. A silent wrong answer is
+  the failure class this document set exists to fight — [setup-ai-env.md](setup-ai-env.md) is an
+  entire document about it one layer down.
+- **Keep it small enough to hold.** If the core cannot be read end to end in one sitting, it has
+  become clever.
 
-**The arrow never reverses.** The core must not know that a screen exists, that a frame exists, or that
-a player exists. When it needs something from the outside, it takes it as an argument or returns a
-request as data — it does not reach for it.
+## Testing
 
-**The check that is hard to fool:** can the core run to completion in a plain test process, with no
-display, no canvas, no timer and no event loop? If not, something has leaked across, and the leak is
-usually a convenience import added in a hurry.
+- **Tests are named as the behaviour claimed**, not as the function under test. A failing test should
+  describe what broke before anyone opens the file.
+- **Tests need not mirror the source layout.** Findable beats symmetrical. *When the mirror is
+  wanted* it is because a module without a test should be conspicuous — that is a coverage question,
+  and layout is a poor way to ask it.
+- **Coverage sits where the state is, not where the pixels are.** Behaviour is exercised over plain
+  state, in milliseconds, with no surface and no build step. The reason is not purity: surface-driven
+  tests are slower and more brittle, and a suite whose coverage lives up there is a suite slow enough
+  to stop being run. *Not when* the behaviour genuinely **is** the surface — a drawing tool, a game
+  of pointer precision — where forcing it into the state layer yields tests that pass while the
+  screen is wrong. Record that in spec-tech in one line.
+- **Surface tests are smoke tests: they prove wiring, not behaviour** — that a control reaches the
+  command it claims to, that something was drawn. Anything they *could* assert belongs in a test that
+  needs no surface.
+- **Anything random is seeded**, and ties between equally valid options break deterministically —
+  lowest id, a fixed order — never by iteration order, which may change. *Equally valid* and
+  *arbitrary* are different things.
 
----
+## Development affordances
 
-## Determinism is a feature, not a nicety
-
-- **Fixed timestep for the simulation.** The step advances by a constant `dt`. Never step by measured
-  wall-clock delta — a slow frame must not change the physics, or a bug becomes unreproducible on a
-  different machine, which is the same as unfixable. Render may interpolate between steps; the
-  simulation may not.
-- **All randomness comes from a seeded generator carried in state.** Never a global random source.
-
-**What determinism buys.** A replay is then just a seed plus an input log — a few hundred bytes that
-reproduce a session exactly. That is simultaneously the cheapest possible bug report, the strongest
-kind of test a game can have (record, replay, assert the end state), and the only way to be sure a
-refactor changed nothing.
-
-It is also the concrete answer to [guide-general.md](guide-general.md)'s "a passing test says the code
-ran, not that the output is right": determinism is what makes the output something a test can pin down.
-
----
-
-## State
-
-**One owned state tree per session, mutated in exactly one place** — inside the step. Everything else
-receives it, reads it, and hands it back.
-
-**No hidden state in adapters.** The distinction worth holding: a renderer that keeps the previous
-frame to avoid redrawing is caching, and that is fine. A renderer that keeps *where the ball is* is a
-second copy of the game, and the two copies will disagree — silently, and usually only under the
-conditions that are hardest to reproduce.
-
-**The cost is explicitness**: state gets passed around rather than reached for. Accept it.
-
----
-
-## Levels and tuning are data, not code
-
-Brick layouts, speeds, spawn rules, level order — data. A level expressed in code cannot be inspected,
-diffed, generated, or edited by anyone who is not editing the program, and every one of those is
-something this project will want.
-
-This is also the seam where the game gets tuned. Tuning that requires a code change gets done once;
-tuning that requires editing a table gets done until it is right.
-
----
-
-## What is allowed to be global
-
-Constants.
-
-That is the entire list. Anything else global is state that no test can isolate and no replay can
-reproduce, which contradicts everything above.
-
----
-
-## Fail loudly where it is cheap
-
-Assert invalid state in the core during development, and let it crash. A silent wrong answer is the
-exact failure class this project is organised against — [setup-ai-env.md](setup-ai-env.md) is a whole
-document about it at the environment layer, and the same reasoning applies one layer in. A ball with a
-NaN velocity should stop the program, not quietly render nothing.
-
----
-
-## Keep it small enough to hold
-
-If the core cannot be read end to end in one sitting, it has become clever. Prefer the boring, obvious
-version: this is a game with a paddle, a ball and a grid of bricks, and there is no size of cleverness
-that pays for itself at that scale.
-
----
-
-## Deliberately not decided yet
-
-These are real questions that this document is **not** the place to answer, listed so that nobody
-mistakes the silence for an oversight:
-
-- The renderer, the runtime, the test runner, the build — [spec-tech.md](spec-tech.md).
-- File and module layout in the repository — follows the stack, so it waits for the stack.
-- Whether an entity/component arrangement is wanted. Not until something demands it; per
-  [guide-general.md](guide-general.md), generality added before it is needed is a guess.
+- **Dev-only affordances are built, and gated.** A fixed fixture state, to reach an interesting
+  situation without building it by hand every time; preview pages rendering real output from real
+  code; and a gate — a flag, an environment check — so they never ship enabled. Document them as they
+  are built: they are forgotten within a month otherwise, and rediscovered by accident much later.
 
 ---
 
 ## When to break these
 
-Break one when it is genuinely wrong for the case in hand, and name the rule and the reason in the
-commit message.
-
-The reason for the naming is not ceremony: a rule that gets broken quietly becomes the new rule by
+Name the rule and the reason in the commit message. A rule broken quietly becomes the new rule by
 accident, and nobody ever decides to make that change. Written down, the break is either a fair
-exception or evidence that the rule needs rewriting — and both of those are useful.
+exception or evidence the rule needs rewriting, and both are worth having.
