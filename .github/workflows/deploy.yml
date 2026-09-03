@@ -1,8 +1,8 @@
-name: Deploy
+name: Build and deploy
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
   workflow_dispatch:
 
 permissions:
@@ -10,12 +10,16 @@ permissions:
   pages: write
   id-token: write
 
-# One deployment at a time, and never cancel one half-done.
+# Per branch, so two branches never queue behind each other. A superseded branch run is cancelled;
+# a run on main is not, because cancelling one half-way through a deployment is how you get a
+# published artefact nobody chose.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  # Runs on every branch. Deploying does not, which is the whole point: the first time these tests
+  # ran in CI used to be after a merge to main, so main was where CI failures were discovered.
   build:
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +49,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/
@@ -54,12 +58,15 @@ jobs:
       - run: npm run build
 
       - uses: actions/configure-pages@v5
+        if: github.ref == 'refs/heads/main'
       - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
