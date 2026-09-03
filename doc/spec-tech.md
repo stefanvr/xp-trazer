@@ -5,8 +5,49 @@
 **Not here.** Anything that owned by the setup-* docs
 ---
 
-**The stack is not chosen yet.** No runtime, framework, renderer or test runner has been decided, and
-nothing below implies one.
+## The stack
+
+| Concern | Choice | Beat |
+|---|---|---|
+| Language | TypeScript | Plain JavaScript, and no build step at all. |
+| Runtime | Node 24 LTS | — |
+| Dev server, build | Vite | — |
+| Renderer | Canvas 2D | PixiJS. |
+| Domain tests | Vitest | `node:test`. |
+| Surface tests | Playwright | — |
+
+**No game engine, and that was settled before the comparison.** **A-1** excludes anything that owns
+the game loop or couples the simulation to frame time, which is Unity, Godot and Phaser — Phaser's
+`update(time, delta)` and its arcade physics are frame-time driven. What is chosen above is a
+renderer and a toolchain; the loop is this project's own.
+
+Three of the rejections are worth a line, because each was close:
+
+- **Plain JavaScript with no build step** would have removed a whole class of silent configuration
+  failure. It loses the types that *fail loudly where it is cheap* leans on hardest inside a physics
+  loop, and with no build there is nothing to stamp the commit identifier that **SF-7** requires.
+- **PixiJS** would render a more convincing Tron glow through real WebGL filters, and it does not own
+  the loop, so **A-1** survives it. It lost because the look is not this project's risk, and Canvas
+  2D `shadowBlur` is already enough.
+- **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
+  tests and the application read the same imports.
+
+**The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Wall reflection,
+the bounce count and the acceleration an arrow key applies were written to exercise the stack, at a
+point where [spec-domain.md](spec-domain.md) does not exist to own any of them. **Nothing may cite
+them as a rule**, and spec-domain replaces them without owing an argument. This is the proof
+overreaching what it needed — the seams it had to exercise are the fixed step, the pure domain, the
+renderer, input reaching the domain, both test layers and the build identifier, and none of those
+needed a ball that bounces.
+
+**The page's `bounces` and `vx` readouts are the proof's instruments, not the game's surface.** They
+exist so a smoke test can assert that the loop advanced and that a key reached the domain, and they
+go when version one's surface arrives. The build identifier beside them stays: **SF-8** verifies a
+deployment by fetching the artefact and reading it, never by asking a control API.
+
+**Node's version is pinned at 24 by the machine, not by preference** — `nvm alias default` and
+`node -v` agree there today, and **SF-1** is what makes checking that a session-start task rather
+than a remembered fact.
 
 ## Architecture
 

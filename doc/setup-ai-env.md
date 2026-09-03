@@ -1,9 +1,12 @@
-# Development environment
+# AI environment
 
 **Owns.** How to AI interacts on this machine.
 
 **Not here.** Technical *choices* — which runtime, which test framework, which host — belong in
-[spec-tech.md](spec-tech.md). This document decides nothing; it records what is already true of the current machine developed on. That is why the two are separate: spec-tech changes when the project changes, this changes only
+[spec-tech.md](spec-tech.md) · bringing a machine from nothing to able to develop — what to install
+and configure, and what only a person can do — is [setup-dev-env.md](setup-dev-env.md). This document
+assumes the machine already works and asks what lies to you; that one assumes nothing is installed
+and asks what to run. This document decides nothing; it records what is already true of the current machine developed on. That is why the two are separate: spec-tech changes when the project changes, this changes only
 when the local machine changes in a way ai interaction changes, and mixing them makes both harder to trust.
 
 **Naming a tool here is not choosing it.** Apart from git, every tool named below that in not in the spec-tech

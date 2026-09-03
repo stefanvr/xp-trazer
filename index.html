@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trazer</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main>
+      <canvas id="stage" width="640" height="480"></canvas>
+      <p class="readout">
+        bounces <span data-testid="bounce-count">0</span>
+        &middot; vx <span data-testid="velocity-x">0</span>
+        &middot; build <span data-testid="build-identifier">unknown</span>
+      </p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
