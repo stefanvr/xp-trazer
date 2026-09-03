@@ -62,6 +62,20 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
   third session, and rightly so: it reads as someone's preference rather than as something that
   actually happened here.
 
+## Writing it down
+
+- Record the decision, not the argument that produced it. How it was reached is already in the commit
+  message and the history.
+- **A justification must hold for someone you have never met, on a machine you have never seen.** A
+  reason true only of the current setup belongs in the `setup-*` documents — and where a decision has
+  no portable reason, the honest one is usually plainer, often simplicity.
+- Established practice needs no defence. Explaining why a widely held convention is good teaches the
+  reader that the whole document can be skimmed.
+- Elaborate only where a specific observation earns it. Where every entry is equally elaborated, the
+  ones that deserved the length lose the emphasis length was supposed to give them.
+- When the same explanation reaches both a pointer and its target, delete the pointer's copy. Routing
+  was its whole job.
+
 ---
 
 ## When two collide

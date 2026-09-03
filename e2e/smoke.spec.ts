@@ -14,6 +14,11 @@ test('the built page reports a real commit rather than unknown', async ({ page }
   // Not merely present: `unknown` is what a build outside a repository stamps, and it exits 0 (SF-7).
   await expect(identifier).not.toHaveText('unknown');
   await expect(identifier).toHaveText(/^[0-9a-f]{40}(-dirty)?$/);
+
+  // The meta tag is what a deployment check reads, with one request and no browser (SF-8). It has
+  // to agree with what the page displays — two sources for one fact is exactly how they drift.
+  const shown = (await identifier.textContent()) ?? '';
+  await expect(page.locator('meta[name="build-identifier"]')).toHaveAttribute('content', shown);
 });
 
 test('the loop runs and the ball reaches a wall', async ({ page }) => {
@@ -36,6 +41,11 @@ test('an arrow key reaches the simulation', async ({ page }) => {
 test('something is actually drawn on the canvas', async ({ page }) => {
   await page.goto('/');
 
+  // Counts distinct colours, and knows none of them. Thresholding a channel would couple this to
+  // whatever spec-style currently says; "differs from the background" would pass on a canvas nothing
+  // ever drew to, since untouched pixels are transparent and differ from it too. More than one
+  // colour means something was drawn on top of something.
+  //
   // Polled, not sampled once: goto resolves on load, which is before the first animation frame has
   // painted anything. A single read here is a race that fails on a fast machine and passes on a slow one.
   await expect
@@ -45,12 +55,17 @@ test('something is actually drawn on the canvas', async ({ page }) => {
         const context = canvas?.getContext('2d');
         if (!canvas || !context) return 0;
         const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
-        let lit = 0;
+        const seen = new Set<number>();
         for (let index = 0; index < data.length; index += 4) {
-          if ((data[index + 2] ?? 0) > 80) lit += 1;
+          seen.add(
+            ((data[index] ?? 0) << 24) |
+              ((data[index + 1] ?? 0) << 16) |
+              ((data[index + 2] ?? 0) << 8) |
+              (data[index + 3] ?? 0),
+          );
         }
-        return lit;
+        return seen.size;
       }),
     )
-    .toBeGreaterThan(0);
+    .toBeGreaterThan(1);
 });

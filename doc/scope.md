@@ -44,6 +44,9 @@ level is cleared when every removable brick has been removed.
 - Persistence of any kind.
 - Sound.
 - More than one level.
+- **Being deployed.** Where it runs is infrastructure, settled by its own technical goal and recorded
+  in [spec-tech.md](spec-tech.md) and [setup-app-env.md](setup-app-env.md). Version one is finished
+  when a game starts, whether or not anyone else can reach it.
 
 ## The first goal inside it — choose the stack
 
@@ -64,13 +67,14 @@ to frame time, is excluded before the comparison starts.
 
 ## Where each answer ends up
 
-Each moves on the day its specification is written, and leaves this table when it does.
+Each is checked off the day its specification is written, and stays in the table rather than leaving
+it — so the table also reads as a record of what has already moved, not only of what has not.
 
-| Answer | Owner once written |
-|---|---|
-| Removable and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` |
-| Bats grouped by orientation; a closed playfield with no loss | `spec-domain.md` |
-| Arrow keys split by axis, both groups live at once | `spec-app.md` |
-| One level, no selection, no persistence | `spec-app.md` |
-| Tron — neon on black | `spec-style.md` |
-| The stack, once chosen | `spec-tech.md` |
+| Answer | Owner once written | Done |
+|---|---|---|
+| Removable and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | |
+| Bats grouped by orientation; a closed playfield with no loss | `spec-domain.md` | |
+| Arrow keys split by axis, both groups live at once | `spec-app.md` | |
+| One level, no selection, no persistence | `spec-app.md` | |
+| Tron — neon on black | `spec-style.md` | ✅ |
+| The stack, once chosen | `spec-tech.md` | ✅ |

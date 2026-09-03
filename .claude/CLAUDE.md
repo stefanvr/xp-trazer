@@ -30,7 +30,8 @@ before it is written.
 
 ### GIT
 
-* Always create a branch before starting new goal
+* Always create a branch before starting new goal — several goals may share one branch when they
+  only make sense together, so the merge lands as one consistent unit
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
 * Always let the user approve a merge to main for release
@@ -48,6 +49,7 @@ is the routing — which document answers which question.
 | What is being built now, where does it stop, and what does done mean? | `doc/scope.md` |
 | How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
 | What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
+| Where does it run, how does it get there, and how do we know it did? | `doc/setup-app-env.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
 | What outranks those principles for this project, and until when? | `doc/guide-override.md` |
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
@@ -56,8 +58,8 @@ is the routing — which document answers which question.
 | What do the player and the developer meet — screens, input, flow? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
-The last three do not exist yet. See **Bootstrap** above: that means the sequence has not reached
-them.
+`spec-domain.md` and `spec-app.md` do not exist yet. See **Bootstrap** above: that means the
+sequence has not reached them.
 
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,

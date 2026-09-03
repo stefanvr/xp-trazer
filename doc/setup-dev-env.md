@@ -6,7 +6,7 @@ configure, and in what order.
 **Not here.** Which technologies — [spec-tech.md](spec-tech.md). How an AI agent drives a machine
 that is *already* working, and which of its commands succeed while doing the wrong thing —
 [setup-ai-env.md](setup-ai-env.md). How the application runs on a machine that is not this one —
-that is `setup-app-env.md`, which does not exist because nothing is deployed anywhere yet.
+that is [setup-app-env.md](setup-app-env.md).
 
 **The boundary with [setup-ai-env.md](setup-ai-env.md), because it is easy to get wrong.** That
 document assumes the machine works and asks *what lies to you*. This one assumes nothing is installed
