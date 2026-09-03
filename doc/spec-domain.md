@@ -34,8 +34,32 @@ The player moves bats. The ball moves itself.
 | **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
 | **Ball** | The moving thing the player never controls directly. | `Ball` |
+| **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
+| **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every removable brick has been removed. | `cleared` |
 | **Rebound** | The ball reversing direction on meeting a boundary, a bat or a brick. | `rebound` |
+| **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
+
+## What happens
+
+Every event, what causes it, and what it leaves changed. Nothing else happens in version one.
+
+| Event | Caused by | Leaves changed |
+|---|---|---|
+| **Level started** | The game begins | The level exists. One of its bats, drawn from the seed, holds the ball. |
+| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary or at an element. A held ball moves with its bat. |
+| **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
+| **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
+| **Ball rebounded** | It met a boundary, a bat or a brick | Its direction is reversed. |
+| **Removable brick removed** | The ball met it | One fewer removable brick, and the ball rebounds in the same moment. |
+| **Level cleared** | The last removable brick was removed | The level is cleared, and nothing advances after it. |
+
+**A level is in one of three states and no others**: the ball is held, the ball is travelling, or the
+level is cleared. Version one has no way to lose, so nothing leaves the middle state except clearing.
+
+**Every event above is caused by something above it, or by the player.** That is what makes this list
+finished rather than merely long — an event nothing causes, or one whose result nothing reads, is
+the gap this activity exists to find.
 
 ## Not named, because version one does not need them
 
