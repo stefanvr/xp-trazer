@@ -72,5 +72,4 @@ Each moves on the day its specification is written, and leaves this table when i
 | Bats grouped by orientation; a closed playfield with no loss | `spec-domain.md` |
 | Arrow keys split by axis, both groups live at once | `spec-app.md` |
 | One level, no selection, no persistence | `spec-app.md` |
-| Tron — neon on black | `spec-style.md` |
 | The stack, once chosen | `spec-tech.md` |
