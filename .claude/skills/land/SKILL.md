@@ -78,10 +78,11 @@ finding**:
    against. Nothing below happens without explicit agreement — an overarching goal is the owner's to
    declare over, and everything after this step is irreversible on this branch. Reporting that it
    looks reached is not the approval.
-2. **Promote what the scope is still holding.** Its *Where each answer ends up* table lists every
-   answer parked there because the document that owns it was unwritten. That table is the deletion
-   checklist, and **The rule** above is the test — a row whose specification now exists moves into it
-   first.
+2. **Confirm the scope has finished moving out.** Its *Where each answer ends up* table checks off
+   each answer the day its specification is written, without removing the row — so before the goal is
+   replaced, every row must be checked. **The rule** above is the test: a row still unchecked here is
+   an answer that exists nowhere else yet, and deleting the section under it would be exactly the loss
+   that rule forbids.
 3. **Replace the goal, keep the document.** Everything from `## The goal` down belonged to the goal
    that just ended. The header above it is the document's own rules and stays. A scope with no goal
    in it says the next one is unset, which is true and worth being able to see.
