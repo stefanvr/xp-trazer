@@ -5,8 +5,36 @@
 **Not here.** Anything that owned by the setup-* docs
 ---
 
-**The stack is not chosen yet.** No runtime, framework, renderer or test runner has been decided, and
-nothing below implies one.
+## The stack
+
+| Concern | Choice | Beat |
+|---|---|---|
+| Language | TypeScript | Plain JavaScript, and no build step at all. |
+| Runtime | Node 24 LTS | — |
+| Dev server, build | Vite | — |
+| Renderer | Canvas 2D | PixiJS. |
+| Domain tests | Vitest | `node:test`. |
+| Surface tests | Playwright | — |
+
+**No game engine, and that was settled before the comparison.** **A-1** excludes anything that owns
+the game loop or couples the simulation to frame time, which is Unity, Godot and Phaser — Phaser's
+`update(time, delta)` and its arcade physics are frame-time driven. What is chosen above is a
+renderer and a toolchain; the loop is this project's own.
+
+Three of the rejections are worth a line, because each was close:
+
+- **Plain JavaScript with no build step** would have removed a whole class of silent configuration
+  failure. It loses the types that *fail loudly where it is cheap* leans on hardest inside a physics
+  loop, and with no build there is nothing to stamp the commit identifier that **SF-7** requires.
+- **PixiJS** would render a more convincing Tron glow through real WebGL filters, and it does not own
+  the loop, so **A-1** survives it. It lost because the look is not this project's risk, and Canvas
+  2D `shadowBlur` is already enough.
+- **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
+  tests and the application read the same imports.
+
+**Node's version is pinned at 24 by the machine, not by preference** — `nvm alias default` and
+`node -v` agree there today, and **SF-1** is what makes checking that a session-start task rather
+than a remembered fact.
 
 ## Architecture
 
