@@ -24,9 +24,18 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
+    // `--host 127.0.0.1` is load-bearing, not tidiness. Left to itself the preview server binds to
+    // `localhost`, which resolves to ::1 on some machines and 127.0.0.1 on others, while the url
+    // below is polled as IPv4 — so the server comes up healthy on an address nothing is watching
+    // and Playwright waits out its timeout. Binding and polling the same literal address removes
+    // name resolution from the question.
+    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${PORT} --strictPort`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: false,
     timeout: 120_000,
+    // Without these the server's own output is swallowed, and a failure to start reports only that
+    // Playwright timed out — which names the symptom and hides every cause.
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });
