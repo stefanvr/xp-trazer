@@ -27,6 +27,9 @@ smoke tests, builds, publishes and then verifies. There is no manual step, and a
 reintroduce **SF-11** — a build from a dirty tree stamps a commit that does not describe it, and a
 CI checkout is the only clean tree anybody can promise.
 
+**Every branch runs everything except the publish.** Otherwise the first CI run of a change is the
+one that happens after it is merged, which makes `main` the place CI failures are discovered.
+
 ### Verifying that it actually deployed
 
 ```bash
