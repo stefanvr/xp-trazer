@@ -35,15 +35,18 @@ the page is missing a row until this routine runs again.
   shape and color taken straight from the spec, and labelled as not yet backed by a domain type. Never
   invent a domain type to justify drawing it; that is [build](../build/SKILL.md)'s "a proof contains no
   product decisions" showing up here too.
-- **Every color is a named constant in one module** — [src/render/palette.ts](../../../src/render/palette.ts)
-  — imported by both the real renderer and this page. Two copies of the same hex value is exactly the
-  drift this routine exists to catch, so there must never be a second copy.
+- **Every color spec-style.md names lives in one module** — [src/render/palette.ts](../../../src/render/palette.ts)
+  — imported by the real renderer, by the application's own stylesheet, and by this page. Two copies
+  of a hex the specification decides is exactly the drift this routine exists to catch, so there must
+  never be a second copy. **Chrome is not one of those**: spec-style.md leaves UI chrome unowned, so
+  this page's own background and text stay in `dev/style.css`. The application's page is not chrome —
+  its background sits against the playfield, so it takes the specification's value.
 
 ## Where it lives
 
-A second Vite HTML entry, `dev/style.html`, reachable from `npm run dev`. Vite's default build entry is
-`index.html` alone, so a second root-level HTML file is served in development and left out of
-`vite build` with no extra configuration — that omission *is* the gate, and adding
+`dev/style.html`, reachable from `npm run dev` at `/dev/style.html`. Vite serves any HTML file under
+the project root in development, while its default *build* entry is `index.html` alone — so this page
+is left out of `vite build` with no extra configuration. That omission *is* the gate, and adding
 `dev/style.html` to `build.rollupOptions.input` would remove it, so don't.
 
 ## Verifying it
