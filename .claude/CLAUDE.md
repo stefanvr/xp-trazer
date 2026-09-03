@@ -28,6 +28,7 @@ something missing.
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
 * Always let the user approve a merge to main for release
+* On approval, run the `land` skill **before** merging — a goal lands with `doc/scratchpad/` cleared
 * After a merge to main, delete local and remote feature branch
 
 ### Understanding the project

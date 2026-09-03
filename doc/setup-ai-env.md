@@ -329,8 +329,8 @@ Nothing indicates what is being waited for, which is its own kind of time sink.
   tree. Otherwise the page reloads mid-run and the failure reads as an application bug.
 - **Scratch leaves no trace.** A `_probe.js` left behind reads as real code to the next session.
   This governs scratch *files* — probes, dumps, generated output. Working *notes* are the opposite
-  case and belong in `doc/scratchpad/`, in the tree and committed, where the deletion rule clears
-  them when the goal lands.
+  case and belong in `doc/scratchpad/`, in the tree and committed, and cleared when the goal lands.
+  The `land` skill carries that rule and the test that licenses the deletion.
 - **Check the result, not the command's exit code**, wherever the two can disagree (**SF-6**,
   **SF-7**, **SF-8**).
 - **Verify visually when there is anything to look at.** A passing test says the code ran, not that
