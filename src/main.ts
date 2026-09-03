@@ -1,5 +1,6 @@
 import { createWorld, step, STEP_SECONDS, type Input } from './domain/simulation';
 import { draw } from './render/draw';
+import { BACKGROUND, BOUNDARY } from './render/palette';
 
 /**
  * The edge. Everything the domain is not allowed to know lives here: the clock, the keyboard, the
@@ -19,6 +20,12 @@ function context2dOf(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
   if (!context) throw new Error('this browser has no 2d canvas context');
   return context;
 }
+
+// The stylesheet names no color of its own; spec-style's palette reaches it through these.
+// The readout wears BOUNDARY because it is page chrome, not a play element, and spec-style says
+// every play element gets a hue of its own — so chrome may not borrow one.
+document.documentElement.style.setProperty('--ground', BACKGROUND);
+document.documentElement.style.setProperty('--line', BOUNDARY);
 
 const canvas = required<HTMLCanvasElement>('#stage');
 const context = context2dOf(canvas);
