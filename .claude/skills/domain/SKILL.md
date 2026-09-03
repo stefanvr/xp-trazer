@@ -82,6 +82,9 @@ addresses the second category they named. The last two are the agent's and are u
 4. **Every invented name has been put to the owner.** Note which terms came from the agent rather
    than from the owner, and ask. The answer replaces the name or confirms it — **and then the note is
    discarded.** This pass is the one whose output must not survive into the document.
+   **An approved name is simply the name.** Once the owner has approved a proposed term, stop marking
+   it as proposed — in the document and in conversation both. Keeping a tally of whose word each one
+   was re-opens a question that this pass exists to close.
 5. **Every name is the thing that happened, not one of its results.** *A finding: the name describes
    an effect.* The first run of this routine called an event `rebound`, which is one outcome of a
    ball meeting something — a removed brick is another, and a name covering only the first hides the
