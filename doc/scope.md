@@ -44,6 +44,9 @@ level is cleared when every removable brick has been removed.
 - Persistence of any kind.
 - Sound.
 - More than one level.
+- **Being deployed.** Where it runs is infrastructure, settled by its own technical goal and recorded
+  in [spec-tech.md](spec-tech.md) and [setup-app-env.md](setup-app-env.md). Version one is finished
+  when a game starts, whether or not anyone else can reach it.
 
 ## The first goal inside it — choose the stack
 

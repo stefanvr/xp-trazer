@@ -15,6 +15,19 @@
 | Renderer | Canvas 2D | PixiJS. |
 | Domain tests | Vitest | `node:test`. |
 | Surface tests | Playwright | — |
+| Host | GitHub Pages | Cloudflare Pages and Netlify; Firebase Hosting. |
+| CI | GitHub Actions | Publishing by hand. |
+
+**The host choice costs the repository its privacy, and that is the decision rather than a
+side-effect.** GitHub Pages will not serve a private repository without a paid plan, so the code,
+every document and the whole commit history become public. Cloudflare Pages and Netlify would have
+kept it closed, and lost on adding a second authenticated account to a machine where **SF-2** already
+documents two tools disagreeing about who you are. Firebase Hosting lost to that same lesson, which
+was written about this machine.
+
+**CI exists to own the clean tree.** **SF-11** is not enforceable locally — nothing stops a build
+from a dirty working tree stamping an identifier that is almost true — and a CI checkout is clean by
+construction. That, and **SF-7** needing real git history, is what publishing by hand gives up.
 
 **No game engine, and that was settled before the comparison.** **A-1** excludes anything that owns
 the game loop or couples the simulation to frame time, which is Unity, Godot and Phaser — Phaser's
