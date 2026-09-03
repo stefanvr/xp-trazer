@@ -28,8 +28,8 @@ The player moves bats. The ball moves itself.
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
 | **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
-| **Brick** | An element that occupies space in the level and turns the ball away. | `Brick` |
-| **Removable brick** | A brick that is removed when the ball meets it. The ball rebounds as it goes. | `RemovableBrick` |
+| **Brick** | An element that occupies space in the level. | `Brick` |
+| **Removable brick** | A brick that is removed when the ball collides with it. | `RemovableBrick` |
 | **Permanent brick** | A brick that is never removed, and that clearing ignores. | `PermanentBrick` |
 | **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
@@ -37,7 +37,7 @@ The player moves bats. The ball moves itself.
 | **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every removable brick has been removed. | `cleared` |
-| **Rebound** | The ball reversing direction on meeting a boundary, a bat or a brick. | `rebound` |
+| **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 
 ## What happens
@@ -50,8 +50,8 @@ Every event, what causes it, and what it leaves changed. Nothing else happens in
 | **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary or at an element. A held ball moves with its bat. |
 | **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
-| **Ball rebounded** | It met a boundary, a bat or a brick | Its direction is reversed. |
-| **Removable brick removed** | The ball met it | One fewer removable brick, and the ball rebounds in the same moment. |
+| **Collision** | The ball met a boundary, a bat or a brick | The ball's direction changes, obeying the law of reflection. |
+| **Removable brick removed** | A collision with one | One fewer removable brick. |
 | **Level cleared** | The last removable brick was removed | The level is cleared, and nothing advances after it. |
 
 **A level is in one of three states and no others**: the ball is held, the ball is travelling, or the

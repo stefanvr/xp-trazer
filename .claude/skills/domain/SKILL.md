@@ -82,6 +82,11 @@ addresses the second category they named. The last two are the agent's and are u
 4. **Every invented name has been put to the owner.** Note which terms came from the agent rather
    than from the owner, and ask. The answer replaces the name or confirms it — **and then the note is
    discarded.** This pass is the one whose output must not survive into the document.
+5. **Every name is the thing that happened, not one of its results.** *A finding: the name describes
+   an effect.* The first run of this routine called an event `rebound`, which is one outcome of a
+   ball meeting something — a removed brick is another, and a name covering only the first hides the
+   second. It is `collision`. A term named for a result is also the term that quietly decides there
+   is only one.
 
 ## Revision here is the work; revision after implementation is the failure
 
@@ -100,6 +105,12 @@ group lands as one consistent unit — both already in [CLAUDE.md](../../CLAUDE.
 The reason for the split is not tidiness: it gives the owner a place to stop after the vocabulary,
 **before rules are founded on names that may be wrong**, which is where the long tail of corrections
 starts.
+
+**That stop is a checkpoint, not a settling.** A name cannot be fully judged until an activity uses
+it — the first run of this routine had the vocabulary agreed, and event storming then renamed a term
+and added three more. Expect that, and do not treat a term as final because it survived the pass that
+invented it. **A term is settled when it has survived the activities that use it**, which is the end
+of the goal rather than the end of its own activity.
 
 ## When not to run it
 
