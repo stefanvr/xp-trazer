@@ -61,6 +61,46 @@ level is cleared. Version one has no way to lose, so nothing leaves the middle s
 finished rather than merely long — an event nothing causes, or one whose result nothing reads, is
 the gap this activity exists to find.
 
+## The rules
+
+Numbered so code and tests can cite them. A rule nothing cites is either unbuilt or unnecessary, and
+a citation that resolves to nothing is a rule dropped without saying so — the number is what makes
+either visible.
+
+### DS-1 · The level
+
+- **DS-1.1** A level is closed. Nothing leaves it.
+- **DS-1.2** A level authors where every element and every bat sits.
+- **DS-1.3** A level has at least one bat.
+- **DS-1.4** A level starts with the ball held by one of its bats, drawn from the seed.
+- **DS-1.5** A level is in exactly one of three states: the ball is held, the ball is travelling, or
+  the level is cleared.
+
+### DS-2 · The ball
+
+- **DS-2.1** A held ball rests on its bat and moves with it.
+- **DS-2.2** Launching sets the ball travelling perpendicular to the bat that held it, away from it.
+- **DS-2.3** A travelling ball advances every step.
+- **DS-2.4** A ball that collides changes direction obeying the law of reflection.
+
+### DS-3 · Bats
+
+- **DS-3.1** Every bat of one orientation moves together, as one thing.
+- **DS-3.2** A bat moves along its own axis only.
+- **DS-3.3** A bat stops at the boundary and at an element.
+- **DS-3.4** Bats move whether the ball is held or travelling.
+
+### DS-4 · Elements
+
+- **DS-4.1** An element never moves.
+- **DS-4.2** A destructible brick is destroyed by a collision with the ball.
+- **DS-4.3** A permanent brick is never destroyed.
+
+### DS-5 · Clearing
+
+- **DS-5.1** A level is cleared when every destructible element has been destroyed.
+- **DS-5.2** A cleared level does not advance.
+
 ## Not named, because version one does not need them
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
