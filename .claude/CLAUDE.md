@@ -8,6 +8,12 @@ Read it **before running any command**: doc/setup-ai-env.md
 
 Start with asking the goal of the session.
 
+### Reporting
+
+* Structure it — a table wherever the content has repeating fields
+* Mark a question as a question. Never leave an ask implied inside an observation, and say plainly
+  when a note needs no answer
+
 ### Bootstrap
 
 A project is brought into being in this order:

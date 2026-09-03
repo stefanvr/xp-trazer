@@ -7,7 +7,7 @@
 export const BACKGROUND = '#05080d';
 export const BOUNDARY = '#123a4d';
 export const BALL = '#f5fbff';
-export const REMOVABLE_BRICK = '#33ff99';
+export const DESTRUCTIBLE_BRICK = '#33ff99';
 export const PERMANENT_BRICK = '#ff8a3d';
 export const HORIZONTAL_BAT = '#22e0e0';
 export const VERTICAL_BAT = '#ff2fd6';

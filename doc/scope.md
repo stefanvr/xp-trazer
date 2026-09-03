@@ -21,23 +21,23 @@ while the document that owns it is unwritten — see *Where each answer ends up*
 ## The goal — a game starts
 
 **Done means:** one level appears, the ball is in play, both bat groups answer the keyboard, and the
-level is cleared when every removable brick has been removed.
+level is cleared when every destructible brick has been destroyed.
 
 ## In
 
 - One authored level.
-- Removable bricks, which the ball destroys, and permanent bricks, which clearing ignores.
+- Destructible bricks, which the ball destroys, and permanent bricks, which clearing ignores.
 - Bats on both axes. All horizontal bats move together; all vertical bats move together.
 - Arrow keys split by axis — left/right drives the horizontal group, up/down the vertical. Both are
   live at once: no switch key and no active-group state to display.
-- A closed playfield. The ball cannot leave.
+- A closed level. The ball cannot leave.
 - Tron. Neon on black.
 - A fixed-step simulation, per [spec-tech.md](spec-tech.md) **A-1**, tested over plain state.
 
 ## Out
 
 - Losing the ball, lives, game over.
-- Hazards — they cost the ball, and a closed playfield has nothing for them to cost.
+- Hazards — they cost the ball, and a closed level has nothing for them to cost.
 - Arcade and journey, and everything downstream of them: runs, unlocks, once-per-run, and returning
   to selection after dying.
 - The map, level selection, and choosing a direction.
@@ -59,7 +59,7 @@ to frame time, is excluded before the comparison starts.
 
 ## What this gives up
 
-- **A bat cannot fail.** With a closed playfield the ball is never lost, so a bat is an aiming tool
+- **A bat cannot fail.** With a closed level the ball is never lost, so a bat is an aiming tool
   and not a defensive one. Version one proves that clearing a level by aiming works, and says
   nothing about whether keeping the ball in play is fun.
 - **Nothing is cut from the game, only deferred.** No feature has been dropped relative to Traz and
@@ -72,8 +72,8 @@ it — so the table also reads as a record of what has already moved, not only o
 
 | Answer | Owner once written | Done |
 |---|---|---|
-| Removable and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | |
-| Bats grouped by orientation; a closed playfield with no loss | `spec-domain.md` | |
+| Destructible and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | ✅ |
+| Bats grouped by orientation; a closed level with no loss | `spec-domain.md` | ✅ |
 | Arrow keys split by axis, both groups live at once | `spec-app.md` | |
 | One level, no selection, no persistence | `spec-app.md` | |
 | Tron — neon on black | `spec-style.md` | ✅ |

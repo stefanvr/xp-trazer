@@ -2,7 +2,7 @@
  * No color is named here. doc/spec-style.md owns the values and src/render/palette.ts is their one
  * place in code, so main.ts sets these two custom properties from it at startup. A hex literal in
  * this file is a second copy, and a second copy is how the page came to sit on a near-black one
- * digit away from the playfield's.
+ * digit away from the level's.
  */
 :root {
   color-scheme: dark;

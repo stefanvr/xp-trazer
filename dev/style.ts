@@ -5,14 +5,14 @@ import {
   GLOW_PIXELS,
   HORIZONTAL_BAT,
   PERMANENT_BRICK,
-  REMOVABLE_BRICK,
+  DESTRUCTIBLE_BRICK,
   VERTICAL_BAT,
 } from '../src/render/palette';
 
 /**
  * The `style` skill's page: one panel per row in doc/spec-style.md's palette table.
  *
- * Playfield background, boundary and ball already have a domain type and a real draw function, so
+ * The level background, boundary and ball already have a domain type and a real draw function, so
  * they are drawn by calling it. A brick or a bat has no domain type yet — spec-domain.md does not
  * own them — so those panels paint the shape and color the spec describes directly, and say so.
  * Inventing a domain type here to avoid saying so would be a product decision smuggled into a
@@ -55,7 +55,7 @@ function centeredRect(width: number, height: number, rectWidth: number, rectHeig
 
 const swatches: readonly Swatch[] = [
   {
-    name: 'Playfield background',
+    name: 'Level background',
     role: 'The void everything else sits on',
     paint: fillBackground,
   },
@@ -65,13 +65,13 @@ const swatches: readonly Swatch[] = [
     paint: (context, width, height) => draw(context, createWorld({ width, height })),
   },
   {
-    name: 'Removable brick',
+    name: 'Destructible brick',
     role: 'The objective — what clearing removes',
     note: 'Shape only — spec-domain.md does not own a brick type yet',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 96, 26);
-      withGlow(context, REMOVABLE_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
+      withGlow(context, DESTRUCTIBLE_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
     },
   },
   {

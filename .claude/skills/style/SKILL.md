@@ -40,7 +40,7 @@ the page is missing a row until this routine runs again.
   of a hex the specification decides is exactly the drift this routine exists to catch, so there must
   never be a second copy. **Chrome is not one of those**: spec-style.md leaves UI chrome unowned, so
   this page's own background and text stay in `dev/style.css`. The application's page is not chrome —
-  its background sits against the playfield, so it takes the specification's value.
+  its background sits against the level, so it takes the specification's value.
 
 ## Where it lives
 
