@@ -1,21 +1,22 @@
 ---
 name: land
-description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory. Use when the owner approves a merge to main, before merging.
+description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then checks whether this landing also reached the overarching goal in doc/scope.md. Use when the owner approves a merge to main, before merging.
 ---
 
 # Land
 
 **Owns.** What happens at the moment a goal lands: the point where the owner approves a merge to
-main. Right now that is one task — clearing `doc/scratchpad/` — and this is where further landing
-tasks go as they earn their place.
+main. Two tasks — clearing `doc/scratchpad/` on every landing, and replacing the goal in
+`doc/scope.md` on the rare landing that reaches it. Further landing tasks go here as they earn their
+place.
 
 **Not here.** The git mechanics around it. Branch before a goal, commit task-sized, push before
 returning, approval before merging, delete the branch after — all in
 [CLAUDE.md](../../CLAUDE.md), which is also where the hook that calls this skill lives.
 
-**Run it before the merge, not after.** Clearing the scratchpad is a change to the goal's own branch,
-so it belongs in the goal's history. A goal that lands with its working notes still in the tree has
-not finished landing.
+**Run it before the merge, not after.** Everything it does is a change to the goal's own branch, so
+it belongs in the goal's history. A goal that lands with its working notes still in the tree has not
+finished landing.
 
 ---
 
@@ -62,9 +63,31 @@ A backlog file is the obvious fourth fate and it is the wrong one:
 A finding either gets fixed, or gets decided and recorded, or comes back next run. A list is a fourth
 state that looks like progress and is not.
 
-## Scope
+## When this landing reaches the scope
 
-`doc/scratchpad/` only, and the `.gitkeep` stays so the directory survives being empty.
+Most goals land *inside* the overarching goal and leave `doc/scope.md` alone. Check anyway, because
+the check is one sentence: **read the scope's *Done means* and ask whether it is now true.**
+
+**Answer it from the artefact, not from the commit log.** The edge is a claim about what the program
+does, so running the program is what settles it.
+
+If it is not reached, there is nothing to do. If it is:
+
+1. **Promote what the scope is still holding.** Its *Where each answer ends up* table lists every
+   answer parked there because the document that owns it was unwritten. That table is the deletion
+   checklist, and **The rule** above is the test — a row whose specification now exists moves into it
+   first.
+2. **The next goal is the owner's.** Reaching the scope ends the overarching goal, and setting the
+   next one is bootstrap step 2. Say that it is reached; never write the next scope while landing
+   this one.
+3. **Replace the goal, keep the document.** Everything from `## The goal` down belonged to the goal
+   that just ended. The header above it is the document's own rules and stays. A scope with no goal
+   in it says the next one is unset, which is true and worth being able to see.
+
+## What it touches
+
+`doc/scratchpad/` on every landing — its `.gitkeep` stays, so the directory survives being empty —
+and `doc/scope.md` only on the landing that reaches the overarching goal.
 
 **`doc/brainstorm/` is not cleared.** A brainstorm records how a specification got its content and is
 superseded by that specification rather than deleted — the `brainstorm` skill carries that rule.

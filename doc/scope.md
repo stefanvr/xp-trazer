@@ -6,8 +6,8 @@
 the player meets [spec-app.md](spec-app.md), how it looks [spec-style.md](spec-style.md), what it is
 built with [spec-tech.md](spec-tech.md).
 
-**Replaced, not appended to.** One overarching goal at a time; when it is reached this content is
-deleted rather than archived, because the commit history already records what landed.
+**Replaced, not appended to.** One overarching goal at a time; when it is reached the goal below is
+replaced rather than archived, because the commit history already records what landed.
 
 **Expected to change mid-flight**, on the branch of whatever found the reason.
 
