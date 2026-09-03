@@ -14,7 +14,9 @@ A project is brought into being in this order:
 
 1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
    Everything it produces is draft and lands in `doc/brainstorm/`.
-2. **Scope the first version.**
+2. **Scope the first version** — the overarching goal, written to `doc/scope.md`. Unlike an
+   ordinary goal it may carry an unmade technology decision, and discharges it by making that
+   choice the first goal inside it.
 3. **Write the minimal specs** — `doc/spec-domain.md`, `doc/spec-app.md`, `doc/spec-style.md`,
    `doc/spec-tech.md` — **in any order**. No dependency is implied between them, so none of them
    blocks another.
@@ -38,6 +40,7 @@ is the routing — which document answers which question.
 
 | Question | Document |
 |---|---|
+| What is being built now, where does it stop, and what does done mean? | `doc/scope.md` |
 | How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
 | What outranks those principles for this project, and until when? | `doc/guide-override.md` |
@@ -54,6 +57,12 @@ them.
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
 cleared when the goal lands.
 
+**`doc/scope.md` owns a decision, but not a lasting one.** It holds one overarching goal and is
+replaced — not appended to — when that goal is reached. It is also expected to change mid-flight, on
+the branch of whatever found the reason. Where a specification exists, the specification outranks it;
+the scope records an answer only while the document that owns it has not been written yet.
+
 **Reading order at session start.** `doc/setup-ai-env.md` before any command, then
-`doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then whichever
-document above owns the decision in front of you.
+`doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
+`doc/scope.md` for what is being built now, then whichever document above owns the decision in front
+of you.
