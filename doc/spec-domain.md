@@ -39,6 +39,7 @@ The player moves bats. The ball moves itself.
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
 | **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
+| **Game state** | Everything that changes while a level is played. | `GameState` |
 
 ## What happens
 
@@ -129,6 +130,22 @@ kind of surface to meet.
 | The grid's width and height | Where the ball starts — **DS-1.4** draws its bat from the seed |
 | Which cells hold a destructible brick, and which hold a permanent one | The ball's size, and every bat's length: the same in every level |
 | Where each bat sits, and on which row or column | The seed. A level that authored it would draw the same bat every time, which is not a draw |
+
+## What a game holds while it runs
+
+A level is what was authored and never changes. The game state is everything that does.
+
+- **The level being played, and the seed it started from.** Neither changes while it runs.
+- **Where the ball is, which way it is going, and how fast.**
+- **Which destructible elements are still there.**
+- **Where each bat group is along its axis.**
+- **Whether the ball is held — and by which bat — or travelling.**
+- **Whether the level is cleared.**
+
+**The ball's speed is state, even though nothing in version one changes it.** **DS-2.5** fixes it for
+now, but speed is the kind of thing a later rule alters as a game goes on, and something that changes
+over time belongs to the state rather than to the level or to a constant. Putting it here costs
+nothing now and means such a rule adds a rule rather than a re-modelling.
 
 ## Not named, because version one does not need them
 
