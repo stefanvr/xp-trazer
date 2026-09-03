@@ -5,7 +5,7 @@ import {
   GLOW_PIXELS,
   HORIZONTAL_BAT,
   PERMANENT_BRICK,
-  REMOVABLE_BRICK,
+  DESTRUCTIBLE_BRICK,
   VERTICAL_BAT,
 } from '../src/render/palette';
 
@@ -65,13 +65,13 @@ const swatches: readonly Swatch[] = [
     paint: (context, width, height) => draw(context, createWorld({ width, height })),
   },
   {
-    name: 'Removable brick',
+    name: 'Destructible brick',
     role: 'The objective — what clearing removes',
     note: 'Shape only — spec-domain.md does not own a brick type yet',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 96, 26);
-      withGlow(context, REMOVABLE_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
+      withGlow(context, DESTRUCTIBLE_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
     },
   },
   {

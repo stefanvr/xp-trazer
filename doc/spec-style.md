@@ -34,8 +34,8 @@ against the dark — color is how the eye tells one kind of thing from another, 
 | Level background | `#05080d` — near-black | The void everything else sits on |
 | Boundary / wall | `#123a4d` — dim blue | Marks the closed level without competing with play elements |
 | Ball | `#f5fbff` — near-white | The one thing that must read first, everywhere, at any speed |
-| Removable brick | `#33ff99` — green neon | The objective — what clearing removes |
-| Permanent brick | `#ff8a3d` — amber neon | Reads as structure, not as a target; deliberately not in the same hue family as the removable brick |
+| Destructible brick | `#33ff99` — green neon | The objective — what clearing removes |
+| Permanent brick | `#ff8a3d` — amber neon | Reads as structure, not as a target; deliberately not in the same hue family as the destructible brick |
 | Horizontal bats | `#22e0e0` — cyan neon | One control group |
 | Vertical bats | `#ff2fd6` — magenta neon | The other control group — a different hue from horizontal, so the two axes are told apart at a glance without reading a label |
 

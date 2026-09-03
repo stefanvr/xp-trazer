@@ -29,14 +29,14 @@ The player moves bats. The ball moves itself.
 | **Boundary** | The level's edge. | `Boundary` |
 | **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
-| **Removable brick** | A brick that is removed when the ball collides with it. | `RemovableBrick` |
-| **Permanent brick** | A brick that is never removed, and that clearing ignores. | `PermanentBrick` |
+| **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
+| **Permanent brick** | A brick that is never destroyed, and that clearing ignores. | `PermanentBrick` |
 | **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
 | **Ball** | The moving thing the player never controls directly. | `Ball` |
 | **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
-| **Cleared** | What a level becomes when every removable brick has been removed. | `cleared` |
+| **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
 | **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 
@@ -51,8 +51,8 @@ Every event, what causes it, and what it leaves changed. Nothing else happens in
 | **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
 | **Collision** | The ball met a boundary, a bat or a brick | The ball's direction changes, obeying the law of reflection. |
-| **Removable brick removed** | A collision with one | One fewer removable brick. |
-| **Level cleared** | The last removable brick was removed | The level is cleared, and nothing advances after it. |
+| **Element destroyed** | A collision with the ball | One fewer destructible element. |
+| **Level cleared** | The last destructible element was destroyed | The level is cleared, and nothing advances after it. |
 
 **A level is in one of three states and no others**: the ball is held, the ball is travelling, or the
 level is cleared. Version one has no way to lose, so nothing leaves the middle state except clearing.
