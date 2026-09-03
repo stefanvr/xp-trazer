@@ -9,10 +9,14 @@ const PORT = 4173;
 export default defineConfig({
   testDir: './e2e',
   forbidOnly: !!process.env['CI'],
-  reporter: [['list']],
+  reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     ...devices['Desktop Chrome'],
+    // A failure that leaves no evidence costs a round trip to reproduce, and a CI failure cannot be
+    // reproduced locally at all. These cost nothing on a passing run.
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
   webServer: {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
