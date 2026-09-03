@@ -7,7 +7,8 @@ approaches both fit and something has to choose between them.
 before returning, no merge to main without approval — are in [CLAUDE.md](../.claude/CLAUDE.md). What
 outranks these principles for the lifetime of this project is [guide-override.md](guide-override.md),
 kept separate on purpose: these are written to outlive the project, which is exactly why anything
-temporary is stored somewhere deletable. What the machine does is [setup-ai-env.md](setup-ai-env.md);
+temporary is stored somewhere deletable. What the machine does is [setup-ai-env.md](setup-ai-env.md), and what it takes to
+have one is [setup-dev-env.md](setup-dev-env.md);
 which technologies are chosen is [spec-tech.md](spec-tech.md); how the code is shaped is
 [guide-design.md](guide-design.md).
 

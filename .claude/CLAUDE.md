@@ -41,6 +41,7 @@ is the routing — which document answers which question.
 |---|---|
 | What is being built now, where does it stop, and what does done mean? | `doc/scope.md` |
 | How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
+| What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
 | What outranks those principles for this project, and until when? | `doc/guide-override.md` |
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
