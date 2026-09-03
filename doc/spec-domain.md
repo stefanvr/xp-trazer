@@ -85,8 +85,9 @@ either visible.
 
 ### DS-3 · Bats
 
-- **DS-3.1** Every bat of one orientation moves together, as one thing.
-- **DS-3.2** A bat moves along its own axis only.
+- **DS-3.1** Every bat of one orientation belongs to one bat group, and a bat group moves as one
+  thing.
+- **DS-3.2** A bat group moves along its orientation's axis only.
 - **DS-3.3** A bat stops at the boundary and at an element.
 - **DS-3.4** Bats move whether the ball is held or travelling.
 
