@@ -20,17 +20,20 @@ wrong.
 
 The domain's words are the code's words, and nothing is renamed in transit.
 
+**What moves a thing is what separates the kinds.** A level places elements, and nothing moves them.
+The player moves bats. The ball moves itself.
+
 | Term | What it is | In code |
 |---|---|---|
-| **Level** | The closed space play happens inside, and the authored arrangement of elements in it. Nothing leaves it. | `Level` |
+| **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
-| **Ball** | The single moving thing the player never controls directly. | `Ball` |
-| **Element** | Anything a level places: a brick or a bat. | `Element` |
+| **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
 | **Brick** | An element that occupies space in the level and turns the ball away. | `Brick` |
 | **Removable brick** | A brick that is removed when the ball meets it. The ball rebounds as it goes. | `RemovableBrick` |
 | **Permanent brick** | A brick that is never removed, and that clearing ignores. | `PermanentBrick` |
-| **Bat** | An element the player moves, lying along one axis. | `Bat` |
+| **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
+| **Ball** | The moving thing the player never controls directly. | `Ball` |
 | **Cleared** | What a level becomes when every removable brick has been removed. | `cleared` |
 | **Rebound** | The ball reversing direction on meeting a boundary, a bat or a brick. | `rebound` |
 
