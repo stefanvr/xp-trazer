@@ -32,7 +32,27 @@ something missing.
 
 ### Understanding the project
 
-This project keeps its decisions in `doc/`. Each document owns exactly one kind of decision.
+This project keeps its decisions in `doc/`. Each document owns exactly one kind of decision, and this
+is the routing — which document answers which question.
 
-`doc/guide-override.md` holds what currently outranks the general principles. Read it together with
-`doc/guide-general.md`, never instead of it.
+| Question | Document |
+|---|---|
+| How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
+| Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
+| What outranks those principles for this project, and until when? | `doc/guide-override.md` |
+| How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
+| Which technologies, and this project's own architecture rules? | `doc/spec-tech.md` |
+| What are the rules of the game world? | `doc/spec-domain.md` |
+| What do the player and the developer meet — screens, input, flow? | `doc/spec-app.md` |
+| How does it look, sound and feel? | `doc/spec-style.md` |
+
+The last three do not exist yet. See **Bootstrap** above: that means the sequence has not reached
+them.
+
+**Drafts and snapshots own no decision, and are never cited as authority** — `doc/brainstorm/` holds
+interview drafts, `doc/discoveries/` holds discovery snapshots, and `doc/scratchpad/` holds working
+notes, cleared when the goal lands.
+
+**Reading order at session start.** `doc/setup-ai-env.md` before any command, then
+`doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then whichever
+document above owns the decision in front of you.
