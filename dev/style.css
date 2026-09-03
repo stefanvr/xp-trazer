@@ -1,0 +1,60 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  color: #cdeaf2;
+  font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+h1 {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lede {
+  opacity: 0.7;
+  max-width: 60ch;
+}
+
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+figure {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+figure canvas {
+  display: block;
+  border-radius: 2px;
+}
+
+figcaption .name {
+  font-weight: 600;
+}
+
+figcaption .role,
+figcaption .note {
+  display: block;
+  opacity: 0.65;
+}
+
+figcaption .note {
+  font-style: italic;
+}
