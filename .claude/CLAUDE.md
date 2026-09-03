@@ -30,7 +30,8 @@ before it is written.
 
 ### GIT
 
-* Always create a branch before starting new goal
+* Always create a branch before starting new goal — several goals may share one branch when they
+  only make sense together, so the merge lands as one consistent unit
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
 * Always let the user approve a merge to main for release
