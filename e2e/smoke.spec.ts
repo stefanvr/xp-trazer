@@ -14,6 +14,11 @@ test('the built page reports a real commit rather than unknown', async ({ page }
   // Not merely present: `unknown` is what a build outside a repository stamps, and it exits 0 (SF-7).
   await expect(identifier).not.toHaveText('unknown');
   await expect(identifier).toHaveText(/^[0-9a-f]{40}(-dirty)?$/);
+
+  // The meta tag is what a deployment check reads, with one request and no browser (SF-8). It has
+  // to agree with what the page displays — two sources for one fact is exactly how they drift.
+  const shown = (await identifier.textContent()) ?? '';
+  await expect(page.locator('meta[name="build-identifier"]')).toHaveAttribute('content', shown);
 });
 
 test('the loop runs and the ball reaches a wall', async ({ page }) => {
