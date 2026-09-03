@@ -9,6 +9,15 @@ when the local machine changes in a way ai interaction changes, and mixing them 
 **Naming a tool here is not choosing it.** Apart from git, every tool named below that in not in the spec-tech
 can be ignored for now. Information is kept here as these are commonly used and lesson learned for AI interaction can be immediatly applied. 
 
+**The lessons here arrived before the project did, and that is deliberate.** Every observation below
+was made on *this machine*, and not necessarily on *this project*. So a passage may name a runtime, a
+host, a CI or a file that this repository does not contain — read those as *"if and when it is that,
+this is already known"*, and never as a record of what has been chosen or of what is in the tree.
+**spec-tech is the only place a choice exists, and the only place to look for one.** Where a passage
+below still reads as though a choice were settled, the passage is loose and spec-tech is right.
+Keeping a lesson ahead of its subject costs nothing; acting on it before the choice exists costs a
+wrong answer.
+
 **Write the silent failures first.** A command that errors is self-correcting — you see it and fix
 it. A command that quietly does the *wrong thing* is not, and that is the class of problem this
 document exists for. Add it here in the same shape: what succeeded, what it actually did,
@@ -37,7 +46,7 @@ bootstrap block.
 wsl.exe -l -q                                    # <distro>, e.g. Ubuntu-24.04
 wsl.exe -e bash -ic 'set -u; echo $HOME; git config user.email'
 
-# ...and the runtime. Node is spec-tech's choice; nvm is this machine's way of having it:
+# ...and the runtime. Where spec-tech chooses Node, nvm is this machine's way of having it:
 wsl.exe -e bash -ic 'set -u; node -v; nvm alias default'
 ```
 
@@ -147,9 +156,9 @@ you.** A diagnostic run as the wrong identity is not a weak signal, it is no sig
 
 #### SF-3 · An HTTPS remote hangs instead of failing
 It prompts for credentials no helper supplies, and waits forever on input that never arrives.
-**Use SSH.** Confirm with `ssh -T git@github.com` — it names the authenticated account. *(The code
-host was spec-tech's to choose and now is GitHub, so it is named here; the check is the same shape
-wherever a remote lives.)*
+**Use SSH.** Confirm with `ssh -T git@github.com` — it names the authenticated account. *(GitHub is
+named because that is where this repository's remote already is — a fact about the remote, not a
+choice spec-tech has made; the check is the same shape wherever a remote lives.)*
 
 **And when reading a remote anonymously to check something, set `GIT_TERMINAL_PROMPT=0`.** Without
 it, a private repository does not report itself as private — git asks for a username and waits, which
@@ -198,9 +207,10 @@ repository — exit 0, complete output, deployable artefact, nothing said.
 **Order matters: `git init` and a first commit precede any build whose output is trusted.**
 The end-to-end suite is the only thing that catches this, which is why it must assert the
 identifier is **not** `unknown` rather than merely present. In CI the equivalent hazard is a
-checkout with no history — a tarball export fails exactly this way. *(spec-tech chose GitHub Actions, and
-`actions/checkout` produces a real repository, so the build can ask git for its commit. That is
-asserted rather than assumed: the smoke test runs in CI and fails on `unknown`.)*
+checkout with no history — a tarball export fails exactly this way. *(If CI turns out to be GitHub
+Actions — spec-tech has chosen no CI — `actions/checkout` produces a real repository, so the build
+can ask git for its commit. Assert that rather than assume it: the smoke test should run in CI and
+fail on `unknown`.)*
 
 **Proving that check works costs one environment variable.** A test that has never failed is a
 claim, not evidence. `GIT_DIR` pointing at nothing makes `git rev-parse` fail while everything else
@@ -211,14 +221,15 @@ nothing to remember to put back:
 GIT_DIR=/nonexistent npx playwright test    # the identifier test must FAIL here
 ```
 
-Observed here: the build still succeeded, stamped `unknown`, and the smoke test caught it —
-*locator resolved to `<p data-testid="build-identifier">unknown</p>`*. Run it whenever that
+Observed on an earlier project on this machine: the build still succeeded, stamped `unknown`, and the
+smoke test caught it — *locator resolved to `<p data-testid="build-identifier">unknown</p>`*. Run it
+whenever that
 assertion changes, because it is the only assertion standing between a broken build and a shipped
 one.
 
 #### SF-8 · A provider API can report "not enabled" and "not allowed to ask" identically
-*(observed on GitHub Pages, which this project did not choose — but the generalisation below holds
-for any host, and it is the check the Firebase deployment is verified with.)* `GET /repos/{owner}/{repo}/pages` returns **404 unauthenticated even for a public repo with
+*(observed on GitHub Pages on an earlier project — the generalisation below holds for
+any host, and it is the check to verify this project's deployment with, once it has one.)* `GET /repos/{owner}/{repo}/pages` returns **404 unauthenticated even for a public repo with
 Pages live**. Trusting it reports a working deployment as broken.
 
 **Generalise: verify a deployment by fetching the artefact, not by asking the control API.** Fetch
@@ -253,8 +264,9 @@ history, wrong about the contents. Nothing marks the difference, and a deploymen
 the built identifier against the branch still passes — the identifier matches exactly as it is
 supposed to.
 
-Observed on the first deployment here: the working tree held uncommitted hosting configuration while
-the built page reported the previous commit. Harmless that time, because nothing uncommitted reached
+Observed on an earlier project's first deployment: the working tree held uncommitted hosting
+configuration while the built page reported the previous commit. Harmless that time, because nothing
+uncommitted reached
 the output — which is exactly why it is worth writing down, since the case that matters looks
 identical from the outside.
 
@@ -267,8 +279,8 @@ continuously, and without being asked. It is the Windows git binary reading the 
 `\\wsl.localhost\…`, where POSIX permission bits are not visible, so every file committed `100755`
 reads back as `100644` and shows as modified. For ever, with no content change.
 
-Observed here on `scripts/verify-deployment.sh`, this repository's only executable file: `755` and a
-clean `git status` in WSL; `old mode 100755 / new mode 100644` and a permanently dirty Source
+Observed on `scripts/verify-deployment.sh`, the only executable file of an earlier project on this
+machine — this repository has none yet: `755` and a clean `git status` in WSL; `old mode 100755 / new mode 100644` and a permanently dirty Source
 Control view in VSCode. One file, one `.git`, two gits that cannot agree.
 
 The visible half is harmless. The two quiet halves are not:
@@ -317,17 +329,17 @@ Nothing indicates what is being waited for, which is its own kind of time sink.
   tree. Otherwise the page reloads mid-run and the failure reads as an application bug.
 - **Scratch leaves no trace.** A `_probe.js` left behind reads as real code to the next session.
   This governs scratch *files* — probes, dumps, generated output. Working *notes* are the opposite
-  case and belong in `doc/scratchpad/`, in the tree and committed, where the deletion rule clears
-  them when the goal lands.
+  case and belong in `doc/scratchpad/`, in the tree and committed, and cleared when the goal lands.
+  The `land` skill carries that rule and the test that licenses the deletion.
 - **Check the result, not the command's exit code**, wherever the two can disagree (**SF-6**,
   **SF-7**, **SF-8**).
 - **Verify visually when there is anything to look at.** A passing test says the code ran, not that
   the output is right. Screenshot it and open the screenshot.
 - **Scaffold into a temporary directory, then copy in what you want.** A project generator writes
   its own `README.md` and `.gitignore` over yours, and the flag that suppresses the *prompt* does
-  not suppress the *overwrite*. Observed: `sv create --no-dir-check` would have replaced this
-  project's README with the template's, and its `.gitignore` had to be appended to ours rather than
-  swapped in.
+  not suppress the *overwrite*. Observed on an earlier project: `sv create --no-dir-check` would have
+  replaced that project's README with the template's, and its `.gitignore` had to be appended rather
+  than swapped in.
 - **A generator's omissions are not decisions either.** The SvelteKit template ships no
   `@types/node`, so anything importing a `node:` builtin — the test runner, and the build config
   itself — runs correctly and fails `svelte-check`. A green test suite says nothing about this;
@@ -368,8 +380,8 @@ quietly replaces it.
 | `git config --get core.fileMode` | `false` | **SF-12** — a fresh clone has not been told; VSCode will call every executable modified, and real changes hide in the noise |
 | `git status --short` | a clean or expected working tree | not a repository yet — see **SF-7** before trusting any build |
 | `ssh -T git@github.com` | `Hi <account>! You've successfully authenticated` | **SF-3** — pushes will hang, not fail |
-| `node -v` | matches the version spec-tech pins — Node 24 LTS | **SF-1** — wrong runtime, results untrustworthy |
-| `nvm alias default` | matches the version spec-tech pins — Node 24 LTS | **SF-1** — next one-shot command reverts |
+| `node -v` | the version spec-tech pins, once it pins one; this machine currently has Node 24 LTS | **SF-1** — wrong runtime, results untrustworthy |
+| `nvm alias default` | the same version as the line above | **SF-1** — next one-shot command reverts |
 
 ---
 

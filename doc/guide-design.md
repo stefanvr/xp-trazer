@@ -3,9 +3,14 @@
 **Owns.** How the code is shaped: its modules, its seams, and what has to stay testable.
 
 **Not here.** Which technologies implement any of it — [spec-tech.md](spec-tech.md) — and this
-project's own architectural rules, which are its application of what follows. What the game is to
-play is not owned by any document yet, and does not belong here when it is. Which principle wins when
-two of these disagree is [guide-general.md](guide-general.md).
+project's own architectural rules, which are its application of what follows. What the project is
+about — its subject matter, and the rules of the world it models — belongs to the specifications and
+never here. Which principle wins when two of these disagree is [guide-general.md](guide-general.md).
+
+**[spec-tech.md](spec-tech.md) outranks this document wherever the two disagree.** What follows is
+written to hold on any project; a project's own architecture is written knowing what is being built,
+which is the better information. Record the departure in spec-tech in one line, so the next reader
+meets a decision rather than a rule being quietly ignored.
 
 **The test for belonging here.** A rule belongs here if it would still be true on a completely
 different project. If it names a technology, a store, or a domain concept, it is this project's rule
@@ -69,9 +74,9 @@ a per-project decision: amend it when a convention proves itself, do not empty i
 - **Coverage sits where the state is, not where the pixels are.** Behaviour is exercised over plain
   state, in milliseconds, with no surface and no build step. The reason is not purity: surface-driven
   tests are slower and more brittle, and a suite whose coverage lives up there is a suite slow enough
-  to stop being run. *Not when* the behaviour genuinely **is** the surface — a drawing tool, a game
-  of pointer precision — where forcing it into the state layer yields tests that pass while the
-  screen is wrong. Record that in spec-tech in one line.
+  to stop being run. *Not when* the behaviour genuinely **is** the surface — a drawing tool, an
+  interaction that is nothing but pointer precision — where forcing it into the state layer yields
+  tests that pass while the screen is wrong. Record that in spec-tech in one line.
 - **Surface tests are smoke tests: they prove wiring, not behaviour** — that a control reaches the
   command it claims to, that something was drawn. Anything they *could* assert belongs in a test that
   needs no surface.
