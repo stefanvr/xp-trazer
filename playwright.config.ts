@@ -9,7 +9,12 @@ const PORT = 4173;
 export default defineConfig({
   testDir: './e2e',
   forbidOnly: !!process.env['CI'],
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // The `github` reporter turns each failure into a GitHub annotation. Annotations are readable on
+  // a public repository without credentials, where the job log and the artifacts are not — so this
+  // is what makes a CI-only failure diagnosable by someone who is not a repository admin.
+  reporter: process.env['CI']
+    ? [['github'], ['list'], ['html', { open: 'never' }]]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     ...devices['Desktop Chrome'],
