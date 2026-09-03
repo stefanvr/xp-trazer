@@ -44,6 +44,9 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
 - Single responsibility at every level, including a document, a commit and a goal —
   [guide-design.md](guide-design.md) carries the test and its exception, and it is not restated here.
 - Keep documentation and implementation synchronised.
+- **When a document is repaired, re-read whatever cites it.** A document set has no build to break, so
+  a structural fix in one document silently falsifies a sentence in another — and the falsified
+  sentence goes on reading as authority.
 - Tests are part of the implementation, not an afterthought.
 - Leave the project in a better, verifiable state.
 
