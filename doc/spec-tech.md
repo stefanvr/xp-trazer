@@ -32,6 +32,11 @@ Three of the rejections are worth a line, because each was close:
 - **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
   tests and the application read the same imports.
 
+**The page's `bounces` and `vx` readouts are the proof's instruments, not the game's surface.** They
+exist so a smoke test can assert that the loop advanced and that a key reached the domain, and they
+go when version one's surface arrives. The build identifier beside them stays: **SF-8** verifies a
+deployment by fetching the artefact and reading it, never by asking a control API.
+
 **Node's version is pinned at 24 by the machine, not by preference** — `nvm alias default` and
 `node -v` agree there today, and **SF-1** is what makes checking that a session-start task rather
 than a remembered fact.
