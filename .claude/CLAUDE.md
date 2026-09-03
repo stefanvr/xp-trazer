@@ -49,9 +49,9 @@ is the routing — which document answers which question.
 The last three do not exist yet. See **Bootstrap** above: that means the sequence has not reached
 them.
 
-**Drafts and snapshots own no decision, and are never cited as authority** — `doc/brainstorm/` holds
-interview drafts, `doc/discoveries/` holds discovery snapshots, and `doc/scratchpad/` holds working
-notes, cleared when the goal lands.
+**Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
+holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
+cleared when the goal lands.
 
 **Reading order at session start.** `doc/setup-ai-env.md` before any command, then
 `doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then whichever
