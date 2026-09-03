@@ -58,8 +58,8 @@ is the routing — which document answers which question.
 | What do the player and the developer meet — screens, input, flow? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
-The last three do not exist yet. See **Bootstrap** above: that means the sequence has not reached
-them.
+`spec-domain.md` and `spec-app.md` do not exist yet. See **Bootstrap** above: that means the
+sequence has not reached them.
 
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
