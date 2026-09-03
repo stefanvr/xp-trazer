@@ -12,7 +12,7 @@ import {
 /**
  * The `style` skill's page: one panel per row in doc/spec-style.md's palette table.
  *
- * Playfield background, boundary and ball already have a domain type and a real draw function, so
+ * The level background, boundary and ball already have a domain type and a real draw function, so
  * they are drawn by calling it. A brick or a bat has no domain type yet — spec-domain.md does not
  * own them — so those panels paint the shape and color the spec describes directly, and say so.
  * Inventing a domain type here to avoid saying so would be a product decision smuggled into a
@@ -55,7 +55,7 @@ function centeredRect(width: number, height: number, rectWidth: number, rectHeig
 
 const swatches: readonly Swatch[] = [
   {
-    name: 'Playfield background',
+    name: 'Level background',
     role: 'The void everything else sits on',
     paint: fillBackground,
   },
