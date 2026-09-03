@@ -72,8 +72,8 @@ it — so the table also reads as a record of what has already moved, not only o
 
 | Answer | Owner once written | Done |
 |---|---|---|
-| Destructible and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | |
-| Bats grouped by orientation; a closed level with no loss | `spec-domain.md` | |
+| Destructible and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | ✅ |
+| Bats grouped by orientation; a closed level with no loss | `spec-domain.md` | ✅ |
 | Arrow keys split by axis, both groups live at once | `spec-app.md` | |
 | One level, no selection, no persistence | `spec-app.md` | |
 | Tron — neon on black | `spec-style.md` | ✅ |
