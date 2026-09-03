@@ -15,19 +15,11 @@
 | Renderer | Canvas 2D | PixiJS. |
 | Domain tests | Vitest | `node:test`. |
 | Surface tests | Playwright | — |
-| Host | GitHub Pages | Cloudflare Pages and Netlify; Firebase Hosting. |
+| Host | GitHub Pages | Cloudflare Pages, Netlify, Firebase Hosting — all lost to simplicity. |
 | CI | GitHub Actions | Publishing by hand. |
 
-**The host choice costs the repository its privacy, and that is the decision rather than a
-side-effect.** GitHub Pages will not serve a private repository without a paid plan, so the code,
-every document and the whole commit history become public. Cloudflare Pages and Netlify would have
-kept it closed, and lost on adding a second authenticated account to a machine where **SF-2** already
-documents two tools disagreeing about who you are. Firebase Hosting lost to that same lesson, which
-was written about this machine.
-
-**CI exists to own the clean tree.** **SF-11** is not enforceable locally — nothing stops a build
-from a dirty working tree stamping an identifier that is almost true — and a CI checkout is clean by
-construction. That, and **SF-7** needing real git history, is what publishing by hand gives up.
+**The host costs the repository its privacy.** GitHub Pages will not serve a private repository
+without a paid plan, so the code, the documents and the history are public.
 
 **No game engine, and that was settled before the comparison.** **A-1** excludes anything that owns
 the game loop or couples the simulation to frame time, which is Unity, Godot and Phaser — Phaser's
@@ -48,19 +40,11 @@ Three of the rejections are worth a line, because each was close:
 **The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Wall reflection,
 the bounce count and the acceleration an arrow key applies were written to exercise the stack, at a
 point where [spec-domain.md](spec-domain.md) does not exist to own any of them. **Nothing may cite
-them as a rule**, and spec-domain replaces them without owing an argument. This is the proof
-overreaching what it needed — the seams it had to exercise are the fixed step, the pure domain, the
-renderer, input reaching the domain, both test layers and the build identifier, and none of those
-needed a ball that bounces.
+them as a rule**, and spec-domain replaces them without owing an argument.
 
 **The page's `bounces` and `vx` readouts are the proof's instruments, not the game's surface.** They
 exist so a smoke test can assert that the loop advanced and that a key reached the domain, and they
-go when version one's surface arrives. The build identifier beside them stays: **SF-8** verifies a
-deployment by fetching the artefact and reading it, never by asking a control API.
-
-**Node's version is pinned at 24 by the machine, not by preference** — `nvm alias default` and
-`node -v` agree there today, and **SF-1** is what makes checking that a session-start task rather
-than a remembered fact.
+go when version one's surface arrives. The build identifier beside them stays.
 
 ## Architecture
 
