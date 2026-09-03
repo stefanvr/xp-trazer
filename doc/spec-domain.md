@@ -65,7 +65,8 @@ the gap this activity exists to find.
 
 Numbered so code and tests can cite them. A rule nothing cites is either unbuilt or unnecessary, and
 a citation that resolves to nothing is a rule dropped without saying so — the number is what makes
-either visible.
+either visible. **A number, once issued, is never reused**, so a citation found in old code resolves
+to the rule it meant or to nothing, never to a different rule.
 
 ### DS-1 · The level
 
@@ -82,6 +83,7 @@ either visible.
 - **DS-2.2** Launching sets the ball travelling perpendicular to the bat that held it, away from it.
 - **DS-2.3** A travelling ball advances every step.
 - **DS-2.4** A ball that collides changes direction obeying the law of reflection.
+- **DS-2.5** The ball's speed never changes. A collision changes where it is going, never how fast.
 
 ### DS-3 · Bats
 
