@@ -104,6 +104,32 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-5.1** A level is cleared when every destructible element has been destroyed.
 - **DS-5.2** A cleared level does not advance.
 
+## What a level is, as data
+
+**A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
+or holds one element.
+
+**Cells are the only thing elements know about.** An element occupies exactly one cell, so every
+surface in a level is a cell face — horizontal or vertical, never anything else. That is what makes
+**DS-2.4** exact rather than approximate: a collision reflects across one axis, and there is no other
+kind of surface to meet.
+
+**The ball and the bats are continuous; elements are not.**
+
+- A cell has a fixed size, so a level's extent follows from its grid.
+- The ball has a position anywhere in that extent, and a size that is the same in every level.
+- A bat lies on one row or one column, and has a continuous position along it. **DS-3.3** stops it
+  where the next cell along is occupied.
+- Every bat is the same length.
+
+**What a level authors, and what it does not.**
+
+| Authored | Not authored |
+|---|---|
+| The grid's width and height | Where the ball starts — **DS-1.4** draws its bat from the seed |
+| Which cells hold a destructible brick, and which hold a permanent one | The ball's size, and every bat's length: the same in every level |
+| Where each bat sits, and on which row or column | The seed. A level that authored it would draw the same bat every time, which is not a draw |
+
 ## Not named, because version one does not need them
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
