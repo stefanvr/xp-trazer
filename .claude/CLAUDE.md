@@ -22,6 +22,12 @@ A project is brought into being in this order:
 A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
 something missing.
 
+### Implementation
+
+Any goal that will produce or change code runs the `build` skill first — it decides whether the code
+is a proof of wiring or product functionality, and only the second one needs a specification to exist
+before it is written.
+
 ### GIT
 
 * Always create a branch before starting new goal
