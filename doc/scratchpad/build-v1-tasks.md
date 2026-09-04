@@ -11,7 +11,9 @@ history already says what was done. Cleared when the goal lands.
 *Done and removed: a level is drawn · bats answer the keyboard · the ball is held and launches ·
 collisions reflect and destructible bricks go · the level clears.*
 
-The last task reached `doc/scope.md`'s edge, so the landing after it is the first where `land`'s
-scope check should answer *yes* — and put that to the owner rather than act on it.
+**This does not reach `doc/scope.md`.** The goal's *"Done means"* sentence is satisfied, but scope's
+*In* list also carries **two ways to play** — the keyboard on a desktop-sized screen, and touch on a
+small one, the second built after the first. Touch is the last goal inside this scope, so `land`'s
+scope check answers *no*.
 
 `build-v1-notes.md` still carries what has not been given a fate: **B-3** and **B-6**.

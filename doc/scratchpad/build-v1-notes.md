@@ -98,10 +98,17 @@ this goal's.
 
 **And it fell further behind.** spec-style gained a **Typography** section for the word a cleared
 level shows, and the skill's own rule is that *"when the table gains a row, the page is missing a row
-until this routine runs again"*. So the page now owes a cleared-word panel as well.
+until this routine runs again"*. So the page owed a cleared-word panel as well.
 
-**Done when** the `style` skill runs, the panels draw bricks and bats through `draw()`, and the page
-shows the cleared word.
+**Closed.** The `style` skill ran. Every element the domain models — bricks and bats included — is
+now drawn by calling `draw()` against a real `GameState` reached by real `step` calls, so no panel
+can go on looking right after the renderer stops. Eight panels: seven palette rows and the cleared
+word, which spans the gallery because the whole decision is how the type reads.
+
+**What that cost, and why it is the right cost.** No panel shows its element alone any more. A level
+must have a bat, a ball, a boundary and something to destroy, so all four are in every frame. Each
+panel is arranged so its own row is what the eye lands on and says what else is in shot — which is
+more honest than a hand-painted rectangle that owes the renderer nothing.
 
 ## B-6 · The proof readouts are still on the surface spec-app says they leave
 
@@ -118,6 +125,26 @@ question about what replaces that proof, not a deletion.
 
 **Open.** For the owner at landing: take the readouts out and find the loop another witness, or keep
 them and say in spec-app that they stay.
+
+## B-7 · A level may author an element where the held ball rests
+
+**Found.** Rebuilding the style page. Panels with a brick row directly under the bat started with the
+held ball drawn *inside* the brick — the panels were rearranged, but the level was legal.
+
+**Why.** **DS-1.4** starts the ball held by a bat and **DS-2.1** rests it on the bat's open side.
+Nothing says the cell it rests in must be empty, and `createGameState` checks the bats against each
+other and the level, never the ball against an element.
+
+**What it would do in play.** The ball starts inside a brick. Launching drives it straight into that
+brick, which is destroyed on the first step — so the level loses a brick to the level's own layout
+rather than to the player.
+
+**Not urgent.** No authored level does it, and `src/levels/first.test.ts` would not catch one that
+did. It is the same family as **DS-1.7** and **DS-1.8**: a level author can write a position play
+could not produce, and the refusals are where that is caught.
+
+**Open.** For the owner: another refusal in `createGameState`, or left because only an authored level
+can cause it and there is one.
 
 ## B-4 · A bounce stops just short of the surface, by up to one step of travel
 

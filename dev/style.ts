@@ -1,125 +1,110 @@
-import { createGameState } from '../src/domain/simulation';
-import { levelFromRows } from '../src/domain/level';
+import { createGameState, step, boundaryOf, type GameState, type Input } from '../src/domain/simulation';
+import { levelFromRows, type Level } from '../src/domain/level';
 import { draw } from '../src/render/draw';
-import {
-  BACKGROUND,
-  GLOW_PIXELS,
-  HORIZONTAL_BAT,
-  PERMANENT_BRICK,
-  DESTRUCTIBLE_BRICK,
-  VERTICAL_BAT,
-} from '../src/render/palette';
+import { BACKGROUND } from '../src/render/palette';
 
 /**
- * The `style` skill's page: one panel per row in doc/spec-style.md's palette table.
+ * The `style` skill's page: one panel per row doc/spec-style.md names — its palette table, and the
+ * one word its typography section decides.
  *
- * The level background, boundary and ball are drawn by calling the real render function. Bricks and
- * bats are painted here instead, and say so — spec-domain.md owns both now, so the style skill wants
- * them drawn through draw() as well. Until that runs, the label must not claim more than the panel
- * does.
+ * **Everything the domain models is drawn by calling the real render function**, against a real
+ * `GameState` reached by real steps. Nothing here re-implements a shape or repeats a color: a panel
+ * that painted its own brick could go on looking right after the renderer stopped, which is the
+ * drift this page exists to catch.
+ *
+ * The consequence is that no panel shows its element alone — a level always has a bat, a ball, a
+ * boundary and something to destroy, because the rules require all four. Each panel is arranged so
+ * that its own row is what the eye lands on, and says what else is in frame.
  */
 
-type Swatch = {
+const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
+
+type Panel = {
   readonly name: string;
   readonly role: string;
   readonly note?: string;
-  readonly paint: (context: CanvasRenderingContext2D, width: number, height: number) => void;
+  /** Absent for the one row the domain does not model — the void itself. */
+  readonly rows?: readonly string[];
+  readonly arrange?: (state: GameState) => GameState;
+  /** Spans the gallery, for a panel that has to be seen at its own size. */
+  readonly wide?: boolean;
 };
 
-function withGlow(
-  context: CanvasRenderingContext2D,
-  color: string,
-  paint: (context: CanvasRenderingContext2D) => void,
-): void {
-  context.save();
-  context.shadowColor = color;
-  context.shadowBlur = GLOW_PIXELS;
-  context.fillStyle = color;
-  paint(context);
-  context.restore();
+/** A real state, reached by real steps — never assembled by hand. */
+function after(state: GameState, times: number, input: Partial<Input>): GameState {
+  let reached = state;
+  for (let taken = 0; taken < times; taken += 1) {
+    reached = step(reached, { ...NOTHING_HELD, ...input });
+  }
+  return reached;
 }
 
-function fillBackground(context: CanvasRenderingContext2D, width: number, height: number): void {
-  context.fillStyle = BACKGROUND;
-  context.fillRect(0, 0, width, height);
+function everyDestructible(level: Level): ReadonlySet<number> {
+  return new Set(
+    level.cells.flatMap((cell, index) => (cell?.kind === 'destructible' ? [index] : [])),
+  );
 }
 
-function centeredRect(width: number, height: number, rectWidth: number, rectHeight: number) {
-  return {
-    x: (width - rectWidth) / 2,
-    y: (height - rectHeight) / 2,
-    w: rectWidth,
-    h: rectHeight,
-  };
-}
+// Seven cells by five, which is the smallest that leaves a bat room to move and a brick room to sit.
+const PLAIN = ['-......', '.......', '...d...', '.......', '.......'];
 
-/**
- * An empty level of whatever size the panel is, with one bat — DS-1.3 says a level has at least one,
- * so the smallest level this page can build still needs it.
- */
-function batteredRows(width: number, height: number): string[] {
-  const columns = Math.max(2, Math.floor(width / 32));
-  const rows = Math.max(1, Math.floor(height / 32));
-  const empty = '.'.repeat(columns);
-  // Against the top edge, as DS-1.6 requires.
-  return [`-${'.'.repeat(columns - 1)}`, ...Array.from({ length: rows - 1 }, () => empty)];
-}
-
-const swatches: readonly Swatch[] = [
+const panels: readonly Panel[] = [
   {
     name: 'Level background',
     role: 'The void everything else sits on',
-    paint: fillBackground,
+    note: 'The one panel not drawn by the renderer — the void is not an element the domain models',
   },
   {
-    name: 'Boundary & ball',
-    role: 'Drawn by the real renderer (src/render/draw.ts) against a live GameState',
-    paint: (context, width, height) => draw(context, createGameState(levelFromRows(batteredRows(width, height)), 0)),
+    name: 'Boundary / wall',
+    role: 'Marks the closed level without competing with play elements',
+    note: 'Its bat, ball and brick are in frame because a level cannot be built without them',
+    rows: PLAIN,
+  },
+  {
+    name: 'Ball',
+    role: 'The one thing that must read first, everywhere, at any speed',
+    note: 'Launched and left to travel, so it is out in the open rather than resting on its bat',
+    rows: PLAIN,
+    arrange: (state) => after(after(state, 1, { launch: true }), 40, {}),
   },
   {
     name: 'Destructible brick',
     role: 'The objective — what clearing removes',
-    note: 'Shape only — not drawn by the real renderer',
-    paint: (context, width, height) => {
-      fillBackground(context, width, height);
-      const rect = centeredRect(width, height, 96, 26);
-      withGlow(context, DESTRUCTIBLE_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
-    },
+    // Row 1 is left clear: a brick directly under the bat would be where the held ball rests.
+    rows: ['-......', '.......', '.ddddd.', '.ddddd.', '.......'],
   },
   {
     name: 'Permanent brick',
-    role: 'Structure, not a target',
-    note: 'Shape only — not drawn by the real renderer',
-    paint: (context, width, height) => {
-      fillBackground(context, width, height);
-      const rect = centeredRect(width, height, 96, 26);
-      withGlow(context, PERMANENT_BRICK, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
-    },
+    role: 'Reads as structure, not as a target',
+    note: 'The single green brick is the one DS-1.8 requires — and it is the comparison the spec asks for',
+    rows: ['-......', '.......', '.ppppp.', '.ppppp.', '......d'],
   },
   {
     name: 'Horizontal bats',
     role: 'One control group',
-    note: 'Shape only — not drawn by the real renderer',
-    paint: (context, width, height) => {
-      fillBackground(context, width, height);
-      const rect = centeredRect(width, height, 110, 14);
-      withGlow(context, HORIZONTAL_BAT, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
-    },
+    note: 'Driven right by real steps, so it sits where the player could put it',
+    rows: PLAIN,
+    arrange: (state) => after(state, 23, { right: true }),
   },
   {
     name: 'Vertical bats',
-    role: 'The other control group',
-    note: 'Shape only — not drawn by the real renderer',
-    paint: (context, width, height) => {
-      fillBackground(context, width, height);
-      const rect = centeredRect(width, height, 14, 110);
-      withGlow(context, VERTICAL_BAT, (c) => c.fillRect(rect.x, rect.y, rect.w, rect.h));
-    },
+    role: 'The other control group — told apart from horizontal by hue alone',
+    note: 'Driven down by real steps',
+    rows: ['|......', '.......', '...d...', '.......', '.......'],
+    arrange: (state) => after(state, 23, { down: true }),
+  },
+  {
+    name: 'CLEARED',
+    role: 'What a cleared level says — spec-style.md’s typography section',
+    note: 'Shown at its own size, because the whole decision is how the type reads',
+    rows: ['-...........', '............', '....dddd....', '............', '............'],
+    arrange: (state) => ({ ...state, destroyed: everyDestructible(state.level) }),
+    wide: true,
   },
 ];
 
-const PANEL_WIDTH = 220;
-const PANEL_HEIGHT = 150;
+const PLAIN_WIDTH = 224;
+const PLAIN_HEIGHT = 160;
 
 function required<T extends Element>(selector: string): T {
   const element = document.querySelector<T>(selector);
@@ -127,33 +112,49 @@ function required<T extends Element>(selector: string): T {
   return element;
 }
 
-const gallery = required('#gallery');
-
-for (const swatch of swatches) {
-  const canvas = document.createElement('canvas');
-  canvas.width = PANEL_WIDTH;
-  canvas.height = PANEL_HEIGHT;
-
+function context2dOf(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
   const context = canvas.getContext('2d');
   if (!context) throw new Error('this browser has no 2d canvas context');
-  swatch.paint(context, PANEL_WIDTH, PANEL_HEIGHT);
+  return context;
+}
+
+const gallery = required('#gallery');
+
+for (const panel of panels) {
+  const canvas = document.createElement('canvas');
+
+  if (panel.rows === undefined) {
+    canvas.width = PLAIN_WIDTH;
+    canvas.height = PLAIN_HEIGHT;
+    const context = context2dOf(canvas);
+    context.fillStyle = BACKGROUND;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  } else {
+    const started = createGameState(levelFromRows(panel.rows), 0);
+    const state = panel.arrange ? panel.arrange(started) : started;
+    const extent = boundaryOf(state);
+    canvas.width = extent.width;
+    canvas.height = extent.height;
+    draw(context2dOf(canvas), state);
+  }
 
   const figure = document.createElement('figure');
+  if (panel.wide) figure.className = 'wide';
   figure.append(canvas);
 
   const caption = document.createElement('figcaption');
   const name = document.createElement('span');
   name.className = 'name';
-  name.textContent = swatch.name;
+  name.textContent = panel.name;
   const role = document.createElement('span');
   role.className = 'role';
-  role.textContent = swatch.role;
+  role.textContent = panel.role;
   caption.append(name, role);
 
-  if (swatch.note) {
+  if (panel.note) {
     const note = document.createElement('span');
     note.className = 'note';
-    note.textContent = swatch.note;
+    note.textContent = panel.note;
     caption.append(note);
   }
 

@@ -45,6 +45,11 @@ figure canvas {
   border-radius: 2px;
 }
 
+/* A panel whose whole point is how something reads at its own size gets the width to show it. */
+figure.wide {
+  grid-column: 1 / -1;
+}
+
 figcaption .name {
   font-weight: 600;
 }
