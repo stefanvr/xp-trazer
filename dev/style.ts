@@ -74,7 +74,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Boundary & ball',
     role: 'Drawn by the real renderer (src/render/draw.ts) against a live GameState',
-    paint: (context, width, height) => draw(context, createGameState(levelFromRows(batteredRows(width, height)))),
+    paint: (context, width, height) => draw(context, createGameState(levelFromRows(batteredRows(width, height)), 0)),
   },
   {
     name: 'Destructible brick',

@@ -36,7 +36,9 @@ const collisionReadout = required('[data-testid="collision-count"]');
 const batReadout = required('[data-testid="bat-position"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
-let state = createGameState(levelFromRows(FIRST_LEVEL));
+// The seed comes from outside the level — one that authored its own would draw the same bat every
+// time, which is not a draw (doc/spec-domain.md).
+let state = createGameState(levelFromRows(FIRST_LEVEL), Date.now());
 
 // The level decides how big the play area is, so the canvas takes its size from the level.
 const extent = boundaryOf(state);
@@ -45,7 +47,20 @@ canvas.height = extent.height;
 
 const held = new Set<string>();
 const ARROWS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
+
+/**
+ * A direction is held; a launch is done. spec-app says Space is pressed once, so it is latched here
+ * and cleared after the steps that saw it — sampling it like a direction drops a press that begins
+ * and ends between two frames, which is most of them.
+ */
+let launchRequested = false;
+
 addEventListener('keydown', (event) => {
+  if (event.key === ' ') {
+    launchRequested = true;
+    event.preventDefault();
+    return;
+  }
   if (ARROWS.has(event.key)) {
     held.add(event.key);
     event.preventDefault();
@@ -66,11 +81,13 @@ function frame(now: number): void {
     right: held.has('ArrowRight'),
     up: held.has('ArrowUp'),
     down: held.has('ArrowDown'),
+    launch: launchRequested,
   };
   while (unspent >= STEP_SECONDS) {
     state = step(state, input);
     unspent -= STEP_SECONDS;
   }
+  launchRequested = false;
 
   collisionReadout.textContent = String(state.collisions);
   const horizontal = state.bats.find((bat) => bat.orientation === 'horizontal');

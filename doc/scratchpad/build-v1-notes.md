@@ -56,3 +56,18 @@ agent's.
 
 **Done when** DS-2.1 or DS-2.2 says which side, or the owner confirms the derivation and it stops
 being open.
+
+## B-3 · The style page says the domain owns no brick or bat type
+
+**Found.** Task 3, while wiring `createGameState`'s new seed through `dev/style.ts`.
+
+**Evidence.** `dev/style.ts` labels three panels *"Shape only — spec-domain.md does not own a brick
+type yet"* and *"…does not own a bat type yet"*. `doc/spec-domain.md` owns both, and
+`src/domain/level.ts` has them.
+
+**Why it is not fixed here.** The `style` skill says an element the domain models is drawn by calling
+the project's real render function, not re-implemented — so the fix is to redraw those panels from
+real types, which is that routine's job. Editing the labels alone would leave the page claiming to
+demonstrate real code while still painting rectangles by hand.
+
+**Done when** the `style` skill runs and the panels draw bricks and bats through `draw()`.

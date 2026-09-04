@@ -1,3 +1,4 @@
+import { batHoldingTheBall, launchVelocity, restingOn } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { extentOf, type Bat, type Extent, type Level } from './level';
 
@@ -29,12 +30,19 @@ export type Input = {
   readonly right: boolean;
   readonly up: boolean;
   readonly down: boolean;
+  /** Space — spec-app. */
+  readonly launch: boolean;
 };
 
 export type Ball = {
   readonly position: Vector;
   readonly velocity: Vector;
   readonly radius: number;
+  /**
+   * The bat holding it, or undefined once launched. DS-1.5's first two states: the ball is held,
+   * or the ball is travelling.
+   */
+  readonly heldBy: number | undefined;
 };
 
 /** Everything that changes while a level is played. The level itself does not. */
@@ -44,6 +52,11 @@ export type GameState = {
   readonly ball: Ball;
   readonly collisions: number;
 };
+
+/** DS-1.5 — the ball is held, or it is travelling. */
+export function isHeld(state: GameState): boolean {
+  return state.ball.heldBy !== undefined;
+}
 
 /** The level's edge, which its extent decides. */
 export function boundaryOf(state: GameState): Extent {
@@ -59,9 +72,8 @@ export function boundaryOf(state: GameState): Extent {
  * than a single cell, and a cell is wider than the ball. The check that used to be here could no
  * longer fail, and a check that cannot fail is a claim rather than evidence.
  */
-export function createGameState(level: Level): GameState {
+export function createGameState(level: Level, seed: number): GameState {
   const radius = 9;
-  const { width, height } = extentOf(level);
   for (const bat of level.bats) {
     const span = spanFor(level, bat);
     if (span.high < span.low) {
@@ -71,13 +83,18 @@ export function createGameState(level: Level): GameState {
     }
   }
 
+  // DS-1.4 — a level starts with the ball held by one of its bats, drawn from the seed.
+  const heldBy = batHoldingTheBall(level, seed);
+  const bat = level.bats[heldBy]!;
+
   return {
     level,
     bats: level.bats,
     ball: {
-      position: { x: width / 2, y: height / 2 },
-      velocity: { x: 0, y: 260 },
+      position: restingOn(level, bat, radius),
+      velocity: { x: 0, y: 0 },
       radius,
+      heldBy,
     },
     collisions: 0,
   };
@@ -92,6 +109,23 @@ export function step(state: GameState, input: Input): GameState {
   const reach = BAT_PIXELS_PER_SECOND * STEP_SECONDS;
   let bats = moveGroup(level, state.bats, 'horizontal', ((input.right ? 1 : 0) - (input.left ? 1 : 0)) * reach);
   bats = moveGroup(level, bats, 'vertical', ((input.down ? 1 : 0) - (input.up ? 1 : 0)) * reach);
+
+  // DS-2.1 — a held ball rests on its bat and moves with it, so it has no motion of its own.
+  if (ball.heldBy !== undefined) {
+    const bat = bats[ball.heldBy]!;
+    const resting = restingOn(level, bat, ball.radius);
+
+    if (!input.launch) {
+      return { ...state, bats, ball: { ...ball, position: resting } };
+    }
+
+    // DS-2.2 — launching sets it travelling, perpendicular to the bat and away from it.
+    return {
+      ...state,
+      bats,
+      ball: { ...ball, position: resting, velocity: launchVelocity(level, bat), heldBy: undefined },
+    };
+  }
 
   let velocityX = ball.velocity.x;
   let velocityY = ball.velocity.y;

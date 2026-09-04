@@ -21,9 +21,13 @@ test('the built page reports a real commit rather than unknown', async ({ page }
   await expect(page.locator('meta[name="build-identifier"]')).toHaveAttribute('content', shown);
 });
 
-test('the loop runs and the ball reaches the boundary', async ({ page }) => {
+test('the loop runs and the ball reaches the boundary once launched', async ({ page }) => {
   await page.goto('/');
 
+  // The ball is held until the player launches it, so nothing collides before Space.
+  await expect(page.getByTestId('collision-count')).toHaveText('0');
+
+  await page.keyboard.press('Space');
   await expect(page.getByTestId('collision-count')).not.toHaveText('0', { timeout: 10_000 });
 });
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createGameState, step, STEP_SECONDS, type GameState, type Input } from './simulation';
+import { createGameState, isHeld, step, STEP_SECONDS, type GameState, type Input } from './simulation';
 import { CELL_PIXELS, levelFromRows } from './level';
 
-const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false };
+const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
 // 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
 const LEVEL = levelFromRows([...Array.from({ length: 14 }, () => '.'.repeat(20)), `-${'.'.repeat(19)}`]);
 // One bat on each axis, both with room to move.
@@ -10,9 +10,10 @@ const BOTH_AXES = levelFromRows([`-|${'.'.repeat(18)}`, ...Array.from({ length: 
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
+/** A travelling ball unless a test says otherwise — most of these predate holding. */
 function stateWith(ball: Partial<GameState['ball']>): GameState {
-  const state = createGameState(LEVEL);
-  return { ...state, ball: { ...state.ball, ...ball } };
+  const state = createGameState(LEVEL, 0);
+  return { ...state, ball: { ...state.ball, heldBy: undefined, ...ball } };
 }
 
 describe('a ball meeting the boundary', () => {
@@ -69,7 +70,7 @@ describe('a step with a direction held', () => {
     state.bats.find((bat) => bat.orientation === 'vertical')?.position ?? 0;
 
   it('moves the horizontal group rightwards while right is held', () => {
-    const state = createGameState(BOTH_AXES);
+    const state = createGameState(BOTH_AXES, 0);
 
     expect(horizontal(step(state, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
       horizontal(state),
@@ -77,13 +78,13 @@ describe('a step with a direction held', () => {
   });
 
   it('moves the vertical group downwards while down is held', () => {
-    const state = createGameState(BOTH_AXES);
+    const state = createGameState(BOTH_AXES, 0);
 
     expect(vertical(step(state, { ...NOTHING_HELD, down: true }))).toBeGreaterThan(vertical(state));
   });
 
   it('drives both groups at once, because both are live', () => {
-    const state = createGameState(BOTH_AXES);
+    const state = createGameState(BOTH_AXES, 0);
 
     const next = step(state, { ...NOTHING_HELD, right: true, down: true });
 
@@ -92,7 +93,7 @@ describe('a step with a direction held', () => {
   });
 
   it('leaves a group alone when both of its directions are held', () => {
-    const state = createGameState(BOTH_AXES);
+    const state = createGameState(BOTH_AXES, 0);
 
     expect(horizontal(step(state, { ...NOTHING_HELD, left: true, right: true }))).toBe(
       horizontal(state),
@@ -100,7 +101,7 @@ describe('a step with a direction held', () => {
   });
 
   it('moves bats whether the ball is travelling or not, which is DS-3.4', () => {
-    const still = { ...createGameState(BOTH_AXES) };
+    const still = { ...createGameState(BOTH_AXES, 0) };
     const stopped = { ...still, ball: { ...still.ball, velocity: { x: 0, y: 0 } } };
 
     expect(horizontal(step(stopped, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
@@ -136,12 +137,57 @@ describe('the step itself', () => {
 
 describe('the smallest level that can hold a bat', () => {
   it('holds the ball too, so no guard for that is needed', () => {
-    const state = createGameState(levelFromRows(['-..']));
+    const state = createGameState(levelFromRows(['-..']), 0);
 
     expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
   });
 
   it('refuses a level whose bat has less room than its own length', () => {
-    expect(() => createGameState(levelFromRows(['-.']))).toThrow(/less room than its own length/);
+    expect(() => createGameState(levelFromRows(['-.']), 0)).toThrow(/less room than its own length/);
+  });
+});
+
+describe('a ball that has not been launched', () => {
+  const level = levelFromRows(['-...........', ...Array.from({ length: 9 }, () => '.'.repeat(12))]);
+
+  it('starts held by one of the level\'s bats', () => {
+    expect(isHeld(createGameState(level, 0))).toBe(true);
+  });
+
+  it('moves with the bat holding it, rather than under its own power', () => {
+    const state = createGameState(level, 0);
+
+    const next = step(state, { ...NOTHING_HELD, right: true });
+
+    expect(next.ball.position.x).toBeGreaterThan(state.ball.position.x);
+    expect(isHeld(next)).toBe(true);
+  });
+
+  it('goes nowhere at all while nothing is held down', () => {
+    const state = createGameState(level, 0);
+
+    expect(step(state, NOTHING_HELD).ball.position).toEqual(state.ball.position);
+  });
+
+  it('is travelling once launched, and no longer held', () => {
+    const state = createGameState(level, 0);
+
+    const next = step(state, { ...NOTHING_HELD, launch: true });
+
+    expect(isHeld(next)).toBe(false);
+    expect(Math.hypot(next.ball.velocity.x, next.ball.velocity.y)).toBeGreaterThan(0);
+  });
+
+  it('keeps travelling after the launch key is let go', () => {
+    const launched = step(createGameState(level, 0), { ...NOTHING_HELD, launch: true });
+
+    const later = step(launched, NOTHING_HELD);
+
+    expect(isHeld(later)).toBe(false);
+    expect(later.ball.position.y).not.toBe(launched.ball.position.y);
+  });
+
+  it('starts the same way every time for the same seed', () => {
+    expect(createGameState(level, 4242)).toEqual(createGameState(level, 4242));
   });
 });
