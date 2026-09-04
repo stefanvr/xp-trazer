@@ -48,7 +48,7 @@ Every event, what causes it, and what it leaves changed. Nothing else happens in
 | Event | Caused by | Leaves changed |
 |---|---|---|
 | **Level started** | The game begins | The level exists. One of its bats, drawn from the seed, holds the ball. |
-| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary or at an element. A held ball moves with its bat; a travelling ball a bat moved into collides with it. |
+| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary, at an element or at another bat. A held ball moves with its bat; a travelling ball a bat moved into collides with it. |
 | **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
 | **Collision** | The ball and a boundary, a bat or a brick met — either of them may have been the one moving | The ball's direction changes, obeying the law of reflection. |
@@ -79,6 +79,8 @@ to the rule it meant or to nothing, never to a different rule.
   the level is cleared.
 - **DS-1.6** A bat has something the ball cannot pass on one of its two perpendicular sides — the
   level's edge today, and whatever else is placed against it later. The other side is open.
+- **DS-1.7** A level authors no bat in the same place as another, and none with less room to slide
+  than its own length. Neither is a position play could reach, and neither is one play could undo.
 
 ### DS-2 · The ball
 
@@ -105,7 +107,8 @@ a new heading, which is what makes reaching it the point of moving one.
 - **DS-3.1** Every bat of one orientation belongs to one bat group, and a bat group moves as one
   thing.
 - **DS-3.2** A bat group moves along its orientation's axis only.
-- **DS-3.3** A bat stops at the boundary and at an element.
+- **DS-3.3** A bat stops at the boundary, at an element, and at another bat. Two bats never occupy
+  the same space.
 - **DS-3.4** Bats move whether the ball is held or travelling.
 
 ### DS-4 · Elements

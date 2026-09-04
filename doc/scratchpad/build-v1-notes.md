@@ -27,13 +27,29 @@ overlap is allowed.
 gains what a bat stops at, and `doc/spec-domain.md` is where that is decided — which makes it the
 `domain` skill's business rather than something to patch in `moveGroup`.
 
-**Open questions if it is fixed**, none of which the specification answers today:
+**Closed.** The owner settled it: bats block, just as the boundary and elements do. **DS-3.3** now
+names all three, and **DS-1.7** refuses a level that authors one bat inside another or one with less
+room to slide than its own length — the second rule already had code and no number to cite.
 
-- Does a bat stop at *any* bat, or only one of the other orientation? Two bats of one group cannot
-  meet, since a group moves as one and its members are on different lines.
-- Does a blocked crossing stop the whole group, the way an element does under **DS-3.1**?
-- Is a level whose authored bats already overlap refused at start, as one with too little room for a
-  bat now is?
+**The three open questions, answered.**
+
+| Question | Answer |
+|---|---|
+| Any bat, or only one of the other orientation? | Only the other orientation is ever asked. A group moves as one thing (**DS-3.1**), so its members keep the distance the level gave them and can never close on each other. |
+| Does a blocked crossing stop the whole group? | Yes — the same rule as an element. The blocked member speaks for every member. |
+| Is an overlapping level refused at start? | Yes, and before the room-to-slide check, because a bat inside another also has no room and that is the misleading answer. |
+
+**Why it needed no geometry of its own.** A bat is exactly one cell thick and sits square on its
+line, so it covers exactly one cell of any line that crosses it — `crossedBy` in `src/domain/bat.ts`
+answers at a cell, and `spanFor` then stops a bat at another bat by the walk it already did for
+elements. It covers that cell only while its length reaches the crossing line, so the same pair
+blocks or does not as the other group slides.
+
+**One consequence worth knowing.** The two groups are moved one after the other, so the second is
+offered whatever the first left. That is what keeps them apart when both are driven at once, and it
+makes right-then-down differ from down-then-right by a step's travel where the two would otherwise
+cross. Paid deliberately: the alternative is letting both move against stale positions and undoing
+the overlap afterwards.
 
 ## B-2 · Which side of its bat the held ball rests on is not specified
 

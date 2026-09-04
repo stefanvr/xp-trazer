@@ -209,6 +209,13 @@ describe('the smallest level that can hold a bat', () => {
       /nothing on either side/,
     );
   });
+
+  it('refuses a level that authors one bat inside another, which DS-1.7 forbids', () => {
+    // The vertical bat runs down column 1 from row 0, through the horizontal bat lying on row 0.
+    expect(() => createGameState(levelFromRows(['-|..', '....', '....']), 0)).toThrow(
+      /authored inside/,
+    );
+  });
 });
 
 describe('a ball that has not been launched', () => {

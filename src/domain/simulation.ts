@@ -1,6 +1,6 @@
 import { awayFrom, batHoldingTheBall, deflectedByBat, launchVelocity, restingOn } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
-import { batRect, obstacleAt, overlaps } from './collision';
+import { batRect, meets, obstacleAt, overlaps } from './collision';
 import { BAT_LENGTH_PIXELS, extentOf, type Bat, type Extent, type Level } from './level';
 
 /**
@@ -98,11 +98,26 @@ export function boundaryOf(state: GameState): Extent {
  */
 export function createGameState(level: Level, seed: number): GameState {
   const radius = 9;
+  /**
+   * DS-1.7 — bats block each other, so two authored in the same place is a position no move could
+   * have reached and none can undo. Asked before anything else, because a bat overlapping another
+   * also has no room to slide, and *that* is the answer a reader would be misled by.
+   */
+  for (const [index, bat] of level.bats.entries()) {
+    for (const other of level.bats.slice(index + 1)) {
+      if (!meets(batRect(bat), batRect(other))) continue;
+      throw new Error(
+        `a ${bat.orientation} bat on line ${bat.line} is authored inside a ${other.orientation} bat on line ${other.line}`,
+      );
+    }
+  }
+
   for (const bat of level.bats) {
     // DS-1.6 — throws where a bat has nothing, or something on both sides, to rest against.
     awayFrom(level, bat);
 
-    const span = spanFor(level, bat);
+    // DS-1.7 — a bat that cannot slide its own length is authored into a place play cannot use.
+    const span = spanFor(level, level.bats, bat);
     if (span.high < span.low) {
       throw new Error(
         `a ${bat.orientation} bat on line ${bat.line} has less room than its own length`,

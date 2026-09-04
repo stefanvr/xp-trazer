@@ -142,7 +142,8 @@ of the document and the cause was *project's* far above.
 
 **Never assemble file content inside a shell string. Use a file-writing tool** against the
 `\\wsl.localhost\…` path. Same for git commit messages: write the message to a file, then
-`git commit -F <file>`.
+`git commit -F <file>`. **Give that file a name the repository ignores**, or the next `git add -A`
+commits the message alongside the change it describes.
 
 **It does not always announce itself.** Observed: a `git commit -F -` fed by a heredoc whose message
 contained *surface's*. The apostrophe closed the outer string, so git received the message truncated

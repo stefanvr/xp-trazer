@@ -9,3 +9,7 @@ dist/
 # Test output
 test-results/
 playwright-report/
+
+# Written by a file-writing tool for `git commit -F`, because a message cannot be assembled inside
+# a shell string — doc/setup-ai-env.md, SF-4. Ignored so that `git add -A` cannot commit it.
+.commit-msg

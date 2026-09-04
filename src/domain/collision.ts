@@ -31,6 +31,16 @@ export function batRect(bat: Bat): Rect {
     : { x: across, y: bat.position, w: CELL_PIXELS, h: BAT_LENGTH_PIXELS };
 }
 
+/** Two rectangles share space. Touching is not sharing, as it is not for a circle either. */
+export function meets(one: Rect, other: Rect): boolean {
+  return (
+    one.x < other.x + other.w &&
+    other.x < one.x + one.w &&
+    one.y < other.y + other.h &&
+    other.y < one.y + one.h
+  );
+}
+
 /** A circle overlaps a rectangle when the nearest point of the rectangle is inside it. */
 export function overlaps(rect: Rect, x: number, y: number, radius: number): boolean {
   const nearestX = Math.max(rect.x, Math.min(x, rect.x + rect.w));
