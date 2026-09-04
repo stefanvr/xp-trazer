@@ -16,9 +16,13 @@ on it. Mixing them makes both harder to trust.
 **Everything here is true whatever the project is built with.** A lesson that depends on a technology
 lives in `doc/lessons/`, one file per technology, named as [spec-tech.md](spec-tech.md) names it.
 
-> **Read the lesson file for each technology spec-tech chooses, and no others.** The stack decides
-> which apply, so nothing lists them and no list can go stale. A file for a technology this project
-> does not use is a lesson held for the project that does — it is not a choice, and not a plan.
+> **Read the lesson file for each technology spec-tech chooses, and no others.** A file for a
+> technology this project does not use is a lesson held for the project that does — not a choice,
+> and not a plan.
+
+**Which those are is listed in [CLAUDE.md](../.claude/CLAUDE.md)**, so that finding out costs nothing
+at session start. That list is an index and this rule is the authority: where they disagree, the list
+is wrong.
 
 **Write the silent failures first.** A command that errors is self-correcting — you see it and fix
 it. A command that quietly does the *wrong thing* is not, and that is the class of problem this

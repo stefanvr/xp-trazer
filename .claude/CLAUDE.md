@@ -75,11 +75,24 @@ cleared when the goal lands.
 **`doc/scope.md` holds one overarching goal, and is replaced when that goal is reached.** A
 specification outranks it the moment it exists.
 
-**`doc/lessons/` is a library, not a plan.** One file per technology, read only for the technologies
-`doc/spec-tech.md` chooses. A file for anything else is a lesson held for the project that uses it —
-never a choice, and never a backlog. Nothing lists which are active, because the stack already does.
+**`doc/lessons/` is a library, not a plan.** One file per technology. A file for a technology this
+project does not use is a lesson held for the project that does — never a choice, and never a
+backlog.
 
-**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the lesson file
-for each technology `doc/spec-tech.md` names, then
+**Active lessons — read these at session start:**
+
+* `doc/lessons/node.md`
+* `doc/lessons/playwright.md`
+* `doc/lessons/github-pages.md`
+* `doc/lessons/github-actions.md`
+
+**That list is an index, not the authority.** It is the technologies `doc/spec-tech.md` chooses that
+have a lesson written, copied here so that reading spec-tech is not a prerequisite for knowing what
+to read. Where the list and those two disagree, **the list is wrong**. It can only change at two
+moments, and both are moments something else is already being edited: **a chosen technology gains a
+lesson file, or a lesson file's technology gets chosen.**
+
+**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
+above, then
 `doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
 `doc/scope.md`, then whichever document above owns the decision in front of you.
