@@ -1,45 +1,52 @@
 # AI environment
 
-**Owns.** How to AI interacts on this machine.
+**Owns.** How an AI agent interacts with this machine, and which of its commands succeed while doing
+the wrong thing.
 
 **Not here.** Technical *choices* — which runtime, which test framework, which host — belong in
-[spec-tech.md](spec-tech.md) · bringing a machine from nothing to able to develop — what to install
-and configure, and what only a person can do — is [setup-dev-env.md](setup-dev-env.md). This document
-assumes the machine already works and asks what lies to you; that one assumes nothing is installed
-and asks what to run. This document decides nothing; it records what is already true of the current machine developed on. That is why the two are separate: spec-tech changes when the project changes, this changes only
-when the local machine changes in a way ai interaction changes, and mixing them makes both harder to trust.
+[spec-tech.md](spec-tech.md) · bringing a machine from nothing to able to develop, and what only a
+person can do, is [setup-dev-env.md](setup-dev-env.md) · where the application runs is
+[setup-app-env.md](setup-app-env.md). This document assumes the machine already works and asks what
+lies to you; setup-dev-env assumes nothing is installed and asks what to run.
 
-**Naming a tool here is not choosing it.** Apart from git, every tool named below that in not in the spec-tech
-can be ignored for now. Information is kept here as these are commonly used and lesson learned for AI interaction can be immediatly applied. 
+**This document decides nothing.** It records what is true of the machine. spec-tech changes when the
+project changes; this changes only when the machine changes in a way that changes how an agent works
+on it. Mixing them makes both harder to trust.
 
-**The lessons here arrived before the project did, and that is deliberate.** Every observation below
-was made on *this machine*, and not necessarily on *this project*. So a passage may name a runtime, a
-host, a CI or a file that this repository does not contain — read those as *"if and when it is that,
-this is already known"*, and never as a record of what has been chosen or of what is in the tree.
-**spec-tech is the only place a choice exists, and the only place to look for one.** Where a passage
-below still reads as though a choice were settled, the passage is loose and spec-tech is right.
-Keeping a lesson ahead of its subject costs nothing; acting on it before the choice exists costs a
-wrong answer.
+**Everything here is true whatever the project is built with.** A lesson that depends on a technology
+lives in `doc/lessons/`, one file per technology, named as [spec-tech.md](spec-tech.md) names it.
+
+> **Read the lesson file for each technology spec-tech chooses, and no others.** A file for a
+> technology this project does not use is a lesson held for the project that does — not a choice,
+> and not a plan.
+
+**Which those are is listed in [CLAUDE.md](../.claude/CLAUDE.md)**, so that finding out costs nothing
+at session start. That list is an index and this rule is the authority: where they disagree, the list
+is wrong.
 
 **Write the silent failures first.** A command that errors is self-correcting — you see it and fix
 it. A command that quietly does the *wrong thing* is not, and that is the class of problem this
-document exists for. Add it here in the same shape: what succeeded, what it actually did,
-and the check that distinguishes the two. **The surprise is the valuable part** — a rule with no
-observation behind it gets ignored by the third session.
+document exists for. Add one in the same shape: what succeeded, what it actually did, and the check
+that distinguishes the two. **The surprise is the valuable part** — a rule with no observation behind
+it gets ignored by the third session.
 
-**Keep personal details out of this file.** It is committed and may be public. Describe the
-*failure mode* and how to check for it — never email addresses, SSH configuration, key names, or
-absolute paths into someone's home directory. Everything below is written to be useful without
-any of that.
+**A number, once issued, is never reused.** These are cited from other documents, from the workflow
+and from the code. A lesson that moves to `doc/lessons/` leaves its number here pointing at where it
+went, so a citation resolves to the lesson it meant or to nothing, never to a different one.
+
+**Keep personal details out of this file.** It is committed and public. Describe the *failure mode*
+and how to check for it — never email addresses, SSH configuration, key names, or absolute paths into
+someone's home directory.
+
 ---
 
 ## Machine:WIN-WSL - Working inside WSL from a Windows host — notes for an AI agent
 
-Read it **before running any command**. It is about the local machine, and every rule here exists
-because something succeeded while doing the wrong thing.
+Read it **before running any command**. Every rule here exists because something succeeded while
+doing the wrong thing.
 
-Portable: nothing below hardcodes a user or a distro. Substitute `<distro>`, `<user>` and  `<project>` from the
-bootstrap block.
+Portable: nothing below hardcodes a user or a distro. Substitute `<distro>`, `<user>` and `<project>`
+from the bootstrap block.
 
 ---
 
@@ -48,14 +55,11 @@ bootstrap block.
 ```bash
 wsl.exe -l -q                                    # <distro>, e.g. Ubuntu-24.04
 wsl.exe -e bash -ic 'set -u; echo $HOME; git config user.email'
-
-# ...and the runtime. Where spec-tech chooses Node, nvm is this machine's way of having it:
-wsl.exe -e bash -ic 'set -u; node -v; nvm alias default'
 ```
 
-Do not trust a remembered answer for any of these. Check the **running** version and the **default**
-separately — `node -v` and `nvm alias default` answer different questions and either can be the
-wrong one (see **SF-1**).
+Do not trust a remembered answer. Where the project's runtime is managed by a version manager, check
+the **running** version and the **default** separately — they answer different questions and either
+can be the wrong one (see **SF-1**, and the lesson file for that runtime).
 
 ---
 
@@ -72,8 +76,8 @@ wsl.exe -e bash -ic 'set -u; cd /home/<user>/<project> && <command>'
 | Form | Effect |
 |---|---|
 | `bash -ic` | ✅ **Correct.** A shell-initialised version manager loads from the interactive startup file. |
-| `bash -lc` | ❌ Login shell never loads it. Silently uses the **system-wide runtime** — often end-of-life. Node is managed by nvm on this machine, so this applies. |
-| Git Bash / PowerShell on the Windows side, against a `\\wsl.localhost\…` path | ❌ Uses the **Windows** runtime and the Windows git identity. Both succeed and both are wrong. |
+| `bash -lc` | ❌ Login shell never loads it. Silently uses the **system-wide runtime** — often end-of-life. |
+| Git Bash / PowerShell on the Windows side, against a `\\wsl.localhost\…` path | ❌ Uses the **Windows** toolchain and the Windows git identity. Both succeed and both are wrong. |
 
 **The Windows side may touch file *content*, and nothing else.**
 
@@ -89,7 +93,7 @@ Windows has its own copy of each, which will answer, succeed, and be wrong (**SF
 
 | Path form | Use it for |
 |---|---|
-| `/home/<user>/<project>/…` | Everything executed, without exception: git, the runtime, the package manager, tests, builds |
+| `/home/<user>/<project>/…` | Everything executed, without exception |
 | `\\wsl.localhost\<distro>\home\<user>\<project>\…` | **Only** reading, writing and editing file content |
 
 The trap is that the forbidden half never announces itself. `git commit` from Windows does not warn
@@ -103,65 +107,27 @@ call — there is no observable difference at the moment you make the mistake.
 
 This is the dangerous class. A command that errors is self-correcting; these are not.
 
-#### SF-1 · The runtime version depends on your shell flags
-Both invocations succeed and run different runtimes. `bash -lc` → system Node; `bash -ic` → nvm's.
+#### SF-1 · The toolchain version depends on your shell flags
+Both invocations succeed and run different toolchains. `bash -lc` loads no version manager and gets
+the system-wide one; `bash -ic` gets the managed one.
 
-**And installing a version is not selecting it.** A fresh interactive shell resolves to nvm's
-**default alias**; `.nvmrc` is read only by an explicit `nvm use`. Install 24 while the default
-alias points at 20 and every one-shot command runs 20, with `.nvmrc` and CI both saying 24.
-
-Two ways out, not equivalent: `nvm use` in the project directory (scoped, reads `.nvmrc`) or
-`nvm alias default <v>` (**global** — hits every other project on the machine).
-Verify with `node -v` and `nvm alias default`, never by recalling what was installed.
+**Verify, never recall.** Which version is running and which one the next fresh shell will pick are
+two questions, and a version manager can answer them differently. *The commands that ask are the
+runtime's — see its lesson file.*
 
 #### SF-2 · Committing from Windows attributes the commit to the wrong person
-The Windows host and WSL each carry their own global git identity, and on a work laptop they
-usually differ. Git does not warn.
+The Windows host and WSL each carry their own global git identity, and on a work laptop they usually
+differ. Git does not warn.
 **Run every git command inside WSL.** Audit with `git log --format='%an <%ae>' | sort -u`.
 
 **And it is not only git.** Every tool that authenticates does so independently, and on a work laptop
-the accounts differ. Observed here: `firebase` was authenticated as the personal account that owns
-the project, while `gcloud` on the same machine was authenticated as the *work* account, which has no
-access to it. Neither tool mentions the other, and a one-line configuration fix aimed at the wrong
-identity fails in a way that reads as a permissions problem with the project rather than as the wrong
-login.
-
-**Check each tool's identity separately, not once for the machine:**
-
-```bash
-git config user.email
-npx firebase login:list
-gcloud auth list
-```
-
-**This machine carries two `gcloud` configurations**, and only one is live at a time:
-
-| Configuration | Account | Use |
-|---|---|---|
-| `default` | the work account | everything work-related |
-| `personal` | the account that owns the Firebase project | this project |
-
-The setting is **machine-wide, not per-terminal**, so leaving `personal` active means work commands
-silently target this project, and leaving `default` active means this project's commands are refused
-in a way that reads as "it may not exist". `gcloud config configurations list` shows both and which
-is live; `gcloud config configurations activate <name>` switches.
-
-The corollary is worth more than the check: **before fixing an access problem, ask which identity is
-being refused.** Twice the cheaper answer has been to avoid the tool rather than re-authenticate it —
-asking the live service directly, which needs no login at all.
-
-**And the error will not tell you.** Observed: a `describe` on a resource, run as the wrong account,
-returned *"Permission … denied on resource … **(or it may not exist)**"*. Denied and absent are the
-same message, so the command answers neither question. This is **SF-8** in a second costume — a
-provider API conflating "not allowed to ask" with "not there" — and the remedy is the same in
-spirit: **establish the identity before running the check, because the check cannot establish it for
-you.** A diagnostic run as the wrong identity is not a weak signal, it is no signal.
+the accounts differ — so **check each tool's identity separately, never once for the machine**. The
+worked example, where two cloud tools on this machine were logged in as different people, is in
+[lessons/firebase.md](lessons/firebase.md).
 
 #### SF-3 · An HTTPS remote hangs instead of failing
 It prompts for credentials no helper supplies, and waits forever on input that never arrives.
-**Use SSH.** Confirm with `ssh -T git@github.com` — it names the authenticated account. *(GitHub is
-named because that is where this repository's remote already is — a fact about the remote, not a
-choice spec-tech has made; the check is the same shape wherever a remote lives.)*
+**Use SSH.** Confirm with `ssh -T git@<host>` — it names the authenticated account.
 
 **And when reading a remote anonymously to check something, set `GIT_TERMINAL_PROMPT=0`.** Without
 it, a private repository does not report itself as private — git asks for a username and waits, which
@@ -207,37 +173,31 @@ Redirect to a file and test the code directly, or check `${PIPESTATUS[0]}`.
 Any build that stamps the commit SHA by asking git will degrade to `unknown` when there is no
 repository — exit 0, complete output, deployable artefact, nothing said.
 
-**Order matters: `git init` and a first commit precede any build whose output is trusted.**
-The end-to-end suite is the only thing that catches this, which is why it must assert the
-identifier is **not** `unknown` rather than merely present. In CI the equivalent hazard is a
-checkout with no history — a tarball export fails exactly this way. *(If CI turns out to be GitHub
-Actions — spec-tech has chosen no CI — `actions/checkout` produces a real repository, so the build
-can ask git for its commit. Assert that rather than assume it: the smoke test should run in CI and
-fail on `unknown`.)*
+**Order matters: `git init` and a first commit precede any build whose output is trusted.** The
+end-to-end suite is the only thing that catches this, which is why it must assert the identifier is
+**not** `unknown` rather than merely present. In CI the equivalent hazard is a checkout with no
+history — a tarball export fails exactly this way, while a real checkout does not. *What the chosen
+CI actually produces is its lesson file's to say.*
 
-**Proving that check works costs one environment variable.** A test that has never failed is a
-claim, not evidence. `GIT_DIR` pointing at nothing makes `git rev-parse` fail while everything else
-proceeds normally, which is this failure exactly — and it needs no source change, so there is
-nothing to remember to put back:
+**Proving that check works costs one environment variable.** A test that has never failed is a claim,
+not evidence. Break git's view of the repository and the build stamps `unknown` while everything else
+proceeds normally, which is this failure exactly — and it needs no source change, so there is nothing
+to remember to put back. *The command is the test runner's — see its lesson file.*
 
-```bash
-GIT_DIR=/nonexistent npx playwright test    # the identifier test must FAIL here
-```
-
-Observed on an earlier project on this machine: the build still succeeded, stamped `unknown`, and the
-smoke test caught it — *locator resolved to `<p data-testid="build-identifier">unknown</p>`*. Run it
-whenever that
+Observed on an earlier project: the build succeeded, stamped `unknown`, and the smoke test caught it —
+*locator resolved to `<p data-testid="build-identifier">unknown</p>`*. Re-run that proof whenever the
 assertion changes, because it is the only assertion standing between a broken build and a shipped
 one.
 
 #### SF-8 · A provider API can report "not enabled" and "not allowed to ask" identically
-*(observed on GitHub Pages on an earlier project — the generalisation below holds for
-any host, and it is the check to verify this project's deployment with, once it has one.)* `GET /repos/{owner}/{repo}/pages` returns **404 unauthenticated even for a public repo with
-Pages live**. Trusting it reports a working deployment as broken.
+A host's control API can answer a question about a deployment with a status that means either *it is
+not there* or *you are not allowed to ask*. Trusting it reports a working deployment as broken, and
+no second reading separates the two.
 
 **Generalise: verify a deployment by fetching the artefact, not by asking the control API.** Fetch
-the site and compare its build identifier to `main`. That is the check that can only pass when the
-thing actually works.
+the thing and compare its build identifier to the commit you expect. That is the check that can only
+pass when it actually works, and it is what this project's deployment is verified with. *The host's
+own version of this — which endpoint lies, and what its answers mean — is in its lesson file.*
 
 #### SF-9 · Pushing a branch does not make it the remote's default
 A host sets its own default from an account setting, or from whichever branch arrived first. It
@@ -247,18 +207,10 @@ while clones, pull requests and any CI that builds "the default branch" land on 
 **Read the default back from the host**, rather than inferring it from a push that succeeded. This
 is the same shape as **SF-8** — the artefact is the answer, not the command that produced it.
 
-#### SF-10 · A successful `npm install` can contain a failed config load
-`npm install` runs the `prepare` script, so a project whose `prepare` reads the build configuration
-loads that configuration *before* the dependencies it imports exist. The load fails, the error is
-printed in full, and the install still exits 0.
-
-Observed on the first install into a fresh scaffold: `ERR_MODULE_NOT_FOUND` for the adapter, then
-*"No Svelte config file found — using SvelteKit's default configuration without an adapter"*, then
-`added 56 packages`, exit 0. Nothing in the exit code separates that from a clean install, and the
-next command to read the config gets the fallback rather than the configuration you wrote.
-
-**Read the install output, not only its exit code**, and re-run the sync step after adding anything
-the configuration imports.
+#### SF-10 · Moved
+*A successful package install can contain a failed config load.* It belongs to a package manager
+rather than to this machine, and is now in [lessons/node.md](lessons/node.md). The number stays so
+older citations still resolve.
 
 #### SF-11 · A build from a dirty working tree stamps a commit that does not describe it
 `git rev-parse HEAD` names the last commit, not the files that were actually compiled. Build with
@@ -269,9 +221,8 @@ supposed to.
 
 Observed on an earlier project's first deployment: the working tree held uncommitted hosting
 configuration while the built page reported the previous commit. Harmless that time, because nothing
-uncommitted reached
-the output — which is exactly why it is worth writing down, since the case that matters looks
-identical from the outside.
+uncommitted reached the output — which is exactly why it is worth writing down, since the case that
+matters looks identical from the outside.
 
 **Deploy from a clean tree**, and let CI be what enforces it, a CI checkout being clean by
 construction. Until then: `git status --porcelain` is empty, or you are not deploying.
@@ -282,9 +233,9 @@ continuously, and without being asked. It is the Windows git binary reading the 
 `\\wsl.localhost\…`, where POSIX permission bits are not visible, so every file committed `100755`
 reads back as `100644` and shows as modified. For ever, with no content change.
 
-Observed on `scripts/verify-deployment.sh`, the only executable file of an earlier project on this
-machine — this repository has none yet: `755` and a clean `git status` in WSL; `old mode 100755 / new mode 100644` and a permanently dirty Source
-Control view in VSCode. One file, one `.git`, two gits that cannot agree.
+Observed on `scripts/verify-deployment.sh`, this repository's only executable file: `755` and a clean
+`git status` in WSL; `old mode 100755 / new mode 100644` and a permanently dirty Source Control view
+in VSCode. One file, one `.git`, two gits that cannot agree.
 
 The visible half is harmless. The two quiet halves are not:
 
@@ -317,7 +268,7 @@ Nothing indicates what is being waited for, which is its own kind of time sink.
 | Thing | Why | Do instead |
 |---|---|---|
 | Anything opening a browser (OAuth, cloud CLI sign-in) | No browser inside WSL | Use the tool's no-localhost / device-code flow, or once: `export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"` in the interactive startup file. WSL2 forwards Windows localhost, so the callback still lands. |
-| Installing browser binaries with a `--with-deps`-style flag | `--with-deps` shells to `sudo apt-get`; no stdin for the password prompt | `npx playwright install chromium` — the download itself needs no privileges. **Confirmed here:** chromium downloaded and launched under WSL with no system package added and no `sudo`. Any equivalent tool: install the binary, skip the system-package step. |
+| Any install step that shells out to `sudo` | No stdin for the password prompt | Find the form that skips the privileged step — a download usually needs no privileges. *Which flag does that is the tool's lesson file.* |
 | Long-running processes with a trailing `&` | A one-shot `wsl.exe` invocation tears down its children on exit; the server dies while the launch command looks successful | Use the calling tool's own backgrounding |
 | Interactive git (`rebase -i`, `add -i`), `Read-Host`, pagers | No TTY | Non-interactive equivalents; `git --no-pager`, `\| cat` |
 
@@ -340,13 +291,9 @@ Nothing indicates what is being waited for, which is its own kind of time sink.
   the output is right. Screenshot it and open the screenshot.
 - **Scaffold into a temporary directory, then copy in what you want.** A project generator writes
   its own `README.md` and `.gitignore` over yours, and the flag that suppresses the *prompt* does
-  not suppress the *overwrite*. Observed on an earlier project: `sv create --no-dir-check` would have
-  replaced that project's README with the template's, and its `.gitignore` had to be appended rather
-  than swapped in.
-- **A generator's omissions are not decisions either.** The SvelteKit template ships no
-  `@types/node`, so anything importing a `node:` builtin — the test runner, and the build config
-  itself — runs correctly and fails `svelte-check`. A green test suite says nothing about this;
-  only the type check does.
+  not suppress the *overwrite*.
+- **A generator's omissions are not decisions either.** What a template leaves out can compile and
+  still fail a type check, and a green test suite says nothing about it.
 - **Do not trust a remembered environment fact.** Re-run the bootstrap block.
 
 ---
@@ -359,11 +306,9 @@ wsl.exe -e bash -ic 'set -u; cd /home/<user>/<project> || exit 1; \
   git config --get core.fileMode; \
   git status --short; \
   ssh -T git@github.com 2>&1 | head -1'
-
-# ...and the runtime, e.g.:
-wsl.exe -e bash -ic 'set -u; cd /home/<user>/<project> || exit 1; \
-  node -v; nvm alias default'
 ```
+
+Then the runtime, with whatever commands its lesson file gives.
 
 **Separated by `;`, not `&&`, and deliberately.** These are independent checks, and several of them
 exit non-zero *precisely when you most need to see the rest*: `git config user.email` exits 1 when
@@ -383,8 +328,8 @@ quietly replaces it.
 | `git config --get core.fileMode` | `false` | **SF-12** — a fresh clone has not been told; VSCode will call every executable modified, and real changes hide in the noise |
 | `git status --short` | a clean or expected working tree | not a repository yet — see **SF-7** before trusting any build |
 | `ssh -T git@github.com` | `Hi <account>! You've successfully authenticated` | **SF-3** — pushes will hang, not fail |
-| `node -v` | the version spec-tech pins, once it pins one; this machine currently has Node 24 LTS | **SF-1** — wrong runtime, results untrustworthy |
-| `nvm alias default` | the same version as the line above | **SF-1** — next one-shot command reverts |
+| the runtime version | what [spec-tech.md](spec-tech.md) pins | **SF-1** — wrong toolchain, results untrustworthy |
+| the version manager's default | the same as the line above | **SF-1** — the next one-shot command reverts |
 
 ---
 
@@ -398,7 +343,6 @@ machine's way of satisfying these.
   still exits zero (**SF-7**).
 - **Push access to the remote over SSH**, never HTTPS — an HTTPS remote hangs rather than fails
   (**SF-3**).
-
 
 ## When someone else joins
 

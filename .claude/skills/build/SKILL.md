@@ -62,8 +62,11 @@ letting them find out afterwards.
 - **A departure from guide-design is recorded in spec-tech in one line** — that document's own
   instruction. A rule broken quietly becomes the new rule by accident, and nobody ever decides to
   make that change.
-- **A silent failure goes to [setup-ai-env.md](../../../doc/setup-ai-env.md)**: what succeeded, what
-  it actually did, and the check that separates the two.
+- **A silent failure gets written down**: what succeeded, what it actually did, and the check that
+  separates the two. It goes to [setup-ai-env.md](../../../doc/setup-ai-env.md) if it is true
+  whatever the project is built with, and to `doc/lessons/<technology>.md` if it is not. **If that
+  lesson file is new and its technology is chosen, CLAUDE.md's active list gains it** — that is one
+  of the two moments the list can change.
 
 ## When not to run it
 

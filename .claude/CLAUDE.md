@@ -54,6 +54,7 @@ is the routing — which document answers which question.
 |---|---|
 | What is being built now, where does it stop, and what does done mean? | `doc/scope.md` |
 | How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
+| What has gone wrong with a particular technology before? | `doc/lessons/<technology>.md` |
 | What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
 | Where does it run, how does it get there, and how do we know it did? | `doc/setup-app-env.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
@@ -74,6 +75,24 @@ cleared when the goal lands.
 **`doc/scope.md` holds one overarching goal, and is replaced when that goal is reached.** A
 specification outranks it the moment it exists.
 
-**Reading order at session start.** `doc/setup-ai-env.md` before any command, then
+**`doc/lessons/` is a library, not a plan.** One file per technology. A file for a technology this
+project does not use is a lesson held for the project that does — never a choice, and never a
+backlog.
+
+**Active lessons — read these at session start:**
+
+* `doc/lessons/node.md`
+* `doc/lessons/playwright.md`
+* `doc/lessons/github-pages.md`
+* `doc/lessons/github-actions.md`
+
+**That list is an index, not the authority.** It is the technologies `doc/spec-tech.md` chooses that
+have a lesson written, copied here so that reading spec-tech is not a prerequisite for knowing what
+to read. Where the list and those two disagree, **the list is wrong**. It can only change at two
+moments, and both are moments something else is already being edited: **a chosen technology gains a
+lesson file, or a lesson file's technology gets chosen.**
+
+**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
+above, then
 `doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
 `doc/scope.md`, then whichever document above owns the decision in front of you.
