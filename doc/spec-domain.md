@@ -84,6 +84,13 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-1.8** A level authors at least one destructible element. One that authors none satisfies
   **DS-5.1** before it is played, so it is cleared before the player touches it.
 
+**A level may still author an element where a bat's held ball would rest, and version one does not
+refuse it.** Launching would drive the ball straight into that element on the first step — a brick
+lost to the level's own layout rather than to the player — which is the same family of mistake as
+**DS-1.7** and **DS-1.8**: a position play could not produce. Left unrefused because version one has
+exactly one authored level and it does not do this; a second level's author should meet this sentence
+before meeting the bug.
+
 ### DS-2 · The ball
 
 - **DS-2.1** A held ball rests on its bat and moves with it, on the side **DS-1.6** leaves open.
