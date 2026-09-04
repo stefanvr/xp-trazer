@@ -21,9 +21,9 @@ A project is brought into being in this order:
 1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
    Everything it produces is draft and lands in `doc/brainstorm/`.
 2. **Scope the first version** — the overarching goal, written to `doc/scope.md`.
-3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md`,
-   `doc/spec-style.md`, `doc/spec-tech.md` — **in any order**. No dependency is implied between them,
-   so none of them blocks another.
+3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
+   `app` skill), `doc/spec-style.md`, `doc/spec-tech.md` — **in any order**. No dependency is implied
+   between them, so none of them blocks another.
 
 A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
 something missing.
@@ -61,11 +61,11 @@ is the routing — which document answers which question.
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
 | Which technologies, and this project's own architecture rules? | `doc/spec-tech.md` |
 | What are the rules of the game world? | `doc/spec-domain.md` |
-| What do the player and the developer meet — screens, input, flow? | `doc/spec-app.md` |
+| What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
-`spec-domain.md` and `spec-app.md` do not exist yet. See **Bootstrap** above: that means the
-sequence has not reached them.
+`spec-app.md` does not exist yet. See **Bootstrap** above: that means the sequence has not reached
+it.
 
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,

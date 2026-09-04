@@ -3,7 +3,7 @@
 **Owns.** The rules of the game world — what exists, what happens, and what makes a level finished.
 Independent of any screen.
 
-**Not here.** What the player and the developer meet — screens, input, flow — is
+**Not here.** What the player meets — screens, input, flow, layout — is
 [spec-app.md](spec-app.md); how it looks is [spec-style.md](spec-style.md); what it is built with is
 [spec-tech.md](spec-tech.md). What is in version one at all is [scope.md](scope.md).
 
