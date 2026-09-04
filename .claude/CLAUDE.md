@@ -54,6 +54,7 @@ is the routing — which document answers which question.
 |---|---|
 | What is being built now, where does it stop, and what does done mean? | `doc/scope.md` |
 | How does the AI work on this machine, and what fails silently? | `doc/setup-ai-env.md` |
+| What has gone wrong with a particular technology before? | `doc/lessons/<technology>.md` |
 | What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
 | Where does it run, how does it get there, and how do we know it did? | `doc/setup-app-env.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
@@ -74,6 +75,11 @@ cleared when the goal lands.
 **`doc/scope.md` holds one overarching goal, and is replaced when that goal is reached.** A
 specification outranks it the moment it exists.
 
-**Reading order at session start.** `doc/setup-ai-env.md` before any command, then
+**`doc/lessons/` is a library, not a plan.** One file per technology, read only for the technologies
+`doc/spec-tech.md` chooses. A file for anything else is a lesson held for the project that uses it —
+never a choice, and never a backlog. Nothing lists which are active, because the stack already does.
+
+**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the lesson file
+for each technology `doc/spec-tech.md` names, then
 `doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
 `doc/scope.md`, then whichever document above owns the decision in front of you.
