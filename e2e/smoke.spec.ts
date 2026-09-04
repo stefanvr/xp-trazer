@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Smoke tests: they prove wiring, not behaviour (guide-design.md). Whether a ball bounces correctly
+ * Smoke tests: they prove wiring, not behaviour (guide-design.md). Whether a collision resolves
  * is settled in src/domain/simulation.test.ts, over plain state, in milliseconds. What can only be
  * proven here is that the pieces reach each other at all.
  */
@@ -21,10 +21,10 @@ test('the built page reports a real commit rather than unknown', async ({ page }
   await expect(page.locator('meta[name="build-identifier"]')).toHaveAttribute('content', shown);
 });
 
-test('the loop runs and the ball reaches a wall', async ({ page }) => {
+test('the loop runs and the ball reaches the boundary', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.getByTestId('bounce-count')).not.toHaveText('0', { timeout: 10_000 });
+  await expect(page.getByTestId('collision-count')).not.toHaveText('0', { timeout: 10_000 });
 });
 
 test('an arrow key reaches the simulation', async ({ page }) => {

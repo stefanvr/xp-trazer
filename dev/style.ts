@@ -1,4 +1,4 @@
-import { createWorld } from '../src/domain/simulation';
+import { createGameState } from '../src/domain/simulation';
 import { draw } from '../src/render/draw';
 import {
   BACKGROUND,
@@ -61,8 +61,8 @@ const swatches: readonly Swatch[] = [
   },
   {
     name: 'Boundary & ball',
-    role: 'Drawn by the real renderer (src/render/draw.ts) against a live World',
-    paint: (context, width, height) => draw(context, createWorld({ width, height })),
+    role: 'Drawn by the real renderer (src/render/draw.ts) against a live GameState',
+    paint: (context, width, height) => draw(context, createGameState({ width, height })),
   },
   {
     name: 'Destructible brick',

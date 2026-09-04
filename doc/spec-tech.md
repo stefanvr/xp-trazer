@@ -37,10 +37,14 @@ Three of the rejections are worth a line, because each was close:
 - **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
   tests and the application read the same imports.
 
-**The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Wall reflection,
-the bounce count and the acceleration an arrow key applies were written to exercise the stack, at a
-point where [spec-domain.md](spec-domain.md) does not exist to own any of them. **Nothing may cite
+**The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Boundary
+reflection, the collision count and the acceleration an arrow key applies were written to exercise
+the stack, before [spec-domain.md](spec-domain.md) existed to own any of them. **Nothing may cite
 them as a rule**, and spec-domain replaces them without owing an argument.
+
+**The code uses spec-domain's names, and that is all it uses of it.** A level of cells, elements,
+bats and bat groups, holding and launching, a seed and clearing are all unbuilt. **A spec-domain name
+found in `src/` does not mean the rule behind it is implemented.**
 
 **The page's `bounces` and `vx` readouts are the proof's instruments, not the game's surface.** They
 exist so a smoke test can assert that the loop advanced and that a key reached the domain, and they

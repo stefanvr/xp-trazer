@@ -1,4 +1,4 @@
-import { createWorld, step, STEP_SECONDS, type Input } from './domain/simulation';
+import { createGameState, step, STEP_SECONDS, type Input } from './domain/simulation';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
 
@@ -30,11 +30,11 @@ document.documentElement.style.setProperty('--line', BOUNDARY);
 const canvas = required<HTMLCanvasElement>('#stage');
 const context = context2dOf(canvas);
 
-const bounceReadout = required('[data-testid="bounce-count"]');
+const collisionReadout = required('[data-testid="collision-count"]');
 const velocityReadout = required('[data-testid="velocity-x"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
-let world = createWorld({ width: canvas.width, height: canvas.height });
+let state = createGameState({ width: canvas.width, height: canvas.height });
 
 const held = new Set<string>();
 addEventListener('keydown', (event) => {
@@ -55,13 +55,13 @@ function frame(now: number): void {
 
   const input: Input = { left: held.has('ArrowLeft'), right: held.has('ArrowRight') };
   while (unspent >= STEP_SECONDS) {
-    world = step(world, input);
+    state = step(state, input);
     unspent -= STEP_SECONDS;
   }
 
-  bounceReadout.textContent = String(world.bounces);
-  velocityReadout.textContent = world.velocity.x.toFixed(1);
-  draw(context, world);
+  collisionReadout.textContent = String(state.collisions);
+  velocityReadout.textContent = state.ball.velocity.x.toFixed(1);
+  draw(context, state);
 
   requestAnimationFrame(frame);
 }
