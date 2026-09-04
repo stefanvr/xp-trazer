@@ -40,6 +40,11 @@ before it is written.
   only make sense together, so the merge lands as one consistent unit
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
+* **Experiment — the branch is rewritten before it lands, so its commits are the work and not the
+  corrections.** Commit freely while working; then fold each correction into the task it belongs to,
+  leaving commits that each build on their own, and force-push. Rewrite first, then run `land`, so
+  the landing commit sits on the history that is kept. **Ends when** the rewriting costs more than
+  the log is worth, or a second person is working on a branch.
 * Always let the user approve a merge to main for release
 * On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and replaces
   the goal in `doc/scope.md` if this landing reached it
