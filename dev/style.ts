@@ -54,6 +54,17 @@ function centeredRect(width: number, height: number, rectWidth: number, rectHeig
   };
 }
 
+/**
+ * An empty level of whatever size the panel is, with one bat — DS-1.3 says a level has at least one,
+ * so the smallest level this page can build still needs it.
+ */
+function batteredRows(width: number, height: number): string[] {
+  const columns = Math.max(2, Math.floor(width / 32));
+  const rows = Math.max(1, Math.floor(height / 32));
+  const empty = '.'.repeat(columns);
+  return [...Array.from({ length: rows - 1 }, () => empty), `-${'.'.repeat(columns - 1)}`];
+}
+
 const swatches: readonly Swatch[] = [
   {
     name: 'Level background',
@@ -63,7 +74,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Boundary & ball',
     role: 'Drawn by the real renderer (src/render/draw.ts) against a live GameState',
-    paint: (context, width, height) => draw(context, createGameState(levelFromRows(Array.from({ length: Math.max(1, Math.floor(height / 32)) }, () => '.'.repeat(Math.max(1, Math.floor(width / 32))))))),
+    paint: (context, width, height) => draw(context, createGameState(levelFromRows(batteredRows(width, height)))),
   },
   {
     name: 'Destructible brick',

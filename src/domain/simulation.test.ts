@@ -4,7 +4,7 @@ import { CELL_PIXELS, levelFromRows } from './level';
 
 const NOTHING_HELD: Input = { left: false, right: false };
 // 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
-const LEVEL = levelFromRows(Array.from({ length: 15 }, () => '.'.repeat(20)));
+const LEVEL = levelFromRows([...Array.from({ length: 14 }, () => '.'.repeat(20)), `-${'.'.repeat(19)}`]);
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -107,7 +107,7 @@ describe('the step itself', () => {
 
 describe('the smallest level that can be authored', () => {
   it('still holds the ball, so no guard is needed', () => {
-    const state = createGameState(levelFromRows(['.']));
+    const state = createGameState(levelFromRows(['-']));
 
     expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
   });
