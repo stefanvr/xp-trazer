@@ -14,9 +14,8 @@ from is `doc/brainstorm/`, which is draft and binds nothing. How the code is sha
 [CLAUDE.md](../../CLAUDE.md).
 
 **`spec-app.md` is not this routine's business.** It wants story mapping where this wants event
-storming, so it gets a routine of its own when it is the goal in front of us. One consequence is
-worth naming rather than discovering: the concerns that belong to neither specification — screen
-size, chrome, whether a thing lives in a menu — are not caught here, and nothing yet catches them.
+storming, so it has a routine of its own — the [app](../app/SKILL.md) skill. Screen size, chrome and
+whether a thing lives in a menu are caught there, under its Layout activity, and not here.
 
 ---
 
