@@ -1,4 +1,11 @@
-import { BAT_LENGTH_PIXELS, CELL_PIXELS, extentOf, type Bat, type Level } from './level';
+import {
+  BAT_LENGTH_PIXELS,
+  CELL_PIXELS,
+  extentOf,
+  type Bat,
+  type Level,
+  type Orientation,
+} from './level';
 
 /**
  * What the ball is touching — doc/spec-domain.md's **Collision**: the ball meeting a boundary, a bat
@@ -13,7 +20,8 @@ export type Rect = { readonly x: number; readonly y: number; readonly w: number;
 
 export type Obstacle =
   | { readonly kind: 'boundary' }
-  | { readonly kind: 'bat' }
+  /** `along` is where the ball met the bat, 0 at its low end and 1 at its high one — **DS-2.6**. */
+  | { readonly kind: 'bat'; readonly orientation: Orientation; readonly along: number }
   | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean };
 
 export function batRect(bat: Bat): Rect {
@@ -73,7 +81,11 @@ export function obstacleAt(
   }
 
   for (const bat of bats) {
-    if (overlaps(batRect(bat), x, y, radius)) return { kind: 'bat' };
+    if (!overlaps(batRect(bat), x, y, radius)) continue;
+
+    const reached = bat.orientation === 'horizontal' ? x : y;
+    const along = (reached - bat.position) / BAT_LENGTH_PIXELS;
+    return { kind: 'bat', orientation: bat.orientation, along: Math.min(Math.max(along, 0), 1) };
   }
 
   return undefined;

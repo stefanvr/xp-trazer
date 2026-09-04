@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { awayFrom, batHoldingTheBall, launchVelocity, restingOn, BALL_PIXELS_PER_SECOND } from './ball';
+import {
+  awayFrom,
+  batHoldingTheBall,
+  deflectedByBat,
+  launchVelocity,
+  restingOn,
+  BALL_PIXELS_PER_SECOND,
+} from './ball';
 import { BAT_LENGTH_PIXELS, CELL_PIXELS, levelFromRows, type Bat } from './level';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
@@ -82,6 +89,42 @@ describe('launching', () => {
     const velocity = launchVelocity(TALL, horizontal(9));
 
     expect(Math.hypot(velocity.x, velocity.y)).toBe(BALL_PIXELS_PER_SECOND);
+  });
+});
+
+describe('a bat turning the ball', () => {
+  const straightUp = { x: 0, y: -BALL_PIXELS_PER_SECOND };
+
+  it('sends it leftwards when met on the near third', () => {
+    expect(deflectedByBat(straightUp, 'horizontal', 0.1).x).toBeLessThan(0);
+  });
+
+  it('sends it rightwards when met on the far third', () => {
+    expect(deflectedByBat(straightUp, 'horizontal', 0.9).x).toBeGreaterThan(0);
+  });
+
+  it('leaves the angle alone when met in the middle', () => {
+    expect(deflectedByBat(straightUp, 'horizontal', 0.5)).toEqual(straightUp);
+  });
+
+  it('turns along the other axis for a vertical bat', () => {
+    const straightRight = { x: BALL_PIXELS_PER_SECOND, y: 0 };
+
+    expect(deflectedByBat(straightRight, 'vertical', 0.1).y).toBeLessThan(0);
+    expect(deflectedByBat(straightRight, 'vertical', 0.9).y).toBeGreaterThan(0);
+  });
+
+  it('turns the ball without speeding it up, which DS-2.5 forbids', () => {
+    for (const along of [0, 0.1, 0.5, 0.9, 1]) {
+      const turned = deflectedByBat(straightUp, 'horizontal', along);
+
+      expect(Math.hypot(turned.x, turned.y)).toBeCloseTo(BALL_PIXELS_PER_SECOND);
+    }
+  });
+
+  it('gives a ball that was travelling on one axis a heading off it', () => {
+    // The whole point: without this the ball retraces one line for ever.
+    expect(deflectedByBat(straightUp, 'horizontal', 0.1).x).not.toBe(0);
   });
 });
 

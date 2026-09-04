@@ -1,5 +1,5 @@
 import { createGameState, step, boundaryOf, STEP_SECONDS, type Input } from './domain/simulation';
-import { levelFromRows } from './domain/level';
+import { destructibleRemaining, levelFromRows } from './domain/level';
 import { FIRST_LEVEL } from './levels/first';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
@@ -34,6 +34,7 @@ const context = context2dOf(canvas);
 
 const collisionReadout = required('[data-testid="collision-count"]');
 const batReadout = required('[data-testid="bat-position"]');
+const bricksReadout = required('[data-testid="bricks-left"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
 // The seed comes from outside the level — one that authored its own would draw the same bat every
@@ -92,6 +93,7 @@ function frame(now: number): void {
   collisionReadout.textContent = String(state.collisions);
   const horizontal = state.bats.find((bat) => bat.orientation === 'horizontal');
   batReadout.textContent = (horizontal?.position ?? 0).toFixed(0);
+  bricksReadout.textContent = String(destructibleRemaining(state.level, state.destroyed));
   draw(context, state);
 
   requestAnimationFrame(frame);

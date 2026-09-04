@@ -48,10 +48,10 @@ Every event, what causes it, and what it leaves changed. Nothing else happens in
 | Event | Caused by | Leaves changed |
 |---|---|---|
 | **Level started** | The game begins | The level exists. One of its bats, drawn from the seed, holds the ball. |
-| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary or at an element. A held ball moves with its bat. |
+| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary or at an element. A held ball moves with its bat; a travelling ball a bat moved into collides with it. |
 | **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
-| **Collision** | The ball met a boundary, a bat or a brick | The ball's direction changes, obeying the law of reflection. |
+| **Collision** | The ball and a boundary, a bat or a brick met — either of them may have been the one moving | The ball's direction changes, obeying the law of reflection. |
 | **Element destroyed** | A collision with the ball | One fewer destructible element. |
 | **Level cleared** | The last destructible element was destroyed | The level is cleared, and nothing advances after it. |
 
@@ -88,6 +88,17 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-2.3** A travelling ball advances every step.
 - **DS-2.4** A ball that collides changes direction obeying the law of reflection.
 - **DS-2.5** The ball's speed never changes. A collision changes where it is going, never how fast.
+- **DS-2.6** A bat also turns the ball, by where along the bat it was met. The outer thirds send it
+  away from the bat's middle; the middle third leaves its angle as reflection left it. **DS-2.5**
+  still holds, so this is a turn and not a push.
+- **DS-2.7** The ball is never inside what it collides with. It turns at the surface it met, and a
+  bat that moves into the ball puts the ball outside itself — a bat meeting the ball is the same
+  collision as the ball meeting the bat, because which of them moved does not change what happened.
+
+**Without DS-2.6 the game cannot be played.** A ball launched perpendicular to its bat travels along
+one axis, and reflection off an axis-aligned surface only ever reverses one component — so the other
+stays zero for ever and the ball retraces one line. A bat is the only thing that can put the ball on
+a new heading, which is what makes reaching it the point of moving one.
 
 ### DS-3 · Bats
 

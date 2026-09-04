@@ -56,9 +56,18 @@ export function elementAt(level: Level, column: number, row: number): Cell {
   return level.cells[row * level.columns + column];
 }
 
-/** Every destructible element still standing. **DS-5.1** is asked of this. */
+/** Every destructible element a level authors. */
 export function destructibleCount(level: Level): number {
   return level.cells.filter((cell) => cell?.kind === 'destructible').length;
+}
+
+/** Every destructible element still standing. **DS-5.1** is asked of this. */
+export function destructibleRemaining(level: Level, destroyed: ReadonlySet<number>): number {
+  let standing = 0;
+  for (const [index, cell] of level.cells.entries()) {
+    if (cell?.kind === 'destructible' && !destroyed.has(index)) standing += 1;
+  }
+  return standing;
 }
 
 /**

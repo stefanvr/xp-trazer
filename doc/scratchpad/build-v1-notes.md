@@ -81,3 +81,54 @@ bats now, so those three panels should go through `draw()`. That is the style ro
 this goal's.
 
 **Done when** the `style` skill runs and the panels draw bricks and bats through `draw()`.
+
+## B-4 · A bounce stops just short of the surface, by up to one step of travel
+
+**Found.** Chasing the gap the owner saw between ball and bat. Most of it was the renderer drawing a
+bat four pixels thinner than the one the collision used, which is fixed. This is what is left.
+
+**What the code does.** `advance` in `src/domain/simulation.ts` offers the next position, and where
+something is there it **refuses the move** and reverses the component instead. The ball therefore
+turns from wherever it happened to be, not from the surface it met.
+
+**How big.** One step of travel: `BALL_PIXELS_PER_SECOND * STEP_SECONDS`, so 260/120 ≈ **2.2 pixels**
+at most, and on average half that. It lasts one frame.
+
+**Why it was written that way.** The comment says it: the step is far shorter than a cell, so
+refusing cannot tunnel, and moving to the exact contact point costs a solve the reflection does not
+otherwise need.
+
+**Reported as presentation, and that was wrong.** It was written up as no rule being broken, on the
+grounds that **DS-2.4** says the ball turns away from what it meets without saying where. That is
+silence being read as permission again. The owner asked for it to be fixed, and fixing it turned out
+to need the same rule as B-5 below.
+
+**Closed.** **DS-2.7** now says the ball turns at the surface it met. `advance` halves the offered
+move ten times to find the largest part of it that stays clear, so the ball goes as far as it can and
+turns there — within a five-hundredth of a pixel of the surface, for a boundary, a bat and a brick
+alike, because it asks the same `obstacleAt` question rather than re-deriving each surface's geometry
+somewhere it could disagree.
+
+## B-5 · A bat moving into the ball trapped it rather than bouncing it
+
+**Found.** By the owner, playing: a ball coming off the boundary with a bat sliding into its path
+went *inside* the bat instead of off its end.
+
+**Why.** Bats move before the ball does, so a bat could close over a ball that was clear of it a
+moment earlier. Once inside, every move the ball was offered was blocked, so it reversed without
+going anywhere — and did so again every step after, on both axes, running the collision count up
+while going nowhere.
+
+**The specification did not cover it.** *"Collision — the ball met a boundary, a bat or a brick"* is
+written from the ball's side only, and nothing said what happens when the other thing is the one that
+moved.
+
+**Closed.** **DS-2.7** says the ball is never inside what it collides with, and that a bat meeting the
+ball is the same collision as the ball meeting the bat — which of them moved does not change what
+happened. The *"Collision"* and *"Bat group moved"* rows of the event table say so too.
+
+`pushedOutOfBats` puts the ball out along the bat's own axis, which is the only way a bat can meet
+it (**DS-3.2**), by the end it is nearer to, travelling away; **DS-2.6** then turns it as it turns
+any ball, and an end is the outer third, so the turn sends it off rather than back along the bat. The
+far end is tried where the near one is occupied — a bat driving the ball into the corner has nowhere
+to put it on the side it is going, and that case is what the 600-step test walks into.

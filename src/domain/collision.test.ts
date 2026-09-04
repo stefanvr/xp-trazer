@@ -63,10 +63,21 @@ describe('what the ball is inside', () => {
     ).toBeUndefined();
   });
 
-  it('finds a bat where one is', () => {
+  it('finds a bat where one is, and says where along it', () => {
     const bat = { orientation: 'horizontal', line: 3, position: 0 } as const;
 
-    expect(at(16, 3 * CELL_PIXELS + 16, [bat])).toEqual({ kind: 'bat' });
+    expect(at(16, 3 * CELL_PIXELS + 16, [bat])).toEqual({
+      kind: 'bat',
+      orientation: 'horizontal',
+      along: 16 / BAT_LENGTH_PIXELS,
+    });
+  });
+
+  it('reports the far end of a bat as one, not beyond it', () => {
+    const bat = { orientation: 'horizontal', line: 3, position: 0 } as const;
+    const hit = at(BAT_LENGTH_PIXELS + RADIUS - 1, 3 * CELL_PIXELS + 16, [bat]);
+
+    expect(hit?.kind === 'bat' && hit.along).toBe(1);
   });
 
   it('finds nothing beside a bat it does not reach', () => {

@@ -1,5 +1,6 @@
 import { boundaryOf, type GameState } from '../domain/simulation';
-import { BAT_LENGTH_PIXELS, CELL_PIXELS, type Bat, type Level } from '../domain/level';
+import { batRect } from '../domain/collision';
+import { CELL_PIXELS, type Bat, type Level } from '../domain/level';
 import {
   BACKGROUND,
   BALL,
@@ -19,11 +20,14 @@ import {
  */
 
 const BRICK_INSET = 1;
-const BAT_INSET = 4;
 
-function drawElements(context: CanvasRenderingContext2D, level: Level): void {
+function drawElements(
+  context: CanvasRenderingContext2D,
+  level: Level,
+  destroyed: ReadonlySet<number>,
+): void {
   for (const [index, cell] of level.cells.entries()) {
-    if (cell === undefined) continue;
+    if (cell === undefined || destroyed.has(index)) continue;
 
     const color = cell.kind === 'destructible' ? DESTRUCTIBLE_BRICK : PERMANENT_BRICK;
     const column = index % level.columns;
@@ -40,19 +44,22 @@ function drawElements(context: CanvasRenderingContext2D, level: Level): void {
   }
 }
 
+/**
+ * Drawn from the same rectangle the collision asks about, so the two cannot disagree.
+ *
+ * They did: this inset the bat by four pixels to make it look thinner, while `batRect` spanned the
+ * whole cell — so the ball turned away from a surface four pixels from the one on screen, and the
+ * bounce looked like a dropped frame. A renderer that draws a different shape from the one the
+ * domain models is telling the player something untrue about where things are.
+ */
 function drawBats(context: CanvasRenderingContext2D, bats: readonly Bat[]): void {
   for (const bat of bats) {
-    const horizontal = bat.orientation === 'horizontal';
-    const color = horizontal ? HORIZONTAL_BAT : VERTICAL_BAT;
+    const color = bat.orientation === 'horizontal' ? HORIZONTAL_BAT : VERTICAL_BAT;
+    const rect = batRect(bat);
 
     context.shadowColor = color;
     context.fillStyle = color;
-    context.fillRect(
-      horizontal ? bat.position : bat.line * CELL_PIXELS + BAT_INSET,
-      horizontal ? bat.line * CELL_PIXELS + BAT_INSET : bat.position,
-      horizontal ? BAT_LENGTH_PIXELS : CELL_PIXELS - BAT_INSET * 2,
-      horizontal ? CELL_PIXELS - BAT_INSET * 2 : BAT_LENGTH_PIXELS,
-    );
+    context.fillRect(rect.x, rect.y, rect.w, rect.h);
   }
 }
 
@@ -71,7 +78,7 @@ export function draw(context: CanvasRenderingContext2D, state: GameState): void 
   context.lineWidth = 2;
   context.strokeRect(1, 1, width - 2, height - 2);
 
-  drawElements(context, state.level);
+  drawElements(context, state.level, state.destroyed);
   drawBats(context, state.bats);
 
   context.shadowColor = BALL;
