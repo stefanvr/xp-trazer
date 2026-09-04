@@ -20,7 +20,7 @@ while the document that owns it is unwritten — see *Where each answer ends up*
 
 ## The goal — a game starts
 
-**Done means:** one level appears, the ball is in play, both bat groups answer the keyboard, and the
+**Done means:** one level appears, the ball is in play, both bat groups answer the player, and the
 level is cleared when every destructible brick has been destroyed.
 
 ## In
@@ -29,7 +29,9 @@ level is cleared when every destructible brick has been destroyed.
 - Destructible bricks, which the ball destroys, and permanent bricks, which clearing ignores.
 - Bats on both axes. All horizontal bats move together; all vertical bats move together.
 - Arrow keys split by axis — left/right drives the horizontal group, up/down the vertical. Both are
-  live at once: no switch key and no active-group state to display.
+  live at once: no switch key and no active-group state to display. **Space** launches the ball.
+- **Two ways to play**: the keyboard on a desktop-sized screen, and touch on a small one. The
+  keyboard one is built first, and the small screen follows as its own piece of work.
 - A closed level. The ball cannot leave.
 - Tron. Neon on black.
 - A fixed-step simulation, per [spec-tech.md](spec-tech.md) **A-1**, tested over plain state.
@@ -74,7 +76,7 @@ it — so the table also reads as a record of what has already moved, not only o
 |---|---|---|
 | Destructible and permanent bricks; clearing ignores the permanent ones | `spec-domain.md` | ✅ |
 | Bats grouped by orientation; a closed level with no loss | `spec-domain.md` | ✅ |
-| Arrow keys split by axis, both groups live at once | `spec-app.md` | |
-| One level, no selection, no persistence | `spec-app.md` | |
+| Arrow keys split by axis, both groups live at once | `spec-app.md` | ✅ |
+| One level, no selection, no persistence | `spec-app.md` | ✅ |
 | Tron — neon on black | `spec-style.md` | ✅ |
 | The stack, once chosen | `spec-tech.md` | ✅ |
