@@ -123,8 +123,19 @@ cleared, and says so — and `collision-count`, `bat-position` and `bricks-left`
 and that a key reaches the simulation. Removing them removes the tests' only hooks, so this is a
 question about what replaces that proof, not a deletion.
 
-**Open.** For the owner at landing: take the readouts out and find the loop another witness, or keep
-them and say in spec-app that they stay.
+**Closed.** The owner kept the readouts and reworded spec-app, so no code changed — the document had
+been describing a plan rather than a decision.
+
+What the paragraph says now: the readouts were written as temporary proof instruments and are kept
+as permanent ones, because a built artefact that cannot be interrogated from outside can only be
+checked by eye. That is spec-tech's argument for the build identifier applied to behaviour instead of
+provenance. They sit beside the level and never on it, so no step needs them and nothing the player
+plays inside carries them.
+
+*"One screen, and no chrome"* became *"one screen, and nothing to navigate"*, because the old wording
+was what made the readouts look like a contradiction. And the sentence had named *"the collision and
+velocity readouts"* when there is no velocity readout and there are three — it now names the four
+things on screen.
 
 ## B-7 · A level may author an element where the held ball rests
 

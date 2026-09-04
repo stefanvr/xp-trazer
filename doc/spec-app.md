@@ -52,12 +52,19 @@ step has a transition to animate — the ball's motion is the simulation advanci
 
 ## Layout
 
-**One screen, and no chrome.** No header, no footer, no menu, no dialog. Version one has nothing to
-put in any of them, and adding one would be a surface with no step behind it.
+**One screen, and nothing to navigate.** No header, no footer, no menu, no dialog. Version one has
+nothing to put in any of them, and adding one would be a surface with no step behind it.
 
-The screen holds the level, and the build identifier that [spec-tech.md](spec-tech.md) keeps. The
-collision and velocity readouts beside it are that document's proof instruments, and they go when
-this surface arrives.
+The screen holds the level, and a line of readouts beside it: the build identifier that
+[spec-tech.md](spec-tech.md) keeps, the collision count, the horizontal bat group's position, and how
+many destructible bricks are left.
+
+**The readouts stay, and they are not the player's.** They were written as temporary proof
+instruments and are kept as permanent ones. A built artefact that cannot be interrogated from outside
+can only be checked by eye, and these are what an automated check reads to see that the loop is
+running and that a key reached the simulation — [spec-tech.md](spec-tech.md)'s argument for the build
+identifier, applied to behaviour rather than to provenance. **They sit beside the level and never on
+it**, so nothing the player plays inside carries them, and no step needs them.
 
 **Desktop-sized, and driven by the keyboard.**
 
