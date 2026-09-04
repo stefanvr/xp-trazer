@@ -69,6 +69,35 @@ addEventListener('keydown', (event) => {
 });
 addEventListener('keyup', (event) => held.delete(event.key));
 
+/**
+ * spec-app.md: a touch button holds exactly the state its key holds, and nothing else — `touchstart`
+ * sets the same flag `keydown` does, and `touchend` clears it, into the very same `held` set. There
+ * is no second input path for `frame` to read below; there is one, fed from two places.
+ *
+ * `touchcancel` clears it the same way `touchend` does, for the same reason `keyup` needs no
+ * counterpart: a finger the browser takes the gesture away from (a system swipe, an incoming call)
+ * must not leave a direction stuck held for the rest of the game.
+ */
+function wireHeldButton(testId: string, key: string): void {
+  const button = required<HTMLButtonElement>(`[data-testid="${testId}"]`);
+  button.addEventListener('touchstart', (event) => {
+    held.add(key);
+    event.preventDefault();
+  });
+  button.addEventListener('touchend', () => held.delete(key));
+  button.addEventListener('touchcancel', () => held.delete(key));
+}
+
+wireHeldButton('touch-left', 'ArrowLeft');
+wireHeldButton('touch-right', 'ArrowRight');
+wireHeldButton('touch-up', 'ArrowUp');
+wireHeldButton('touch-down', 'ArrowDown');
+
+required<HTMLButtonElement>('[data-testid="touch-launch"]').addEventListener('touchstart', (event) => {
+  launchRequested = true;
+  event.preventDefault();
+});
+
 let previous = performance.now();
 let unspent = 0;
 

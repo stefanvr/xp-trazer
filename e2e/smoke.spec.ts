@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Browser } from '@playwright/test';
 
 /**
  * Smoke tests: they prove wiring, not behaviour (guide-design.md). Whether a collision resolves
@@ -72,6 +72,57 @@ test.describe('the small-screen mode', () => {
     await expect(page.locator('#touch-controls')).toBeHidden();
 
     await context.close();
+  });
+});
+
+test.describe('the touch buttons', () => {
+  // Every test opens its own touch-capable, narrow context — the default `page` fixture is neither.
+  const touchPage = async (browser: Browser) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 780 }, hasTouch: true });
+    return context.newPage();
+  };
+
+  test('holding one drives the same bat group its key drives', async ({ browser }) => {
+    const page = await touchPage(browser);
+    await page.goto('/');
+
+    const bat = page.getByTestId('bat-position');
+    const before = Number(await bat.textContent());
+
+    await page.locator('[data-testid="touch-right"]').dispatchEvent('touchstart');
+    await expect.poll(async () => Number(await bat.textContent())).toBeGreaterThan(before);
+
+    await page.context().close();
+  });
+
+  test('releasing one stops the group, the way letting go of a key does', async ({ browser }) => {
+    const page = await touchPage(browser);
+    await page.goto('/');
+
+    const bat = page.getByTestId('bat-position');
+    const button = page.locator('[data-testid="touch-right"]');
+
+    await button.dispatchEvent('touchstart');
+    await expect.poll(async () => Number(await bat.textContent())).toBeGreaterThan(0);
+    await button.dispatchEvent('touchend');
+
+    const stopped = Number(await bat.textContent());
+    await page.waitForTimeout(100);
+    expect(Number(await bat.textContent())).toBe(stopped);
+
+    await page.context().close();
+  });
+
+  test('tapping launch launches the ball, exactly as Space does', async ({ browser }) => {
+    const page = await touchPage(browser);
+    await page.goto('/');
+
+    await expect(page.getByTestId('collision-count')).toHaveText('0');
+
+    await page.locator('[data-testid="touch-launch"]').dispatchEvent('touchstart');
+    await expect(page.getByTestId('collision-count')).not.toHaveText('0', { timeout: 10_000 });
+
+    await page.context().close();
   });
 });
 
