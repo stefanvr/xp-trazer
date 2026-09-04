@@ -30,11 +30,11 @@ test('the loop runs and the ball reaches the boundary', async ({ page }) => {
 test('an arrow key reaches the simulation', async ({ page }) => {
   await page.goto('/');
 
-  const velocity = page.getByTestId('velocity-x');
-  await expect(velocity).toHaveText('0.0');
+  const bat = page.getByTestId('bat-position');
+  const before = Number(await bat.textContent());
 
   await page.keyboard.down('ArrowRight');
-  await expect.poll(async () => Number(await velocity.textContent())).toBeGreaterThan(0);
+  await expect.poll(async () => Number(await bat.textContent())).toBeGreaterThan(before);
   await page.keyboard.up('ArrowRight');
 });
 

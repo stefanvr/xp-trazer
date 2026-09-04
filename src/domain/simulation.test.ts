@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { createGameState, step, STEP_SECONDS, type GameState, type Input } from './simulation';
 import { CELL_PIXELS, levelFromRows } from './level';
 
-const NOTHING_HELD: Input = { left: false, right: false };
+const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false };
 // 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
 const LEVEL = levelFromRows([...Array.from({ length: 14 }, () => '.'.repeat(20)), `-${'.'.repeat(19)}`]);
+// One bat on each axis, both with room to move.
+const BOTH_AXES = levelFromRows([`-|${'.'.repeat(18)}`, ...Array.from({ length: 14 }, () => '.'.repeat(20))]);
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -60,23 +62,50 @@ describe('a ball crossing open space', () => {
   });
 });
 
-describe('input', () => {
-  it('speeds the ball rightwards while right is held', () => {
-    const state = stateWith({ position: { x: 320, y: 240 }, velocity: { x: 0, y: 0 } });
+describe('a step with a direction held', () => {
+  const horizontal = (state: GameState) =>
+    state.bats.find((bat) => bat.orientation === 'horizontal')?.position ?? 0;
+  const vertical = (state: GameState) =>
+    state.bats.find((bat) => bat.orientation === 'vertical')?.position ?? 0;
 
-    expect(step(state, { left: false, right: true }).ball.velocity.x).toBeGreaterThan(0);
+  it('moves the horizontal group rightwards while right is held', () => {
+    const state = createGameState(BOTH_AXES);
+
+    expect(horizontal(step(state, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
+      horizontal(state),
+    );
   });
 
-  it('speeds the ball leftwards while left is held', () => {
-    const state = stateWith({ position: { x: 320, y: 240 }, velocity: { x: 0, y: 0 } });
+  it('moves the vertical group downwards while down is held', () => {
+    const state = createGameState(BOTH_AXES);
 
-    expect(step(state, { left: true, right: false }).ball.velocity.x).toBeLessThan(0);
+    expect(vertical(step(state, { ...NOTHING_HELD, down: true }))).toBeGreaterThan(vertical(state));
   });
 
-  it('leaves the ball alone when both directions are held', () => {
-    const state = stateWith({ position: { x: 320, y: 240 }, velocity: { x: 0, y: 0 } });
+  it('drives both groups at once, because both are live', () => {
+    const state = createGameState(BOTH_AXES);
 
-    expect(step(state, { left: true, right: true }).ball.velocity.x).toBe(0);
+    const next = step(state, { ...NOTHING_HELD, right: true, down: true });
+
+    expect(horizontal(next)).toBeGreaterThan(horizontal(state));
+    expect(vertical(next)).toBeGreaterThan(vertical(state));
+  });
+
+  it('leaves a group alone when both of its directions are held', () => {
+    const state = createGameState(BOTH_AXES);
+
+    expect(horizontal(step(state, { ...NOTHING_HELD, left: true, right: true }))).toBe(
+      horizontal(state),
+    );
+  });
+
+  it('moves bats whether the ball is travelling or not, which is DS-3.4', () => {
+    const still = { ...createGameState(BOTH_AXES) };
+    const stopped = { ...still, ball: { ...still.ball, velocity: { x: 0, y: 0 } } };
+
+    expect(horizontal(step(stopped, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
+      horizontal(stopped),
+    );
   });
 });
 
@@ -91,7 +120,7 @@ describe('the step itself', () => {
     const state = stateWith({ position: { x: 100, y: 100 }, velocity: { x: 37, y: -91 } });
     const before = structuredClone(state);
 
-    step(state, { left: false, right: true });
+    step(state, { ...NOTHING_HELD, right: true });
 
     expect(state).toEqual(before);
   });
@@ -105,10 +134,14 @@ describe('the step itself', () => {
   });
 });
 
-describe('the smallest level that can be authored', () => {
-  it('still holds the ball, so no guard is needed', () => {
-    const state = createGameState(levelFromRows(['-']));
+describe('the smallest level that can hold a bat', () => {
+  it('holds the ball too, so no guard for that is needed', () => {
+    const state = createGameState(levelFromRows(['-..']));
 
     expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
+  });
+
+  it('refuses a level whose bat has less room than its own length', () => {
+    expect(() => createGameState(levelFromRows(['-.']))).toThrow(/less room than its own length/);
   });
 });

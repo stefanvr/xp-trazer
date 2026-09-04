@@ -1,4 +1,5 @@
-import { extentOf, type Extent, type Level } from './level';
+import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
+import { extentOf, type Bat, type Extent, type Level } from './level';
 
 /**
  * The domain. Pure functions over plain types, importing no infrastructure — guide-design.md.
@@ -16,12 +17,19 @@ import { extentOf, type Extent, type Level } from './level';
  */
 
 export const STEP_SECONDS = 1 / 120;
-export const NUDGE_PIXELS_PER_SECOND = 240;
 
 export type Vector = { readonly x: number; readonly y: number };
 
-/** What the player is holding down this step. */
-export type Input = { readonly left: boolean; readonly right: boolean };
+/**
+ * What the player is holding down this step. spec-app: left and right move the horizontal bat
+ * group, up and down the vertical one, and both are live at once.
+ */
+export type Input = {
+  readonly left: boolean;
+  readonly right: boolean;
+  readonly up: boolean;
+  readonly down: boolean;
+};
 
 export type Ball = {
   readonly position: Vector;
@@ -32,6 +40,7 @@ export type Ball = {
 /** Everything that changes while a level is played. The level itself does not. */
 export type GameState = {
   readonly level: Level;
+  readonly bats: readonly Bat[];
   readonly ball: Ball;
   readonly collisions: number;
 };
@@ -53,8 +62,18 @@ export function boundaryOf(state: GameState): Extent {
 export function createGameState(level: Level): GameState {
   const radius = 9;
   const { width, height } = extentOf(level);
+  for (const bat of level.bats) {
+    const span = spanFor(level, bat);
+    if (span.high < span.low) {
+      throw new Error(
+        `a ${bat.orientation} bat on line ${bat.line} has less room than its own length`,
+      );
+    }
+  }
+
   return {
     level,
+    bats: level.bats,
     ball: {
       position: { x: width / 2, y: height / 2 },
       velocity: { x: 0, y: 260 },
@@ -66,11 +85,15 @@ export function createGameState(level: Level): GameState {
 
 /** Advances one fixed step. The same state and the same input always give the same result. */
 export function step(state: GameState, input: Input): GameState {
-  const { ball } = state;
+  const { ball, level } = state;
   const boundary = boundaryOf(state);
-  const nudge = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 
-  let velocityX = ball.velocity.x + nudge * NUDGE_PIXELS_PER_SECOND * STEP_SECONDS;
+  // DS-3.4: bats move whether the ball is held or travelling, so this happens every step.
+  const reach = BAT_PIXELS_PER_SECOND * STEP_SECONDS;
+  let bats = moveGroup(level, state.bats, 'horizontal', ((input.right ? 1 : 0) - (input.left ? 1 : 0)) * reach);
+  bats = moveGroup(level, bats, 'vertical', ((input.down ? 1 : 0) - (input.up ? 1 : 0)) * reach);
+
+  let velocityX = ball.velocity.x;
   let velocityY = ball.velocity.y;
   let x = ball.position.x + velocityX * STEP_SECONDS;
   let y = ball.position.y + velocityY * STEP_SECONDS;
@@ -102,6 +125,7 @@ export function step(state: GameState, input: Input): GameState {
 
   return {
     ...state,
+    bats,
     ball: { ...ball, position: { x, y }, velocity: { x: velocityX, y: velocityY } },
     collisions,
   };

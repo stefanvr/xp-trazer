@@ -33,7 +33,7 @@ const canvas = required<HTMLCanvasElement>('#stage');
 const context = context2dOf(canvas);
 
 const collisionReadout = required('[data-testid="collision-count"]');
-const velocityReadout = required('[data-testid="velocity-x"]');
+const batReadout = required('[data-testid="bat-position"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
 let state = createGameState(levelFromRows(FIRST_LEVEL));
@@ -44,8 +44,9 @@ canvas.width = extent.width;
 canvas.height = extent.height;
 
 const held = new Set<string>();
+const ARROWS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
 addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+  if (ARROWS.has(event.key)) {
     held.add(event.key);
     event.preventDefault();
   }
@@ -60,14 +61,20 @@ function frame(now: number): void {
   unspent += Math.min((now - previous) / 1000, LONGEST_CATCH_UP_SECONDS);
   previous = now;
 
-  const input: Input = { left: held.has('ArrowLeft'), right: held.has('ArrowRight') };
+  const input: Input = {
+    left: held.has('ArrowLeft'),
+    right: held.has('ArrowRight'),
+    up: held.has('ArrowUp'),
+    down: held.has('ArrowDown'),
+  };
   while (unspent >= STEP_SECONDS) {
     state = step(state, input);
     unspent -= STEP_SECONDS;
   }
 
   collisionReadout.textContent = String(state.collisions);
-  velocityReadout.textContent = state.ball.velocity.x.toFixed(1);
+  const horizontal = state.bats.find((bat) => bat.orientation === 'horizontal');
+  batReadout.textContent = (horizontal?.position ?? 0).toFixed(0);
   draw(context, state);
 
   requestAnimationFrame(frame);

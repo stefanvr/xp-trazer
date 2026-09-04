@@ -1,6 +1,15 @@
 import { boundaryOf, type GameState } from '../domain/simulation';
-import { CELL_PIXELS, type Level } from '../domain/level';
-import { BACKGROUND, BALL, BOUNDARY, DESTRUCTIBLE_BRICK, GLOW_PIXELS, PERMANENT_BRICK } from './palette';
+import { BAT_LENGTH_PIXELS, CELL_PIXELS, type Bat, type Level } from '../domain/level';
+import {
+  BACKGROUND,
+  BALL,
+  BOUNDARY,
+  DESTRUCTIBLE_BRICK,
+  GLOW_PIXELS,
+  HORIZONTAL_BAT,
+  PERMANENT_BRICK,
+  VERTICAL_BAT,
+} from './palette';
 
 /**
  * The renderer. It reads the state and draws it, and decides nothing — replacing this should mean
@@ -10,6 +19,7 @@ import { BACKGROUND, BALL, BOUNDARY, DESTRUCTIBLE_BRICK, GLOW_PIXELS, PERMANENT_
  */
 
 const BRICK_INSET = 1;
+const BAT_INSET = 4;
 
 function drawElements(context: CanvasRenderingContext2D, level: Level): void {
   for (const [index, cell] of level.cells.entries()) {
@@ -30,6 +40,22 @@ function drawElements(context: CanvasRenderingContext2D, level: Level): void {
   }
 }
 
+function drawBats(context: CanvasRenderingContext2D, bats: readonly Bat[]): void {
+  for (const bat of bats) {
+    const horizontal = bat.orientation === 'horizontal';
+    const color = horizontal ? HORIZONTAL_BAT : VERTICAL_BAT;
+
+    context.shadowColor = color;
+    context.fillStyle = color;
+    context.fillRect(
+      horizontal ? bat.position : bat.line * CELL_PIXELS + BAT_INSET,
+      horizontal ? bat.line * CELL_PIXELS + BAT_INSET : bat.position,
+      horizontal ? BAT_LENGTH_PIXELS : CELL_PIXELS - BAT_INSET * 2,
+      horizontal ? CELL_PIXELS - BAT_INSET * 2 : BAT_LENGTH_PIXELS,
+    );
+  }
+}
+
 export function draw(context: CanvasRenderingContext2D, state: GameState): void {
   const { width, height } = boundaryOf(state);
   const { ball } = state;
@@ -46,6 +72,7 @@ export function draw(context: CanvasRenderingContext2D, state: GameState): void 
   context.strokeRect(1, 1, width - 2, height - 2);
 
   drawElements(context, state.level);
+  drawBats(context, state.bats);
 
   context.shadowColor = BALL;
   context.fillStyle = BALL;
