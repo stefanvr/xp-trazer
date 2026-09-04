@@ -34,3 +34,25 @@ gains what a bat stops at, and `doc/spec-domain.md` is where that is decided —
 - Does a blocked crossing stop the whole group, the way an element does under **DS-3.1**?
 - Is a level whose authored bats already overlap refused at start, as one with too little room for a
   bat now is?
+
+## B-2 · Which side of its bat the held ball rests on is not specified
+
+**Found.** Task 3, implementing **DS-2.1** and **DS-2.2**.
+
+**What the specification fixes, and what it does not.** *"A held ball rests on its bat"* does not say
+which side, and *"perpendicular to the bat that held it, away from it"* fixes the axis but not the
+sign. For a bat with level on both sides — which every bat in the authored level has — both answers
+satisfy both rules.
+
+**What the code does, and on what grounds.** `awayFrom` takes the side with more level behind it: a
+bat in the top half throws downwards, one in the bottom half throws up. The grounds are **DS-1.1**,
+nothing leaves the level — for a bat hard against an edge the other side is outside, so only one
+answer is available there, and taking the same rule everywhere makes the behaviour one rule rather
+than two.
+
+**Not reported as compliance.** The specification is silent, and silence is not permission — this is
+undecided, not decided. It is recorded so the owner gets the choice rather than inheriting the
+agent's.
+
+**Done when** DS-2.1 or DS-2.2 says which side, or the owner confirms the derivation and it stops
+being open.

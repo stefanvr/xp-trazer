@@ -1,0 +1,92 @@
+import { describe, expect, it } from 'vitest';
+import { awayFrom, batHoldingTheBall, launchVelocity, restingOn, BALL_PIXELS_PER_SECOND } from './ball';
+import { BAT_LENGTH_PIXELS, CELL_PIXELS, levelFromRows, type Bat } from './level';
+
+/** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
+
+const TALL = levelFromRows(Array.from({ length: 10 }, (_, row) => (row === 0 ? '-....' : '.....')));
+const WIDE = levelFromRows(['|....', '.....', '.....']);
+
+const horizontal = (line: number, position = 0): Bat => ({ orientation: 'horizontal', line, position });
+const vertical = (line: number, position = 0): Bat => ({ orientation: 'vertical', line, position });
+
+describe('which way a bat throws', () => {
+  it('throws down from the top half, so the ball goes into the level', () => {
+    expect(awayFrom(TALL, horizontal(1))).toEqual({ x: 0, y: 1 });
+  });
+
+  it('throws up from the bottom half', () => {
+    expect(awayFrom(TALL, horizontal(8))).toEqual({ x: 0, y: -1 });
+  });
+
+  it('throws right from the left half', () => {
+    expect(awayFrom(WIDE, vertical(0))).toEqual({ x: 1, y: 0 });
+  });
+
+  it('throws left from the right half', () => {
+    expect(awayFrom(WIDE, vertical(4))).toEqual({ x: -1, y: 0 });
+  });
+});
+
+describe('a held ball', () => {
+  it('sits along the middle of the bat holding it', () => {
+    const resting = restingOn(TALL, horizontal(1, 64), 9);
+
+    expect(resting.x).toBe(64 + BAT_LENGTH_PIXELS / 2);
+  });
+
+  it('rests against the side the bat throws towards', () => {
+    const resting = restingOn(TALL, horizontal(1, 0), 9);
+
+    expect(resting.y).toBe(2 * CELL_PIXELS + 9);
+  });
+
+  it('rests on the other side for a bat in the far half', () => {
+    const resting = restingOn(TALL, horizontal(8, 0), 9);
+
+    expect(resting.y).toBe(8 * CELL_PIXELS - 9);
+  });
+
+  it('rests beside a vertical bat rather than above it', () => {
+    const resting = restingOn(WIDE, vertical(0, 0), 9);
+
+    expect(resting).toEqual({ x: CELL_PIXELS + 9, y: BAT_LENGTH_PIXELS / 2 });
+  });
+});
+
+describe('launching', () => {
+  it('sends the ball perpendicular to its bat, away from it', () => {
+    expect(launchVelocity(TALL, horizontal(1))).toEqual({ x: 0, y: BALL_PIXELS_PER_SECOND });
+  });
+
+  it('sends it along the other axis from a vertical bat', () => {
+    expect(launchVelocity(WIDE, vertical(0))).toEqual({ x: BALL_PIXELS_PER_SECOND, y: 0 });
+  });
+
+  it('leaves at the one speed the ball ever has', () => {
+    const velocity = launchVelocity(TALL, horizontal(8));
+
+    expect(Math.hypot(velocity.x, velocity.y)).toBe(BALL_PIXELS_PER_SECOND);
+  });
+});
+
+describe('choosing the bat that holds the ball', () => {
+  const four = levelFromRows(['-...|', '.....', '-...|']);
+
+  it('names a bat the level actually has', () => {
+    for (const seed of [0, 1, 7, 12345]) {
+      expect(batHoldingTheBall(four, seed)).toBeLessThan(four.bats.length);
+      expect(batHoldingTheBall(four, seed)).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('names the same bat every time for the same seed', () => {
+    expect(batHoldingTheBall(four, 12345)).toBe(batHoldingTheBall(four, 12345));
+  });
+
+  it('does not name the same bat for every seed', () => {
+    const chosen = new Set([0, 1, 2, 3].map((seed) => batHoldingTheBall(four, seed)));
+
+    expect(chosen.size).toBeGreaterThan(1);
+  });
+});
