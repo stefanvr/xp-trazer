@@ -74,9 +74,9 @@ npx playwright install chromium
 
 ✅ Downloads and launches under WSL with no `sudo` and no system package added.
 
-**Never `--with-deps`.** It shells out to `sudo apt-get`, and with no stdin for the password prompt
-it hangs rather than failing — setup-ai-env §3. The download itself needs no privileges, which is
-why the plain form works.
+**Never `--with-deps` here.** It shells out to `sudo apt-get` and hangs on a prompt nothing can
+answer (setup-ai-env §3); the download itself needs no privileges. Why, and where the opposite is
+correct, is in [lessons/playwright.md](lessons/playwright.md).
 
 **On a barer machine the browser may still be missing system libraries.** Playwright names them when
 it fails. Installing them needs the distro package manager, and therefore root.

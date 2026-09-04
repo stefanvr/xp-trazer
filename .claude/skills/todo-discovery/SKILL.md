@@ -76,7 +76,12 @@ the owner has raised, not a decision, and it stays out of scope until they make 
 4. **Follow the attributions.** *"A chose B"* asserts that A's file records B. Check A.
 5. **Re-read whatever was changed most recently.** A structural fix in one document is the usual cause
    of a stale claim in another.
-6. **Then grep** — `todo|fixme|tbd` — and expect it to find little.
+6. **Where content has moved, ask who still points at where it was** — not whether each citation
+   still resolves. A redirect left behind for old citations resolves, and a section that kept its
+   name while losing its subject resolves, and both are wrong. Sweep by *what moved*, not by
+   *identifier*: grepping the moved thing's number finds the citations that name it and none of the
+   prose that restates it.
+7. **Then grep** — `todo|fixme|tbd` — and expect it to find little.
 
 Every step reads the file. *Report what was verified, not what is believed — the two read identically
 and only one of them is worth anything.*
