@@ -35,6 +35,25 @@ specification in code.** Stop and say so. That is the moment this routine exists
 specification is the expensive place to be wrong, and code that quietly becomes one was never
 reviewed as one.
 
+## Break the goal into checkable tasks, in the scratchpad
+
+**Before the first line of code**, write the breakdown to a file in `doc/scratchpad/`: two columns,
+the task and **what makes it checkable**. Checkable means the observable thing the owner can look at
+and judge — *"bats answer the keyboard"*, not *"the bat module"*. A task that can only be checked by
+reading the diff is a layer, and layers are not tasks.
+
+**Remove a task once it is implemented.** The file then always reads as what is left, which is what
+it is for. What was done is already in the commit history, and a file that keeps both goes stale in
+the half nobody rereads.
+
+**This is not the backlog [land](../land/SKILL.md) refuses.** It holds only the goal in front of us,
+it shrinks to nothing as that goal completes, and landing clears the scratchpad. A backlog outlives
+its goal and accumulates; this one is deleted by being finished.
+
+Keep it in its own file, separate from the note that collects findings as the work goes. The two run
+opposite ways — the breakdown shrinks, and the findings accumulate until each is given a fate at
+landing.
+
 ## A proof contains no product decisions
 
 **The test is mechanical: remove a rule, and ask whether any seam stopped being proven.** A ball that
