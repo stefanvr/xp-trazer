@@ -35,3 +35,36 @@ completes, so aiming is something the launch step allows rather than something i
 **That the cleared level says so is a step's detail; what it says and how it looks is
 [spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from a ball
 that has stopped working.
+
+## Where the steps surface
+
+**One surface, and no navigation.** Both steps happen on the level itself. Nothing is entered, left,
+or returned to — there is no second place for anything to be.
+
+| Step | How the player acts |
+|---|---|
+| **Launch the ball** | An arrow key **held** moves its bat group for as long as it is held. **Space**, pressed once, launches. |
+| **Play until the level is cleared** | The same four keys, the same way. The cleared indication appears on the level, where the player is already looking. |
+
+**Nothing triggers sound or animation.** [scope.md](scope.md) puts sound out of version one, and no
+step has a transition to animate — the ball's motion is the simulation advancing, which
+[spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
+
+## Layout
+
+**One screen, and no chrome.** No header, no footer, no menu, no dialog. Version one has nothing to
+put in any of them, and adding one would be a surface with no step behind it.
+
+The screen holds the level, and the build identifier that [spec-tech.md](spec-tech.md) keeps. The
+collision and velocity readouts beside it are that document's proof instruments, and they go when
+this surface arrives.
+
+**Desktop-sized, and driven by the keyboard.**
+
+## What this leaves open
+
+- **The small-screen mode, and the touch input it needs.** [scope.md](scope.md) puts both in version
+  one, to be built after the keyboard one. Two bat groups on two axes have no obvious touch
+  equivalent, so it is design work rather than a port, and nothing here constrains it.
+- **What the cleared indication says and looks like** — [spec-style.md](spec-style.md)'s, and it has
+  no row for it yet.
