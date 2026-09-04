@@ -154,8 +154,8 @@ rather than to the player.
 did. It is the same family as **DS-1.7** and **DS-1.8**: a level author can write a position play
 could not produce, and the refusals are where that is caught.
 
-**Open.** For the owner: another refusal in `createGameState`, or left because only an authored level
-can cause it and there is one.
+**Left.** The owner's call: no authored level does it, and version one has exactly one level. Recorded
+here rather than fixed, so a second level's author meets the note before meeting the bug.
 
 ## B-4 · A bounce stops just short of the surface, by up to one step of travel
 
