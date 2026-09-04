@@ -1,13 +1,35 @@
 import { describe, expect, it } from 'vitest';
-import { createGameState, isHeld, step, STEP_SECONDS, type GameState, type Input } from './simulation';
+import {
+  createGameState,
+  isCleared,
+  isHeld,
+  step,
+  STEP_SECONDS,
+  type GameState,
+  type Input,
+} from './simulation';
 import { CELL_PIXELS, levelFromRows } from './level';
 import { obstacleAt } from './collision';
 
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
+/**
+ * A far corner of every test level holds one destructible brick, out of reach of anything these
+ * tests do. Without it the level is cleared before it starts — DS-5.1 is satisfied by a level with
+ * nothing to destroy — and DS-5.2 then stops the step these tests are about.
+ */
+const IN_THE_CORNER = (columns: number, rows: number) =>
+  Array.from({ length: rows }, (_, row) =>
+    row === rows - 2 ? `${'.'.repeat(columns - 2)}d.` : '.'.repeat(columns),
+  );
+
 // 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
-const LEVEL = levelFromRows([`-${'.'.repeat(19)}`, ...Array.from({ length: 14 }, () => '.'.repeat(20))]);
+const LEVEL = levelFromRows([`-${'.'.repeat(19)}`, ...IN_THE_CORNER(20, 14)]);
 // One bat on each axis, both with room to move.
-const BOTH_AXES = levelFromRows([`-${'.'.repeat(19)}`, `|${'.'.repeat(19)}`, ...Array.from({ length: 13 }, () => '.'.repeat(20))]);
+const BOTH_AXES = levelFromRows([
+  `-${'.'.repeat(19)}`,
+  `|${'.'.repeat(19)}`,
+  ...IN_THE_CORNER(20, 13),
+]);
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -165,6 +187,54 @@ describe('a bat moving into a travelling ball', () => {
   });
 });
 
+describe('clearing a level', () => {
+  // One destructible brick at column 2 of row 2, one permanent one at column 4, and a bat with
+  // room to move so that a step that changed anything would show.
+  const level = levelFromRows(['-.....', '......', '..d.p.', '......', '......', '......']);
+  const brick = 2 * 6 + 2;
+
+  const withDestroyed = (destroyed: readonly number[]): GameState => {
+    const state = createGameState(level, 0);
+    return { ...state, destroyed: new Set(destroyed), ball: { ...state.ball, heldBy: undefined } };
+  };
+
+  it('is not cleared while a destructible brick still stands', () => {
+    expect(isCleared(withDestroyed([]))).toBe(false);
+  });
+
+  it('is cleared when the last destructible brick has been destroyed', () => {
+    expect(isCleared(withDestroyed([brick]))).toBe(true);
+  });
+
+  it('counts no permanent brick towards it, which is DS-4.3', () => {
+    // The permanent brick is still standing, and the level is cleared regardless.
+    expect(withDestroyed([brick]).level.cells[2 * 6 + 4]?.kind).toBe('permanent');
+    expect(isCleared(withDestroyed([brick]))).toBe(true);
+  });
+
+  it('does not advance once cleared, whatever the player holds down', () => {
+    const cleared = {
+      ...withDestroyed([brick]),
+      ball: { ...withDestroyed([brick]).ball, velocity: { x: 240, y: 120 } },
+    };
+
+    expect(step(cleared, { ...NOTHING_HELD, right: true, down: true, launch: true })).toBe(cleared);
+  });
+
+  it('becomes cleared on the step that destroys the last brick', () => {
+    const last = {
+      ...withDestroyed([]),
+      ball: { ...withDestroyed([]).ball, position: { x: 54, y: 80 }, velocity: { x: 240, y: 0 } },
+    };
+
+    const next = step(last, NOTHING_HELD);
+
+    expect(isCleared(next)).toBe(true);
+    // The collision still happened in full — DS-2.4 turns the ball away from what it destroyed.
+    expect(next.ball.velocity.x).toBeLessThan(0);
+  });
+});
+
 describe('the step itself', () => {
   it('gives the same result every time for the same state and input', () => {
     const state = stateWith({ position: { x: 100, y: 100 }, velocity: { x: 37, y: -91 } });
@@ -193,33 +263,41 @@ describe('the step itself', () => {
 describe('the smallest level that can hold a bat', () => {
   // Two rows, because DS-1.6 wants one side of the bat open and a single row is blocked on both.
   it('holds the ball too, so no guard for that is needed', () => {
-    const state = createGameState(levelFromRows(['-..', '...']), 0);
+    const state = createGameState(levelFromRows(['-..', '..d']), 0);
 
     expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
   });
 
+  // Each of these levels carries a destructible brick it does not otherwise need, so that the
+  // refusal under test is the only one available and the message proves which rule spoke.
   it('refuses a level whose bat has less room than its own length', () => {
-    expect(() => createGameState(levelFromRows(['-.', '..']), 0)).toThrow(
+    expect(() => createGameState(levelFromRows(['-.', '.d']), 0)).toThrow(
       /less room than its own length/,
     );
   });
 
   it('refuses a level whose bat has nothing to rest against, which DS-1.6 forbids', () => {
-    expect(() => createGameState(levelFromRows(['...', '-..', '...']), 0)).toThrow(
+    expect(() => createGameState(levelFromRows(['...', '-..', '..d']), 0)).toThrow(
       /nothing on either side/,
     );
   });
 
   it('refuses a level that authors one bat inside another, which DS-1.7 forbids', () => {
     // The vertical bat runs down column 1 from row 0, through the horizontal bat lying on row 0.
-    expect(() => createGameState(levelFromRows(['-|..', '....', '....']), 0)).toThrow(
+    expect(() => createGameState(levelFromRows(['-|..', '....', '...d']), 0)).toThrow(
       /authored inside/,
+    );
+  });
+
+  it('refuses a level with nothing to destroy, which DS-1.8 forbids', () => {
+    expect(() => createGameState(levelFromRows(['-..', '...']), 0)).toThrow(
+      /no destructible element/,
     );
   });
 });
 
 describe('a ball that has not been launched', () => {
-  const level = levelFromRows(['-...........', ...Array.from({ length: 9 }, () => '.'.repeat(12))]);
+  const level = levelFromRows(['-...........', ...IN_THE_CORNER(12, 9)]);
 
   it('starts held by one of the level\'s bats', () => {
     expect(isHeld(createGameState(level, 0))).toBe(true);
@@ -264,8 +342,10 @@ describe('a ball that has not been launched', () => {
 });
 
 describe('a travelling ball meeting something', () => {
-  // A destructible brick at column 2 and a permanent one at column 4, both on row 2.
-  const level = levelFromRows(['-.....', '......', '..d.p.', '......', '......', '......']);
+  // A destructible brick at column 2 and a permanent one at column 4, both on row 2 — and a second
+  // destructible one in the corner, so that destroying the first does not clear the level and stop
+  // the very step these tests are about.
+  const level = levelFromRows(['-.....', '......', '..d.p.', '......', '.....d', '......']);
 
   /** Travelling, at a place and speed the test chooses. */
   const travelling = (position: { x: number; y: number }, velocity: { x: number; y: number }) => {

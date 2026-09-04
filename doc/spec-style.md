@@ -50,6 +50,26 @@ glow; this document is the reason that choice needs to hold, not a restatement o
 ever stops reading as Tron's glow, that is a reason to reopen the rendering choice in spec-tech, not to
 add a rule here.
 
+## Typography
+
+Version one puts exactly one piece of text on the level: the word a cleared level shows.
+[spec-app.md](spec-app.md) asks for it — *"a ball that has merely stopped is indistinguishable from a
+ball that has stopped working"* — and leaves what it says and looks like here.
+
+| What | Decision |
+|---|---|
+| The word | `CLEARED`, uppercase |
+| Face | The system sans-serif stack. No web font: nothing to load, nothing to ship, and nothing about Tron needs a face this project would have to carry |
+| Size | One and a half cells tall, so it scales with the level rather than with the screen |
+| Tracking | Wide — a quarter of the size between letters, which is what makes uppercase read as a title rather than as shouting |
+| Color | `#33ff99`, the destructible brick's green. **It is the hue that meant *the objective*, and it comes free exactly when the objective is complete** — the last brick wearing it has just gone, so nothing is on screen to confuse it with |
+| Placement | Centred on the level, drawn over everything |
+| Glow | The same edge glow as everything else |
+
+**No panel, no box, no dimming behind it.** The level stays lit and the word sits on it. A cleared
+level is still the thing the player was looking at, and covering it would make finishing look like
+leaving.
+
 ## What this leaves open
 
 Named rather than guessed at, so a later goal knows what it is deciding rather than rediscovering that
@@ -60,7 +80,8 @@ nothing was decided:
   last.
 - **HUD / UI chrome.** Version one has no score, no lives, no menu, no map — nothing in scope needs a
   look for any of them yet.
-- **Typography.** No text appears in version one's level.
+- **Typography beyond the one word above.** Version one's level carries `CLEARED` and nothing else,
+  so the face is chosen and nothing else about type is — no scale, no second weight, no body text.
 - **What would make it visually wrong.** Asked in brainstorm, answered "no idea" — free rather than
   missing, and the cheapest kind of decision to leave for when something forces an answer.
 - **The Tron/C64 tension for anything beyond version one.** Brainstorm left it standing rather than

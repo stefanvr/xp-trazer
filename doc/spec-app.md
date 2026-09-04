@@ -66,5 +66,3 @@ this surface arrives.
 - **The small-screen mode, and the touch input it needs.** [scope.md](scope.md) puts both in version
   one, to be built after the keyboard one. Two bat groups on two axes have no obvious touch
   equivalent, so it is design work rather than a port, and nothing here constrains it.
-- **What the cleared indication says and looks like** — [spec-style.md](spec-style.md)'s, and it has
-  no row for it yet.

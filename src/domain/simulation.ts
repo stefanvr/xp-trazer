@@ -1,7 +1,15 @@
 import { awayFrom, batHoldingTheBall, deflectedByBat, launchVelocity, restingOn } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { batRect, meets, obstacleAt, overlaps } from './collision';
-import { BAT_LENGTH_PIXELS, extentOf, type Bat, type Extent, type Level } from './level';
+import {
+  BAT_LENGTH_PIXELS,
+  destructibleCount,
+  destructibleRemaining,
+  extentOf,
+  type Bat,
+  type Extent,
+  type Level,
+} from './level';
 
 /**
  * The domain. Pure functions over plain types, importing no infrastructure — guide-design.md.
@@ -82,6 +90,18 @@ export function isHeld(state: GameState): boolean {
   return state.ball.heldBy !== undefined;
 }
 
+/**
+ * **DS-5.1** — a level is cleared when every destructible element has been destroyed. Permanent
+ * ones are not counted, which is **DS-4.3**: clearing ignores them.
+ *
+ * Asked of what is destroyed rather than stored beside it, the same way `isHeld` is asked of the
+ * ball. spec-domain lists both among what a game holds, and a state that holds the answer as well
+ * as the facts it follows from can hold a wrong one.
+ */
+export function isCleared(state: GameState): boolean {
+  return destructibleRemaining(state.level, state.destroyed) === 0;
+}
+
 /** The level's edge, which its extent decides. */
 export function boundaryOf(state: GameState): Extent {
   return extentOf(state.level);
@@ -123,6 +143,15 @@ export function createGameState(level: Level, seed: number): GameState {
         `a ${bat.orientation} bat on line ${bat.line} has less room than its own length`,
       );
     }
+  }
+
+  /**
+   * DS-1.8 — asked last, because whether a level can be played at all is the more fundamental
+   * answer than whether playing it can finish, and a reader met by the second question first would
+   * fix the wrong thing.
+   */
+  if (destructibleCount(level) === 0) {
+    throw new Error('a level authors no destructible element, so it is cleared before it is played');
   }
 
   // DS-1.4 — a level starts with the ball held by one of its bats, drawn from the seed.
@@ -199,6 +228,12 @@ function pushedOutOfBats(
 /** Advances one fixed step. The same state and the same input always give the same result. */
 export function step(state: GameState, input: Input): GameState {
   const { ball, level } = state;
+
+  /**
+   * DS-5.2 — a cleared level does not advance. Asked before anything else, because *nothing*
+   * advances: DS-3.4 moves bats while the ball is held or travelling, and cleared is neither.
+   */
+  if (isCleared(state)) return state;
 
   // DS-3.4: bats move whether the ball is held or travelling, so this happens every step.
   const reach = BAT_PIXELS_PER_SECOND * STEP_SECONDS;

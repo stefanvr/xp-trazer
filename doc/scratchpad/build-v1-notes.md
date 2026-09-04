@@ -96,7 +96,28 @@ calling the project's real render function rather than re-implemented. spec-doma
 bats now, so those three panels should go through `draw()`. That is the style routine's job, not
 this goal's.
 
-**Done when** the `style` skill runs and the panels draw bricks and bats through `draw()`.
+**And it fell further behind.** spec-style gained a **Typography** section for the word a cleared
+level shows, and the skill's own rule is that *"when the table gains a row, the page is missing a row
+until this routine runs again"*. So the page now owes a cleared-word panel as well.
+
+**Done when** the `style` skill runs, the panels draw bricks and bats through `draw()`, and the page
+shows the cleared word.
+
+## B-6 · The proof readouts are still on the surface spec-app says they leave
+
+**Found.** Task 5, reading spec-app while building the cleared indication.
+
+**Evidence.** spec-app's *Layout*: *"The screen holds the level, and the build identifier that
+spec-tech.md keeps. The collision and velocity readouts beside it are that document's proof
+instruments, and they go when this surface arrives."* The surface has arrived — the level is played,
+cleared, and says so — and `collision-count`, `bat-position` and `bricks-left` are still beside it.
+
+**Why it was not just done.** Two of them are what `e2e/smoke.spec.ts` reads to prove the loop runs
+and that a key reaches the simulation. Removing them removes the tests' only hooks, so this is a
+question about what replaces that proof, not a deletion.
+
+**Open.** For the owner at landing: take the readouts out and find the loop another witness, or keep
+them and say in spec-app that they stay.
 
 ## B-4 · A bounce stops just short of the surface, by up to one step of travel
 

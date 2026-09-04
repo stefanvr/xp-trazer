@@ -81,6 +81,8 @@ to the rule it meant or to nothing, never to a different rule.
   level's edge today, and whatever else is placed against it later. The other side is open.
 - **DS-1.7** A level authors no bat in the same place as another, and none with less room to slide
   than its own length. Neither is a position play could reach, and neither is one play could undo.
+- **DS-1.8** A level authors at least one destructible element. One that authors none satisfies
+  **DS-5.1** before it is played, so it is cleared before the player touches it.
 
 ### DS-2 · The ball
 

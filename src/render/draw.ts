@@ -1,10 +1,15 @@
-import { boundaryOf, type GameState } from '../domain/simulation';
+import { boundaryOf, isCleared, type GameState } from '../domain/simulation';
 import { batRect } from '../domain/collision';
 import { CELL_PIXELS, type Bat, type Level } from '../domain/level';
 import {
   BACKGROUND,
   BALL,
   BOUNDARY,
+  CLEARED_FACE,
+  CLEARED_TEXT,
+  CLEARED_TEXT_CELLS,
+  CLEARED_TRACKING,
+  CLEARED_WORD,
   DESTRUCTIBLE_BRICK,
   GLOW_PIXELS,
   HORIZONTAL_BAT,
@@ -63,6 +68,36 @@ function drawBats(context: CanvasRenderingContext2D, bats: readonly Bat[]): void
   }
 }
 
+/**
+ * spec-style's one piece of text, and spec-app's reason for it: a ball that has merely stopped is
+ * indistinguishable from a ball that has stopped working.
+ *
+ * Letters are placed one at a time rather than through the context's `letterSpacing`, which is recent
+ * enough that not every browser has it — and it fails by silently ignoring the value, which would
+ * leave the word set solid with nothing to show that a decision had been dropped.
+ */
+function drawCleared(context: CanvasRenderingContext2D, width: number, height: number): void {
+  const size = CELL_PIXELS * CLEARED_TEXT_CELLS;
+  const tracking = size * CLEARED_TRACKING;
+  const letters = [...CLEARED_WORD];
+
+  context.font = `${size}px ${CLEARED_FACE}`;
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.shadowColor = CLEARED_TEXT;
+  context.fillStyle = CLEARED_TEXT;
+
+  const widths = letters.map((letter) => context.measureText(letter).width);
+  const across = widths.reduce((sum, each) => sum + each, 0) + tracking * (letters.length - 1);
+
+  let at = (width - across) / 2;
+  for (const [index, letter] of letters.entries()) {
+    const advance = widths[index]!;
+    context.fillText(letter, at + advance / 2, height / 2);
+    at += advance + tracking;
+  }
+}
+
 export function draw(context: CanvasRenderingContext2D, state: GameState): void {
   const { width, height } = boundaryOf(state);
   const { ball } = state;
@@ -86,6 +121,9 @@ export function draw(context: CanvasRenderingContext2D, state: GameState): void 
   context.beginPath();
   context.arc(ball.position.x, ball.position.y, ball.radius, 0, Math.PI * 2);
   context.fill();
+
+  // Over everything, and over nothing else: spec-style wants the level left lit behind it.
+  if (isCleared(state)) drawCleared(context, width, height);
 
   context.restore();
 }
