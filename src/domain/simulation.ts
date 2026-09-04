@@ -5,81 +5,98 @@
  * spec-tech.md: the simulation advances by a fixed amount, never by wall-clock time measured
  * between frames. The accumulator that decides *how often* to call `step` lives at the edge, in
  * main.ts, because that is the part that has to know what time it is.
+ *
+ * **The names here are doc/spec-domain.md's; the behaviour is not yet.** Ball, boundary and
+ * collision are that document's words and this module uses them. Everything else it describes — a
+ * level of cells, elements, bats and bat groups, holding and launching, a seed, clearing — is
+ * absent, and spec-tech.md records what is here as the stack proof's scaffolding rather than a
+ * domain decision. **A spec-domain name in this file does not mean the rule behind it is built.**
  */
 
 export const STEP_SECONDS = 1 / 120;
 export const NUDGE_PIXELS_PER_SECOND = 240;
 
 export type Vector = { readonly x: number; readonly y: number };
-export type Box = { readonly width: number; readonly height: number };
 
-/** What the player is holding down this step. The renderer's keyboard is not the domain's problem. */
+/** The level's edge. The code has a boundary; it does not yet have a level to be the edge of. */
+export type Boundary = { readonly width: number; readonly height: number };
+
+/** What the player is holding down this step. Input belongs to spec-app, which is not written. */
 export type Input = { readonly left: boolean; readonly right: boolean };
 
-export type World = {
-  readonly box: Box;
+export type Ball = {
   readonly position: Vector;
   readonly velocity: Vector;
   readonly radius: number;
-  readonly bounces: number;
+};
+
+/** Everything that changes while a level is played. */
+export type GameState = {
+  readonly boundary: Boundary;
+  readonly ball: Ball;
+  readonly collisions: number;
 };
 
 /**
- * Starts vertically, so the side walls are only ever reached by input. That keeps the surface smoke
- * test deterministic: nothing changes horizontal velocity except an arrow key.
+ * Starts vertically, so the side boundaries are only ever reached by input. That keeps the surface
+ * smoke test deterministic: nothing changes horizontal velocity except an arrow key.
  */
-export function createWorld(box: Box): World {
+export function createGameState(boundary: Boundary): GameState {
   const radius = 9;
-  if (box.width <= radius * 2 || box.height <= radius * 2) {
-    throw new Error(`a ${box.width}x${box.height} box cannot hold a ball of radius ${radius}`);
+  if (boundary.width <= radius * 2 || boundary.height <= radius * 2) {
+    throw new Error(
+      `a ${boundary.width}x${boundary.height} boundary cannot hold a ball of radius ${radius}`,
+    );
   }
   return {
-    box,
-    position: { x: box.width / 2, y: box.height / 2 },
-    velocity: { x: 0, y: 260 },
-    radius,
-    bounces: 0,
+    boundary,
+    ball: {
+      position: { x: boundary.width / 2, y: boundary.height / 2 },
+      velocity: { x: 0, y: 260 },
+      radius,
+    },
+    collisions: 0,
   };
 }
 
-/** Advances the world one fixed step. Same world and same input always give the same result. */
-export function step(world: World, input: Input): World {
+/** Advances one fixed step. The same state and the same input always give the same result. */
+export function step(state: GameState, input: Input): GameState {
+  const { ball, boundary } = state;
   const nudge = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 
-  let velocityX = world.velocity.x + nudge * NUDGE_PIXELS_PER_SECOND * STEP_SECONDS;
-  let velocityY = world.velocity.y;
-  let x = world.position.x + velocityX * STEP_SECONDS;
-  let y = world.position.y + velocityY * STEP_SECONDS;
-  let bounces = world.bounces;
+  let velocityX = ball.velocity.x + nudge * NUDGE_PIXELS_PER_SECOND * STEP_SECONDS;
+  let velocityY = ball.velocity.y;
+  let x = ball.position.x + velocityX * STEP_SECONDS;
+  let y = ball.position.y + velocityY * STEP_SECONDS;
+  let collisions = state.collisions;
 
-  const lowX = world.radius;
-  const highX = world.box.width - world.radius;
+  const lowX = ball.radius;
+  const highX = boundary.width - ball.radius;
   if (x < lowX) {
     x = lowX + (lowX - x);
     velocityX = -velocityX;
-    bounces += 1;
+    collisions += 1;
   } else if (x > highX) {
     x = highX - (x - highX);
     velocityX = -velocityX;
-    bounces += 1;
+    collisions += 1;
   }
 
-  const lowY = world.radius;
-  const highY = world.box.height - world.radius;
+  const lowY = ball.radius;
+  const highY = boundary.height - ball.radius;
   if (y < lowY) {
     y = lowY + (lowY - y);
     velocityY = -velocityY;
-    bounces += 1;
+    collisions += 1;
   } else if (y > highY) {
     y = highY - (y - highY);
     velocityY = -velocityY;
-    bounces += 1;
+    collisions += 1;
   }
 
   return {
-    ...world,
-    position: { x, y },
-    velocity: { x: velocityX, y: velocityY },
-    bounces,
+    ...state,
+    ball: { ...ball, position: { x, y }, velocity: { x: velocityX, y: velocityY } },
+    collisions,
   };
 }
