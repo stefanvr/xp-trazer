@@ -42,6 +42,39 @@ test('an arrow key reaches the simulation', async ({ page }) => {
   await page.keyboard.up('ArrowRight');
 });
 
+test.describe('the small-screen mode', () => {
+  // spec-app.md: narrower than 700px *and* touch-capable, never either alone.
+  test('shows the touch buttons on a narrow touch device', async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 780 }, hasTouch: true });
+    const page = await context.newPage();
+    await page.goto('/');
+
+    await expect(page.locator('#touch-controls')).toBeVisible();
+
+    await context.close();
+  });
+
+  test('stays hidden on a narrow window with no touch', async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 780 }, hasTouch: false });
+    const page = await context.newPage();
+    await page.goto('/');
+
+    await expect(page.locator('#touch-controls')).toBeHidden();
+
+    await context.close();
+  });
+
+  test('stays hidden on a wide touch device', async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 1000, height: 800 }, hasTouch: true });
+    const page = await context.newPage();
+    await page.goto('/');
+
+    await expect(page.locator('#touch-controls')).toBeHidden();
+
+    await context.close();
+  });
+});
+
 test('something is actually drawn on the canvas', async ({ page }) => {
   await page.goto('/');
 

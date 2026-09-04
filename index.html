@@ -9,6 +9,19 @@
   <body>
     <main>
       <canvas id="stage" width="640" height="480"></canvas>
+      <!--
+        spec-app.md: touch acts on the same two steps a keyboard does, through five buttons — four
+        directional, one per key they replace, and one to launch. Hidden by CSS outside the
+        small-screen mode (doc/spec-app.md's "The small-screen mode"), never by JavaScript, so there
+        is one thing deciding whether they show rather than two that could disagree.
+      -->
+      <div id="touch-controls">
+        <button type="button" data-testid="touch-left" aria-label="Move horizontal bats left">◀</button>
+        <button type="button" data-testid="touch-right" aria-label="Move horizontal bats right">▶</button>
+        <button type="button" data-testid="touch-launch" aria-label="Launch the ball">LAUNCH</button>
+        <button type="button" data-testid="touch-up" aria-label="Move vertical bats up">▲</button>
+        <button type="button" data-testid="touch-down" aria-label="Move vertical bats down">▼</button>
+      </div>
       <p class="readout">
         collisions <span data-testid="collision-count">0</span>
         &middot; bat <span data-testid="bat-position">0</span>

@@ -5,8 +5,7 @@ says what is left. Cleared when the goal lands.
 
 | Task | Checkable as |
 |---|---|
-| **1 · The small-screen mode shows** | Below 700px width on a touch device, six buttons appear below a level scaled to fit; at any other width, or without touch, nothing changes from today |
 | **2 · Each button drives the input its key drives** | Holding a directional button moves the same bat group its arrow key moves, for as long as it is held; tapping launch launches, exactly as Space does |
 
-Both are `spec-app.md`'s *Touch acts on the same steps* and *The small-screen mode* sections, written
-this goal.
+`spec-app.md`'s *Touch acts on the same steps* and *The small-screen mode* sections, written this
+goal.

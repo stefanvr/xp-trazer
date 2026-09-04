@@ -35,3 +35,61 @@ canvas {
   margin: 0;
   text-transform: uppercase;
 }
+
+/*
+ * doc/spec-app.md: "The small-screen mode" — hidden everywhere else, because the desktop layout is
+ * unchanged outside it. Below the level (order in the markup already puts it there) and never over
+ * it, so a finger on a button is never a finger on the ball.
+ */
+#touch-controls {
+  display: none;
+}
+
+/*
+ * spec-app's own boundary: narrower than 700px *and* touch-capable, never either alone. `pointer:
+ * coarse` is the standard proxy for "the primary input cannot point precisely" — a touchscreen,
+ * where a mouse or trackpad reads `pointer: fine`.
+ */
+@media (max-width: 700px) and (pointer: coarse) {
+  canvas#stage {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #touch-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      'left launch right'
+      'up   launch down';
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  #touch-controls button {
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: uppercase;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--line) 12%, transparent);
+    color: var(--line);
+    /* Large targets, and no callout/selection chrome a press-and-hold would otherwise trigger. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+
+  #touch-controls button:active {
+    background: color-mix(in srgb, var(--line) 30%, transparent);
+  }
+
+  [data-testid='touch-left'] { grid-area: left; }
+  [data-testid='touch-right'] { grid-area: right; }
+  [data-testid='touch-launch'] { grid-area: launch; }
+  [data-testid='touch-up'] { grid-area: up; }
+  [data-testid='touch-down'] { grid-area: down; }
+}
