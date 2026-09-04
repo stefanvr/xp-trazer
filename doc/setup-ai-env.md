@@ -144,6 +144,12 @@ of the document and the cause was *project's* far above.
 `\\wsl.localhost\…` path. Same for git commit messages: write the message to a file, then
 `git commit -F <file>`.
 
+**It does not always announce itself.** Observed: a `git commit -F -` fed by a heredoc whose message
+contained *surface's*. The apostrophe closed the outer string, so git received the message truncated
+at that word — and **committed and pushed it**, exit status zero, the tail of the message appearing
+only as two stray `command not found` lines that read like unrelated noise. The parse error is the
+lucky case; the silent one ships.
+
 **And it is not only file content — the same layer eats command strings.** Observed repeatedly:
 `wsl.exe -e bash -ic 'npm test; grep -E "tests|pass|fail" out.log'` reports *"Command 'pass' not
 found"*, because the outer layer re-parsed the `|` inside the quoted pattern and ran the
