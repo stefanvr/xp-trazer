@@ -1,5 +1,7 @@
+import { extentOf, type Extent, type Level } from './level';
+
 /**
- * The domain. Pure functions over plain types, importing nothing — guide-design.md.
+ * The domain. Pure functions over plain types, importing no infrastructure — guide-design.md.
  *
  * It never reads a clock. `STEP_SECONDS` is a constant the program controls, which is A-1 in
  * spec-tech.md: the simulation advances by a fixed amount, never by wall-clock time measured
@@ -18,10 +20,7 @@ export const NUDGE_PIXELS_PER_SECOND = 240;
 
 export type Vector = { readonly x: number; readonly y: number };
 
-/** The level's edge. The code has a boundary; it does not yet have a level to be the edge of. */
-export type Boundary = { readonly width: number; readonly height: number };
-
-/** What the player is holding down this step. Input belongs to spec-app, which is not written. */
+/** What the player is holding down this step. */
 export type Input = { readonly left: boolean; readonly right: boolean };
 
 export type Ball = {
@@ -30,28 +29,34 @@ export type Ball = {
   readonly radius: number;
 };
 
-/** Everything that changes while a level is played. */
+/** Everything that changes while a level is played. The level itself does not. */
 export type GameState = {
-  readonly boundary: Boundary;
+  readonly level: Level;
   readonly ball: Ball;
   readonly collisions: number;
 };
+
+/** The level's edge, which its extent decides. */
+export function boundaryOf(state: GameState): Extent {
+  return extentOf(state.level);
+}
 
 /**
  * Starts vertically, so the side boundaries are only ever reached by input. That keeps the surface
  * smoke test deterministic: nothing changes horizontal velocity except an arrow key.
  */
-export function createGameState(boundary: Boundary): GameState {
+/**
+ * No guard that the level is big enough for the ball: `levelFromRows` will not build one smaller
+ * than a single cell, and a cell is wider than the ball. The check that used to be here could no
+ * longer fail, and a check that cannot fail is a claim rather than evidence.
+ */
+export function createGameState(level: Level): GameState {
   const radius = 9;
-  if (boundary.width <= radius * 2 || boundary.height <= radius * 2) {
-    throw new Error(
-      `a ${boundary.width}x${boundary.height} boundary cannot hold a ball of radius ${radius}`,
-    );
-  }
+  const { width, height } = extentOf(level);
   return {
-    boundary,
+    level,
     ball: {
-      position: { x: boundary.width / 2, y: boundary.height / 2 },
+      position: { x: width / 2, y: height / 2 },
       velocity: { x: 0, y: 260 },
       radius,
     },
@@ -61,7 +66,8 @@ export function createGameState(boundary: Boundary): GameState {
 
 /** Advances one fixed step. The same state and the same input always give the same result. */
 export function step(state: GameState, input: Input): GameState {
-  const { ball, boundary } = state;
+  const { ball } = state;
+  const boundary = boundaryOf(state);
   const nudge = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 
   let velocityX = ball.velocity.x + nudge * NUDGE_PIXELS_PER_SECOND * STEP_SECONDS;

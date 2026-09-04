@@ -1,4 +1,6 @@
-import { createGameState, step, STEP_SECONDS, type Input } from './domain/simulation';
+import { createGameState, step, boundaryOf, STEP_SECONDS, type Input } from './domain/simulation';
+import { levelFromRows } from './domain/level';
+import { FIRST_LEVEL } from './levels/first';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
 
@@ -34,7 +36,12 @@ const collisionReadout = required('[data-testid="collision-count"]');
 const velocityReadout = required('[data-testid="velocity-x"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
-let state = createGameState({ width: canvas.width, height: canvas.height });
+let state = createGameState(levelFromRows(FIRST_LEVEL));
+
+// The level decides how big the play area is, so the canvas takes its size from the level.
+const extent = boundaryOf(state);
+canvas.width = extent.width;
+canvas.height = extent.height;
 
 const held = new Set<string>();
 addEventListener('keydown', (event) => {

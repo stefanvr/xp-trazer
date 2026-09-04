@@ -1,4 +1,5 @@
 import { createGameState } from '../src/domain/simulation';
+import { levelFromRows } from '../src/domain/level';
 import { draw } from '../src/render/draw';
 import {
   BACKGROUND,
@@ -62,7 +63,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Boundary & ball',
     role: 'Drawn by the real renderer (src/render/draw.ts) against a live GameState',
-    paint: (context, width, height) => draw(context, createGameState({ width, height })),
+    paint: (context, width, height) => draw(context, createGameState(levelFromRows(Array.from({ length: Math.max(1, Math.floor(height / 32)) }, () => '.'.repeat(Math.max(1, Math.floor(width / 32))))))),
   },
   {
     name: 'Destructible brick',

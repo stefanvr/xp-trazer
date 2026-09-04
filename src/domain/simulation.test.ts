@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { createGameState, step, STEP_SECONDS, type GameState, type Input } from './simulation';
+import { CELL_PIXELS, levelFromRows } from './level';
 
 const NOTHING_HELD: Input = { left: false, right: false };
-const BOUNDARY = { width: 640, height: 480 };
+// 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
+const LEVEL = levelFromRows(Array.from({ length: 15 }, () => '.'.repeat(20)));
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
 function stateWith(ball: Partial<GameState['ball']>): GameState {
-  const state = createGameState(BOUNDARY);
+  const state = createGameState(LEVEL);
   return { ...state, ball: { ...state.ball, ...ball } };
 }
 
@@ -103,8 +105,10 @@ describe('the step itself', () => {
   });
 });
 
-describe('a boundary too small for the ball', () => {
-  it('fails loudly rather than starting a game that cannot work', () => {
-    expect(() => createGameState({ width: 4, height: 4 })).toThrow(/cannot hold a ball/);
+describe('the smallest level that can be authored', () => {
+  it('still holds the ball, so no guard is needed', () => {
+    const state = createGameState(levelFromRows(['.']));
+
+    expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
   });
 });
