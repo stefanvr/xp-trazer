@@ -46,9 +46,10 @@ them as a rule**, and spec-domain replaces them without owing an argument.
 bats and bat groups, holding and launching, a seed and clearing are all unbuilt. **A spec-domain name
 found in `src/` does not mean the rule behind it is implemented.**
 
-**The page's `bounces` and `vx` readouts are the proof's instruments, not the game's surface.** They
-exist so a smoke test can assert that the loop advanced and that a key reached the domain, and they
-go when version one's surface arrives. The build identifier beside them stays.
+**The built page carries the commit it was built from.** A deployment is verified by fetching the
+artefact and reading that identifier (**SF-8**), so it is a requirement of the stack rather than a
+choice about the surface. What else the page shows is [spec-app.md](spec-app.md)'s, including which
+of the proof's instruments survive.
 
 ## Architecture
 

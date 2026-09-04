@@ -75,6 +75,9 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
   ones that deserved the length lose the emphasis length was supposed to give them.
 - When the same explanation reaches both a pointer and its target, delete the pointer's copy. Routing
   was its whole job.
+- **Do not write down what the tree already shows.** A note saying which documents do not exist yet
+  goes stale one file at a time, and silently, because nothing fails when it does. Where computing
+  something would cost a read you cannot afford, copy it — and then say which side is the authority.
 
 ---
 
