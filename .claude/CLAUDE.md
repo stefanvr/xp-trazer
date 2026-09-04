@@ -65,9 +65,6 @@ is the routing — which document answers which question.
 | What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
-`spec-app.md` does not exist yet. See **Bootstrap** above: that means the sequence has not reached
-it.
-
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
 cleared when the goal lands.

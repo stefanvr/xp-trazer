@@ -39,19 +39,8 @@ bash scripts/verify-deployment.sh <the pages url> "$(git rev-parse origin/main)"
 The workflow runs this itself, and it is worth running by hand whenever something looks wrong.
 
 **It fetches the page and reads the `build-identifier` meta tag** — never asking GitHub whether the
-deployment succeeded. **SF-8**: a control API reports *not enabled* and *not allowed to ask*
-identically, so it answers neither question. The artefact is the only thing that can only be right
-when the thing actually works.
-
-It separates three failures that a control API would report as one:
-
-| What it says | What happened |
-|---|---|
-| no meta tag at all | not our page — a 404 page, or a stale deployment from before the tag existed |
-| `unknown` | built outside a repository (**SF-7**) — the build exited 0 and nothing else noticed |
-| a real but different commit | **the deployment did not fail; it served an older build** |
-
-The third is the one worth having. Nothing else in the pipeline notices it.
+deployment succeeded (**SF-8**). Which failures that separates, and why the control API cannot, is in
+[lessons/github-pages.md](lessons/github-pages.md).
 
 ### The default branch is the host's opinion, not ours
 

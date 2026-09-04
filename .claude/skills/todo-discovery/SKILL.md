@@ -14,9 +14,9 @@ findings is the owner's — this routine reports and does not order.
 **Absence is not a finding.** This project builds and specifies no further than the goal in front of
 it, and [CLAUDE.md](../../CLAUDE.md) records the bootstrap sequence that makes that deliberate. A
 specification that does not exist means the sequence has not reached it. **Never report a
-specification the sequence has not reached as missing — `spec-domain.md` and `spec-app.md` today —
-and never report that something has not been built yet** — those are the plan working, and reporting
-them hands the project its own method back as a fault.
+specification the sequence has not reached as missing, and never report that something has not been
+built yet** — those are the plan working, and reporting them hands the project its own method back as
+a fault. *Which documents exist is not written down anywhere, deliberately: look.*
 
 **The greppable half is the smallest half.** The findings are in what the documents say *about each
 other*. A run that only greps for the word `TODO` reports that there is nothing to do.
@@ -61,10 +61,9 @@ would have been argued back into scope on the next run.
   says so and the checklist repairs it. Written down and handled is closed.
 - **Cosmetics.** A missing trailing newline has no done worth naming.
 
-**When the specifications exist, this may widen.** Once `spec-domain` and `spec-app` join `spec-style`
-and `spec-tech`, checking them against each other becomes a legitimate target of the same shape —
-documents disagreeing. That is a possibility the owner has raised, not a decision, and it stays out of
-scope until they make it one.
+**Where the specifications exist, this may widen.** Checking them against each other, and against
+`spec-tech`, is a legitimate target of the same shape — documents disagreeing. That is a possibility
+the owner has raised, not a decision, and it stays out of scope until they make it one.
 
 ## Where to look
 
@@ -77,7 +76,12 @@ scope until they make it one.
 4. **Follow the attributions.** *"A chose B"* asserts that A's file records B. Check A.
 5. **Re-read whatever was changed most recently.** A structural fix in one document is the usual cause
    of a stale claim in another.
-6. **Then grep** — `todo|fixme|tbd` — and expect it to find little.
+6. **Where content has moved, ask who still points at where it was** — not whether each citation
+   still resolves. A redirect left behind for old citations resolves, and a section that kept its
+   name while losing its subject resolves, and both are wrong. Sweep by *what moved*, not by
+   *identifier*: grepping the moved thing's number finds the citations that name it and none of the
+   prose that restates it.
+7. **Then grep** — `todo|fixme|tbd` — and expect it to find little.
 
 Every step reads the file. *Report what was verified, not what is believed — the two read identically
 and only one of them is worth anything.*

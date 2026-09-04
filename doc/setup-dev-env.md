@@ -46,12 +46,8 @@ npm test
 ✅ `nvm use` selects 24 from `.nvmrc`. ✅ `npm ci` into a deliberately wiped `node_modules`, followed
 by `npm test`, gives 12 passing domain tests.
 
-**`npm ci`, not `npm install`.** `ci` installs exactly what the lockfile says and fails if
-`package.json` and the lockfile disagree; `install` will quietly resolve something newer. Use
-`install` only when adding a dependency on purpose.
-
-**Read the output, not only the exit code** — **SF-10**: a successful `npm install` can contain a
-failed config load and still exit 0.
+**`npm ci`, not `npm install`**, and **read the output rather than only the exit code**. Why each
+matters, and what a successful install can hide, is in [lessons/node.md](lessons/node.md).
 
 ## When nvm is not there
 
@@ -78,9 +74,9 @@ npx playwright install chromium
 
 ✅ Downloads and launches under WSL with no `sudo` and no system package added.
 
-**Never `--with-deps`.** It shells out to `sudo apt-get`, and with no stdin for the password prompt
-it hangs rather than failing — setup-ai-env §3. The download itself needs no privileges, which is
-why the plain form works.
+**Never `--with-deps` here.** It shells out to `sudo apt-get` and hangs on a prompt nothing can
+answer (setup-ai-env §3); the download itself needs no privileges. Why, and where the opposite is
+correct, is in [lessons/playwright.md](lessons/playwright.md).
 
 **On a barer machine the browser may still be missing system libraries.** Playwright names them when
 it fails. Installing them needs the distro package manager, and therefore root.
