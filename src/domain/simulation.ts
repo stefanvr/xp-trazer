@@ -1,4 +1,4 @@
-import { batHoldingTheBall, launchVelocity, restingOn } from './ball';
+import { awayFrom, batHoldingTheBall, launchVelocity, restingOn } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { extentOf, type Bat, type Extent, type Level } from './level';
 
@@ -75,6 +75,9 @@ export function boundaryOf(state: GameState): Extent {
 export function createGameState(level: Level, seed: number): GameState {
   const radius = 9;
   for (const bat of level.bats) {
+    // DS-1.6 — throws where a bat has nothing, or something on both sides, to rest against.
+    awayFrom(level, bat);
+
     const span = spanFor(level, bat);
     if (span.high < span.low) {
       throw new Error(

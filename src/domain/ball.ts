@@ -11,19 +11,31 @@ export const BALL_PIXELS_PER_SECOND = 260;
 export type Vector = { readonly x: number; readonly y: number };
 
 /**
- * Which way the ball leaves its bat.
+ * Which way the ball leaves its bat — the open side, per **DS-1.6** and **DS-2.2**.
  *
- * **DS-2.2** says perpendicular to the bat and away from it, which fixes the axis but not the sign —
- * a bat with level on both sides could throw either way. The side taken is the one with more level
- * behind it, so a bat in the top half throws downwards and one in the bottom half throws up. That
- * keeps **DS-1.1** — nothing leaves the level — true for a bat hard against an edge, where the other
- * side is outside.
+ * **DS-1.6** says a bat has something the ball cannot pass on one perpendicular side. The ball rests
+ * on the other, and leaves that way. Today the only such thing is the level's edge; when a hazard
+ * can sit against a bat, this is where it is read.
+ *
+ * A bat with both sides open, or neither, has no answer. That is a level that **DS-1.6** forbids, so
+ * this fails loudly rather than picking one — `createGameState` asks for every bat at start, which is
+ * where such a level is refused.
  */
 export function awayFrom(level: Level, bat: Bat): Vector {
-  if (bat.orientation === 'horizontal') {
-    return bat.line < level.rows / 2 ? { x: 0, y: 1 } : { x: 0, y: -1 };
+  const last = bat.orientation === 'horizontal' ? level.rows - 1 : level.columns - 1;
+  const blockedBefore = bat.line === 0;
+  const blockedAfter = bat.line === last;
+
+  if (blockedBefore === blockedAfter) {
+    const sides = blockedBefore ? 'both sides blocked' : 'nothing on either side';
+    throw new Error(
+      `a ${bat.orientation} bat on line ${bat.line} has ${sides}; DS-1.6 wants exactly one`,
+    );
   }
-  return bat.line < level.columns / 2 ? { x: 1, y: 0 } : { x: -1, y: 0 };
+
+  const forwards = blockedBefore;
+  if (bat.orientation === 'horizontal') return { x: 0, y: forwards ? 1 : -1 };
+  return { x: forwards ? 1 : -1, y: 0 };
 }
 
 /** **DS-2.1** — a held ball rests on its bat, so its place is the bat's place. */

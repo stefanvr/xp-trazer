@@ -77,11 +77,14 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-1.4** A level starts with the ball held by one of its bats, drawn from the seed.
 - **DS-1.5** A level is in exactly one of three states: the ball is held, the ball is travelling, or
   the level is cleared.
+- **DS-1.6** A bat has something the ball cannot pass on one of its two perpendicular sides — the
+  level's edge today, and whatever else is placed against it later. The other side is open.
 
 ### DS-2 · The ball
 
-- **DS-2.1** A held ball rests on its bat and moves with it.
-- **DS-2.2** Launching sets the ball travelling perpendicular to the bat that held it, away from it.
+- **DS-2.1** A held ball rests on its bat and moves with it, on the side **DS-1.6** leaves open.
+- **DS-2.2** Launching sets the ball travelling perpendicular to the bat that held it, away from it —
+  which is that same open side.
 - **DS-2.3** A travelling ball advances every step.
 - **DS-2.4** A ball that collides changes direction obeying the law of reflection.
 - **DS-2.5** The ball's speed never changes. A collision changes where it is going, never how fast.

@@ -54,8 +54,15 @@ than two.
 undecided, not decided. It is recorded so the owner gets the choice rather than inheriting the
 agent's.
 
-**Done when** DS-2.1 or DS-2.2 says which side, or the owner confirms the derivation and it stops
-being open.
+**Closed.** The owner gave the rule the specification was missing: *a bat always has a boundary or
+future hazard on one side, and the ball rests on the other.* The agent's half-of-the-level proxy
+would have answered wrongly for a bat in the middle, which is exactly where a proxy breaks.
+
+It is now **DS-1.6** in `doc/spec-domain.md`, with DS-2.1 and DS-2.2 amended to point at it.
+`awayFrom` reads the open side rather than guessing, and fails loudly where there is no answer;
+`createGameState` asks for every bat at start, so a level DS-1.6 forbids is refused before play.
+The authored level's bats moved to the edges, because under the old proxy they were legal and under
+the rule they were not.
 
 ## B-3 · The style page says the domain owns no brick or bat type
 
@@ -65,9 +72,12 @@ being open.
 type yet"* and *"…does not own a bat type yet"*. `doc/spec-domain.md` owns both, and
 `src/domain/level.ts` has them.
 
-**Why it is not fixed here.** The `style` skill says an element the domain models is drawn by calling
-the project's real render function, not re-implemented — so the fix is to redraw those panels from
-real types, which is that routine's job. Editing the labels alone would leave the page claiming to
-demonstrate real code while still painting rectangles by hand.
+**Half fixed here.** The labels said the domain owns no brick or bat type, which is false, so they
+now say only what is true: *shape only — not drawn by the real renderer*.
+
+**What is left is the redraw.** The `style` skill says an element the domain models is drawn by
+calling the project's real render function rather than re-implemented. spec-domain owns bricks and
+bats now, so those three panels should go through `draw()`. That is the style routine's job, not
+this goal's.
 
 **Done when** the `style` skill runs and the panels draw bricks and bats through `draw()`.

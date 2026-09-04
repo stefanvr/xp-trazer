@@ -4,9 +4,9 @@ import { CELL_PIXELS, levelFromRows } from './level';
 
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
 // 20 x 15 cells of 32 pixels — a 640 x 480 level, the size the earlier tests were written against.
-const LEVEL = levelFromRows([...Array.from({ length: 14 }, () => '.'.repeat(20)), `-${'.'.repeat(19)}`]);
+const LEVEL = levelFromRows([`-${'.'.repeat(19)}`, ...Array.from({ length: 14 }, () => '.'.repeat(20))]);
 // One bat on each axis, both with room to move.
-const BOTH_AXES = levelFromRows([`-|${'.'.repeat(18)}`, ...Array.from({ length: 14 }, () => '.'.repeat(20))]);
+const BOTH_AXES = levelFromRows([`-${'.'.repeat(19)}`, `|${'.'.repeat(19)}`, ...Array.from({ length: 13 }, () => '.'.repeat(20))]);
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -136,14 +136,23 @@ describe('the step itself', () => {
 });
 
 describe('the smallest level that can hold a bat', () => {
+  // Two rows, because DS-1.6 wants one side of the bat open and a single row is blocked on both.
   it('holds the ball too, so no guard for that is needed', () => {
-    const state = createGameState(levelFromRows(['-..']), 0);
+    const state = createGameState(levelFromRows(['-..', '...']), 0);
 
     expect(state.ball.radius * 2).toBeLessThan(CELL_PIXELS);
   });
 
   it('refuses a level whose bat has less room than its own length', () => {
-    expect(() => createGameState(levelFromRows(['-.']), 0)).toThrow(/less room than its own length/);
+    expect(() => createGameState(levelFromRows(['-.', '..']), 0)).toThrow(
+      /less room than its own length/,
+    );
+  });
+
+  it('refuses a level whose bat has nothing to rest against, which DS-1.6 forbids', () => {
+    expect(() => createGameState(levelFromRows(['...', '-..', '...']), 0)).toThrow(
+      /nothing on either side/,
+    );
   });
 });
 

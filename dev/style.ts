@@ -13,11 +13,10 @@ import {
 /**
  * The `style` skill's page: one panel per row in doc/spec-style.md's palette table.
  *
- * The level background, boundary and ball already have a domain type and a real draw function, so
- * they are drawn by calling it. A brick or a bat has no domain type yet — spec-domain.md does not
- * own them — so those panels paint the shape and color the spec describes directly, and say so.
- * Inventing a domain type here to avoid saying so would be a product decision smuggled into a
- * demonstration page (build skill's "a proof contains no product decisions").
+ * The level background, boundary and ball are drawn by calling the real render function. Bricks and
+ * bats are painted here instead, and say so — spec-domain.md owns both now, so the style skill wants
+ * them drawn through draw() as well. Until that runs, the label must not claim more than the panel
+ * does.
  */
 
 type Swatch = {
@@ -62,7 +61,8 @@ function batteredRows(width: number, height: number): string[] {
   const columns = Math.max(2, Math.floor(width / 32));
   const rows = Math.max(1, Math.floor(height / 32));
   const empty = '.'.repeat(columns);
-  return [...Array.from({ length: rows - 1 }, () => empty), `-${'.'.repeat(columns - 1)}`];
+  // Against the top edge, as DS-1.6 requires.
+  return [`-${'.'.repeat(columns - 1)}`, ...Array.from({ length: rows - 1 }, () => empty)];
 }
 
 const swatches: readonly Swatch[] = [
@@ -79,7 +79,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Destructible brick',
     role: 'The objective — what clearing removes',
-    note: 'Shape only — spec-domain.md does not own a brick type yet',
+    note: 'Shape only — not drawn by the real renderer',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 96, 26);
@@ -89,7 +89,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Permanent brick',
     role: 'Structure, not a target',
-    note: 'Shape only — spec-domain.md does not own a brick type yet',
+    note: 'Shape only — not drawn by the real renderer',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 96, 26);
@@ -99,7 +99,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Horizontal bats',
     role: 'One control group',
-    note: 'Shape only — spec-domain.md does not own a bat type yet',
+    note: 'Shape only — not drawn by the real renderer',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 110, 14);
@@ -109,7 +109,7 @@ const swatches: readonly Swatch[] = [
   {
     name: 'Vertical bats',
     role: 'The other control group',
-    note: 'Shape only — spec-domain.md does not own a bat type yet',
+    note: 'Shape only — not drawn by the real renderer',
     paint: (context, width, height) => {
       fillBackground(context, width, height);
       const rect = centeredRect(width, height, 14, 110);

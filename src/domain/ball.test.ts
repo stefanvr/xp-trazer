@@ -4,47 +4,62 @@ import { BAT_LENGTH_PIXELS, CELL_PIXELS, levelFromRows, type Bat } from './level
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
-const TALL = levelFromRows(Array.from({ length: 10 }, (_, row) => (row === 0 ? '-....' : '.....')));
-const WIDE = levelFromRows(['|....', '.....', '.....']);
+// Bats against an edge, as DS-1.6 requires.
+const TALL = levelFromRows([
+  '-....',
+  ...Array.from({ length: 8 }, () => '.....'),
+  '-....',
+]);
+const WIDE = levelFromRows(['|...|', '.....', '.....']);
 
 const horizontal = (line: number, position = 0): Bat => ({ orientation: 'horizontal', line, position });
 const vertical = (line: number, position = 0): Bat => ({ orientation: 'vertical', line, position });
 
 describe('which way a bat throws', () => {
-  it('throws down from the top half, so the ball goes into the level', () => {
-    expect(awayFrom(TALL, horizontal(1))).toEqual({ x: 0, y: 1 });
+  it('throws away from the edge above it', () => {
+    expect(awayFrom(TALL, horizontal(0))).toEqual({ x: 0, y: 1 });
   });
 
-  it('throws up from the bottom half', () => {
-    expect(awayFrom(TALL, horizontal(8))).toEqual({ x: 0, y: -1 });
+  it('throws away from the edge below it', () => {
+    expect(awayFrom(TALL, horizontal(9))).toEqual({ x: 0, y: -1 });
   });
 
-  it('throws right from the left half', () => {
+  it('throws away from the edge to its left', () => {
     expect(awayFrom(WIDE, vertical(0))).toEqual({ x: 1, y: 0 });
   });
 
-  it('throws left from the right half', () => {
+  it('throws away from the edge to its right', () => {
     expect(awayFrom(WIDE, vertical(4))).toEqual({ x: -1, y: 0 });
+  });
+
+  it('has no answer for a bat with nothing on either side, which DS-1.6 forbids', () => {
+    expect(() => awayFrom(TALL, horizontal(4))).toThrow(/nothing on either side/);
+  });
+
+  it('has no answer for a bat with both sides blocked', () => {
+    const oneRow = levelFromRows(['-....']);
+
+    expect(() => awayFrom(oneRow, horizontal(0))).toThrow(/both sides blocked/);
   });
 });
 
 describe('a held ball', () => {
   it('sits along the middle of the bat holding it', () => {
-    const resting = restingOn(TALL, horizontal(1, 64), 9);
+    const resting = restingOn(TALL, horizontal(0, 64), 9);
 
     expect(resting.x).toBe(64 + BAT_LENGTH_PIXELS / 2);
   });
 
   it('rests against the side the bat throws towards', () => {
-    const resting = restingOn(TALL, horizontal(1, 0), 9);
+    const resting = restingOn(TALL, horizontal(0, 0), 9);
 
-    expect(resting.y).toBe(2 * CELL_PIXELS + 9);
+    expect(resting.y).toBe(CELL_PIXELS + 9);
   });
 
-  it('rests on the other side for a bat in the far half', () => {
-    const resting = restingOn(TALL, horizontal(8, 0), 9);
+  it('rests on the other side for a bat against the far edge', () => {
+    const resting = restingOn(TALL, horizontal(9, 0), 9);
 
-    expect(resting.y).toBe(8 * CELL_PIXELS - 9);
+    expect(resting.y).toBe(9 * CELL_PIXELS - 9);
   });
 
   it('rests beside a vertical bat rather than above it', () => {
@@ -56,7 +71,7 @@ describe('a held ball', () => {
 
 describe('launching', () => {
   it('sends the ball perpendicular to its bat, away from it', () => {
-    expect(launchVelocity(TALL, horizontal(1))).toEqual({ x: 0, y: BALL_PIXELS_PER_SECOND });
+    expect(launchVelocity(TALL, horizontal(0))).toEqual({ x: 0, y: BALL_PIXELS_PER_SECOND });
   });
 
   it('sends it along the other axis from a vertical bat', () => {
@@ -64,7 +79,7 @@ describe('launching', () => {
   });
 
   it('leaves at the one speed the ball ever has', () => {
-    const velocity = launchVelocity(TALL, horizontal(8));
+    const velocity = launchVelocity(TALL, horizontal(9));
 
     expect(Math.hypot(velocity.x, velocity.y)).toBe(BALL_PIXELS_PER_SECOND);
   });
