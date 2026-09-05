@@ -22,6 +22,8 @@ while the document that owns it is unwritten — see *Where each answer ends up*
 
 ---
 
+**Reached.** The next overarching goal is not set yet — `scope create` sets it.
+
 ## The goal — a game starts
 
 **Done means:** one level appears, the ball is in play, both bat groups answer the player, and the
