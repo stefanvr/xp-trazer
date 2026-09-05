@@ -42,9 +42,10 @@ reached wants `check`, a goal marked reached wants `create`.
 **Read the scope's *Done means* and ask whether it is now true.** That sentence is the edge, and it is
 the only thing being answered. Most goals land *inside* the overarching goal and the answer is no.
 
-**Answer it from the artefact, not from the commit log.** The edge is a claim about what the program
-does, so running the program is what settles it. A passing test says the code ran; it does not say
-the edge is met. Where there is something to look at, look at it.
+**Answer it from the suites, not from the commit log.** The edge is a claim about what the program
+does, and the unit and end-to-end suites are what say so. **Do not drive the running product to
+settle it** — that is expensive, it proves one thing once, and it leaves nothing behind. Where a
+clause of *Done means* is asserted nowhere, that is a gap in the tests: close it there.
 
 **Confirm the scope has finished moving out.** Its *Where each answer ends up* table checks off each
 answer the day its specification is written, without removing the row. Every row must be checked

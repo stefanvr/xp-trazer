@@ -57,6 +57,10 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
   and only one of them is worth anything.
 - Prefer external signal to self-report: verify by reading the artefact, not the claim that it was
   produced.
+- **The suite is the verification; driving the product by hand is not.** An automated check runs
+  again tomorrow, and on a machine that is not yours; a manual run proves one thing once, to one
+  person, and leaves nothing behind. Where something worth asserting is asserted nowhere, that is a
+  test to write — not a session to spend steering the product until it does the thing.
 - On anything multi-step, arrange a second reader — a test, a check, or another model.
 - Write down the surprise, not the summary. A rule with no observation behind it gets ignored by the
   third session, and rightly so: it reads as someone's preference rather than as something that

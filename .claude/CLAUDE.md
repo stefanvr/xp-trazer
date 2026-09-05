@@ -51,6 +51,10 @@ before it is written.
   landing looks like it reaches the overarching goal it calls `scope check`, which marks it reached
 * **Setting the next overarching goal is never part of a landing** — it is bootstrap step 2, run as
   `scope create`, separately and whenever the owner chooses
+* **Merge with `--no-ff`, so every landing leaves one commit named for what landed** — `Merge
+  <branch>: <what landed>`. A fast-forward loses the boundary, and that boundary is the only place
+  the landing reads as one thing rather than as a run of commits. Never rewrite `main` to give an
+  earlier landing one it did not get
 * After a merge to main, delete local and remote feature branch
 
 ### Understanding the project
