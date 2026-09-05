@@ -23,8 +23,10 @@ A project is brought into being in this order:
 2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the `scope`
    skill in `create` mode.
 3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
-   `app` skill), `doc/spec-style.md`, `doc/spec-tech.md` — **in any order**. No dependency is implied
-   between them, so none of them blocks another.
+   `app` skill), `doc/spec-style.md` (the `style` skill), `doc/spec-tech.md` (the `tech` skill) —
+   **in any order**. No dependency is implied between them, so none of them blocks another.
+
+**Each of the four skills ends in a scrutiny pass.**
 
 A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
 something missing.
