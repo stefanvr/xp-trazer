@@ -15,8 +15,8 @@ is technically produced, and every other technology choice — `doc/spec-tech.md
 
 **The player, not the developer.** A story map is about tasks a user does in the product, and a
 developer is not one. What a developer meets is already owned: `doc/guide-design.md` says dev-only
-affordances are built, gated, and documented as they are built, and the [style](../style/SKILL.md)
-skill does exactly that for `dev/style.html`.
+affordances are built, gated, and documented as they are built, and the
+[preview](../preview/SKILL.md) skill does exactly that for `dev/style.html` and `dev/audio.html`.
 
 **A specification states the desired state**, with no marker saying who proposed something or how
 settled it is. The [domain](../domain/SKILL.md) skill carries the full argument; it holds here
