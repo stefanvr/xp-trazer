@@ -9,6 +9,10 @@ built with [spec-tech.md](spec-tech.md).
 **Replaced, not appended to.** One overarching goal at a time; when it is reached the goal below is
 replaced rather than archived, because the commit history already records what landed.
 
+**Reaching a goal and setting the next one are two steps, not one.** The goal is first *marked*
+reached and left standing — it is what the next one is chosen against — and replaced later, whenever
+a new scope is set. `.claude/skills/scope/SKILL.md` owns both, and neither happens inside a landing.
+
 **Expected to change mid-flight**, on the branch of whatever found the reason.
 
 **No backlog, no parked list, no next-up** — `.claude/skills/land/SKILL.md` carries the argument.

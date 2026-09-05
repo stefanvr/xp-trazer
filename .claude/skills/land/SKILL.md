@@ -1,18 +1,19 @@
 ---
 name: land
-description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then checks whether this landing also reached the overarching goal in doc/scope.md. Use when the owner approves a merge to main, before merging.
+description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope skill, which owns it. Use when the owner approves a merge to main, before merging.
 ---
 
 # Land
 
 **Owns.** What happens at the moment a goal lands: the point where the owner approves a merge to
-main. Two tasks — clearing `doc/scratchpad/` on every landing, and, on the owner's approval,
-replacing the goal in `doc/scope.md` on the rare landing that reaches it. Further landing tasks go
-here as they earn their place.
+main. One task — clearing `doc/scratchpad/`, on every landing. Further landing tasks go here as they
+earn their place.
 
-**Not here.** The git mechanics around it. Branch before a goal, commit task-sized, push before
-returning, approval before merging, delete the branch after — all in
-[CLAUDE.md](../../CLAUDE.md), which is also where the hook that calls this skill lives.
+**Not here.** `doc/scope.md`. Whether the overarching goal is reached, and what the next one is, both
+belong to [scope](../scope/SKILL.md); this skill calls it and writes nothing to that document itself.
+Nor the git mechanics — branch before a goal, commit task-sized, push before returning, approval
+before merging, delete the branch after — all in [CLAUDE.md](../../CLAUDE.md), which is also where the
+hook that calls this skill lives.
 
 **Run it before the merge, not after.** Everything it does is a change to the goal's own branch, so
 it belongs in the goal's history. A goal that lands with its working notes still in the tree has not
@@ -65,34 +66,21 @@ state that looks like progress and is not.
 
 ## When this landing reaches the scope
 
-Most goals land *inside* the overarching goal and leave `doc/scope.md` alone. Check anyway, because
-the check is one sentence: **read the scope's *Done means* and ask whether it is now true.**
+Most goals land *inside* the overarching goal and leave `doc/scope.md` alone. Ask anyway, because
+asking is one sentence: **read the scope's *Done means* and ask whether it is now true.**
 
-**Answer it from the artefact, not from the commit log.** The edge is a claim about what the program
-does, so running the program is what settles it.
+If it is not reached, there is nothing to do. If it reads as reached, **run
+[scope](../scope/SKILL.md) in `check` mode and stop reading here.** That skill owns the document, the
+proposal to the owner, and the marker it writes.
 
-If it is not reached, there is nothing to do. If it reads as reached, that is a **proposal, not a
-finding**:
-
-1. **Put it to the owner, and wait.** Say that the edge reads as met and what it was answered
-   against. Nothing below happens without explicit agreement — an overarching goal is the owner's to
-   declare over, and everything after this step is irreversible on this branch. Reporting that it
-   looks reached is not the approval.
-2. **Confirm the scope has finished moving out.** Its *Where each answer ends up* table checks off
-   each answer the day its specification is written, without removing the row — so before the goal is
-   replaced, every row must be checked. **The rule** above is the test: a row still unchecked here is
-   an answer that exists nowhere else yet, and deleting the section under it would be exactly the loss
-   that rule forbids.
-3. **Replace the goal, keep the document.** Everything from `## The goal` down belonged to the goal
-   that just ended. The header above it is the document's own rules and stays. A scope with no goal
-   in it says the next one is unset, which is true and worth being able to see.
-
-**The next overarching goal is not written here.** Setting it is bootstrap step 2, and the owner's.
+**Landing does not set the next goal.** Not by writing one, and not by clearing the way for one. A
+landing that decided what gets built next would be doing two jobs, and setting the overarching goal
+is bootstrap step 2 with its own place in the sequence — `scope create`, separately, whenever the
+owner chooses.
 
 ## What it touches
 
-`doc/scratchpad/` on every landing — its `.gitkeep` stays, so the directory survives being empty —
-and `doc/scope.md` only on the landing that reaches the overarching goal.
+`doc/scratchpad/`, and nothing else — its `.gitkeep` stays, so the directory survives being empty.
 
 **`doc/brainstorm/` is not cleared.** A brainstorm records how a specification got its content and is
 superseded by that specification rather than deleted — the `brainstorm` skill carries that rule.

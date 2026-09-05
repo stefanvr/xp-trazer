@@ -20,7 +20,8 @@ A project is brought into being in this order:
 
 1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
    Everything it produces is draft and lands in `doc/brainstorm/`.
-2. **Scope the first version** — the overarching goal, written to `doc/scope.md`.
+2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the `scope`
+   skill in `create` mode.
 3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
    `app` skill), `doc/spec-style.md`, `doc/spec-tech.md` — **in any order**. No dependency is implied
    between them, so none of them blocks another.
@@ -46,8 +47,10 @@ before it is written.
   the landing commit sits on the history that is kept. **Ends when** the rewriting costs more than
   the log is worth, or a second person is working on a branch.
 * Always let the user approve a merge to main for release
-* On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and replaces
-  the goal in `doc/scope.md` if this landing reached it
+* On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and where the
+  landing looks like it reaches the overarching goal it calls `scope check`, which marks it reached
+* **Setting the next overarching goal is never part of a landing** — it is bootstrap step 2, run as
+  `scope create`, separately and whenever the owner chooses
 * After a merge to main, delete local and remote feature branch
 
 ### Understanding the project
