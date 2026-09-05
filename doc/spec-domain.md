@@ -37,6 +37,7 @@ The player moves bats. The ball moves itself.
 | **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
+| **Event** | Something that happened in the world. A step yields the events that happened during it. | `Event` |
 | **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 | **Game state** | Everything that changes while a level is played. | `GameState` |
