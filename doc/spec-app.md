@@ -86,10 +86,23 @@ running and that a key reached the simulation — [spec-tech.md](spec-tech.md)'s
 identifier, applied to behaviour rather than to provenance. **They sit beside the level and never on
 it**, so nothing the player plays inside carries them, and no step needs them.
 
-**Desktop-sized, and driven by the keyboard.**
+**Desktop-sized, and driven by the keyboard — one of two modes.**
 
-## What this leaves open
+### The small-screen mode
 
-- **The small-screen mode, and the touch input it needs.** [scope.md](scope.md) puts both in version
-  one, to be built after the keyboard one. Two bat groups on two axes have no obvious touch
-  equivalent, so it is design work rather than a port, and nothing here constrains it.
+**Both conditions decide it, not either alone.** The screen is narrower than **700px**, *and* the
+device reports touch support. A narrow desktop window without touch stays on the keyboard layout —
+narrow is not the same as untouchable, and a resized window is not a phone. A wide touch screen also
+stays on it — width is scope's own axis (*"the keyboard on a desktop-sized screen, and touch on a
+small one"*), and a large touchscreen is assumed to have room and, often, a keyboard.
+
+700px is chosen against the level itself: the authored level is 640px wide, so anything narrower
+cannot show it at its natural size, and 700px leaves a little past that before the switch fires.
+
+**The level scales to fit the width it is given, keeping its aspect ratio; the five buttons sit below
+it, never over it.** A finger on the level would be a finger on the ball. The readouts move below the
+buttons — they are still not the player's, so they take whatever is left rather than a place chosen
+for them.
+
+**No other chrome.** The one screen, and the one activity, are the same in both modes — a mode is how
+the level's steps are reached, not a second surface.
