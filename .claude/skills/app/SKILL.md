@@ -42,8 +42,9 @@ all three.
 3. **Details** — the granular, discrete interactions that complete a step.
 
 **Every level is the minimum that completes the level above.** Details are the smallest set that
-completes the step; activities are tested against `doc/scope.md` the same way. **The next iteration
-is the minimal extension**, not the next tranche of a design that was worked out in advance.
+completes the step; activities are tested the same way against whatever goal `doc/scope.md` holds.
+**The next iteration is the minimal extension**, not the next tranche of a design that was worked
+out in advance.
 
 ### Layout sits beside interaction on purpose
 
@@ -73,8 +74,11 @@ untested.**
 
 1. **Every detail is the minimum that completes its step.** *A detail the step would still be
    complete without is the finding* — it belongs to a later iteration, as a minimal extension.
-2. **Every activity is in the scope.** Test the top level against `doc/scope.md`. *An activity the
-   scope puts out is the finding*, however obviously the product will want it later.
+2. **Every activity is in the scope, where a scope is set.** Test the top level against
+   `doc/scope.md`. *An activity the goal puts out is the finding*, however obviously the product
+   will want it later. **Where the document holds no goal, say so and skip this test** — a scope is
+   cleared when its goal is reached and may sit empty until the next one is set, and a test with
+   nothing to test against passes silently, which is worse than not running.
 3. **Every step surfaces somewhere.** Interaction design must say where each step happens. *A step
    with no surface is a gap*, and it is the one that reaches implementation as a guess.
 4. **Nothing here decides what another specification owns.** *A rule about how a thing looks, what
