@@ -74,8 +74,11 @@ letting them find out afterwards.
 
 - **The test sits where the behaviour is** — over plain state, no surface, milliseconds. Surface
   tests prove wiring only. Both are [guide-design.md](../../../doc/guide-design.md)'s rules.
-- **Verify the artefact, not the claim.** Run it; where there is anything to look at, screenshot it
-  and open the screenshot. A passing test says the code ran, not that the output is right.
+- **Verify the artefact, not the claim — and do it through the suite.** A unit test says the code
+  ran; what the product actually does in a browser is the end-to-end suite's to assert, screenshots
+  included. Where something is worth looking at and nothing asserts it, that is a test to write,
+  not a page to drive by hand —
+  [guide-general.md](../../../doc/guide-general.md) carries the argument.
 - **A check that has never failed is a claim, not evidence.** Make it fail on purpose once, and say
   what you did to make it fail.
 - **A departure from guide-design is recorded in spec-tech in one line** — that document's own

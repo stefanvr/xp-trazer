@@ -294,8 +294,11 @@ Nothing indicates what is being waited for, which is its own kind of time sink.
   The `land` skill carries that rule and the test that licenses the deletion.
 - **Check the result, not the command's exit code**, wherever the two can disagree (**SF-6**,
   **SF-7**, **SF-8**).
-- **Verify visually when there is anything to look at.** A passing test says the code ran, not that
-  the output is right. Screenshot it and open the screenshot.
+- **Verification runs through the suite, not through a page driven by hand.**
+  [guide-general.md](guide-general.md) owns that principle; what this machine adds is the price. An
+  ad-hoc check here costs a build, a server and a browser across the WSL boundary, it holds the
+  session for as long as it runs, and it leaves nothing that can be re-run. Where a screenshot is
+  the evidence, it belongs to the browser suite, which already keeps one on failure.
 - **Scaffold into a temporary directory, then copy in what you want.** A project generator writes
   its own `README.md` and `.gitignore` over yours, and the flag that suppresses the *prompt* does
   not suppress the *overwrite*.
