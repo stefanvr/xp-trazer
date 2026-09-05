@@ -11,7 +11,6 @@ it — DS-6 in `spec-domain.md`, the sound table in `spec-style.md`, Web Audio i
 
 | Task | What makes it checkable |
 |---|---|
-| **2 · An event has a sound, or none** | Unit, pure. A collision that destroyed nothing → the collision sound · an element destroyed → the destruction sound · a collision that destroyed what it met → nothing |
 | **3 · The page makes the noise** | End-to-end against the built page, with `AudioContext` replaced by a recorder: destroying a brick produces the destruction sound and not the collision one, and a bounce produces the collision sound. The page also runs when there is no `AudioContext` at all |
 | **4 · The audio check can fail** | Break the mapping on purpose, watch task 3's assertion fail, revert, watch it pass unmutated. A check that has never failed is a claim |
 
