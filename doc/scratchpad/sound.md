@@ -20,6 +20,20 @@ claiming to be a specification term.
 **Not fixed here**, because a specification pass writes specifications; the code change belongs to
 the build goal, which will open that file anyway.
 
+### The style preview page now covers half of what spec-style owns
+
+The `style` skill builds a dev-only page demonstrating *"every visual currently named in
+`doc/spec-style.md`"*, and says to run it whenever that document changes. `spec-style.md` has just
+gained a section the page cannot show, so running the skill after this change demonstrates the
+document's visuals and silently omits its sounds.
+
+Nothing is wrong with the skill as written — it says *visual*, and it does that. The gap is that
+spec-style now owns something no routine demonstrates, and *the suite is the verification* does not
+reach a question like *does this sound right*, which is a judgement rather than an assertion.
+
+**Whose it is:** the skill's, not this goal's. Raised here so the landing gives it a fate rather than
+leaving it to be met by someone running `style` and wondering why sound is missing.
+
 ## Carried forward, for a goal that is not this one
 
 ### The original has bricks that take more than one hit
