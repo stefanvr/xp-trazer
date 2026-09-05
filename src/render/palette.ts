@@ -2,7 +2,7 @@
  * The one place a value doc/spec-style.md decides lives — its colors, and now the type it names for
  * the one word version one puts on a level. That document owns what these values are; this module is
  * the only thing allowed to spell one out, so the real renderer and spec-style's demonstration page
- * (the `style` skill) draw from the same source rather than two copies that can drift apart.
+ * (the `preview` skill) draw from the same source rather than two copies that can drift apart.
  */
 
 export const BACKGROUND = '#05080d';

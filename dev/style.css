@@ -63,3 +63,47 @@ figcaption .note {
 figcaption .note {
   font-style: italic;
 }
+
+/*
+ * The sound page. Its panels have a button where the visual page has a canvas, and everything else
+ * — the gallery grid, the caption parts, `wide` — is shared, which is why it lives here rather than
+ * in a second stylesheet that would drift.
+ */
+h2 {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2.5rem;
+  opacity: 0.8;
+}
+
+#sounds,
+#events {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+button.play {
+  font: inherit;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1rem;
+  border-radius: 2px;
+  border: 1px solid #2a5d6d;
+  background: #08161c;
+  color: inherit;
+  cursor: pointer;
+}
+
+button.play:hover:not(:disabled) {
+  background: #0f2833;
+}
+
+/* A silence is a panel too, and it has to look like one rather than like a broken button. */
+button.play:disabled {
+  cursor: default;
+  opacity: 0.4;
+  border-style: dashed;
+}

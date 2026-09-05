@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trazer — sound demonstration</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>doc/spec-style.md, heard</h1>
+      <p class="lede">
+        One panel per sound the specification names, and one per event that decides whether a sound
+        happens at all. Every panel plays through the real synthesis, from the real values — so no
+        panel can keep sounding right after the audio edge stops. Dev-only: this page is never built
+        (see <code>.claude/skills/preview/SKILL.md</code>).
+      </p>
+      <h2>The two sounds</h2>
+      <div id="sounds"></div>
+      <h2>What each event is heard as</h2>
+      <p class="lede">
+        The interesting one is the collision that destroyed what it met: it is silent, because its
+        destruction is what is heard. Press the pair in order to hear that a brick going makes one
+        noise and not two.
+      </p>
+      <div id="events"></div>
+    </main>
+    <script type="module" src="./audio.ts"></script>
+  </body>
+</html>
