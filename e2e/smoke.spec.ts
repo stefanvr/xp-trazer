@@ -126,6 +126,26 @@ test.describe('the touch buttons', () => {
   });
 });
 
+/**
+ * The one thing the domain tests cannot reach: that clearing arrives on the page.
+ *
+ * DS-5.1 counts and DS-5.2 freezes, both settled over plain state in
+ * src/domain/simulation.test.ts. What is proven here is only the wiring — that destroying the last
+ * destructible element moves the readout the player reads. It runs against a level built for the
+ * purpose because the authored one cannot be cleared by a test: unattended it took 28 bricks to 20
+ * in 150 seconds, and steering the bats made it worse.
+ */
+test('clearing reaches the page when the last destructible brick goes', async ({ page }) => {
+  await page.goto('/?level=clearing-proof');
+  await expect(page.getByTestId('bricks-left')).toHaveText('1');
+
+  // Nothing is steered. The level is built so that launching is the whole input: one bat, so the
+  // seed cannot pick a different one, and the brick sits in the column the resting ball launches up.
+  await page.keyboard.press('Space');
+
+  await expect(page.getByTestId('bricks-left')).toHaveText('0', { timeout: 10_000 });
+});
+
 test('something is actually drawn on the canvas', async ({ page }) => {
   await page.goto('/');
 

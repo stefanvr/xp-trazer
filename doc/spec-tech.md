@@ -74,3 +74,19 @@ rediscovered by violating it.
 than hygienic: the clock is an input, pure computation lives outside the renderer, and anything random
 is seeded. Dropping any one of them for convenience breaks this silently — the game still plays, and
 only the tests stop being trustworthy, while staying green.
+
+### A-2 · One query parameter substitutes the level, and reaches nothing else
+
+`?level=clearing-proof` loads a level built so the end-to-end suite can watch a level be cleared: one
+bat, so DS-1.4's draw from the seed has a single candidate, and one destructible element in the
+column the resting ball launches up. Any other value, and the absent case, load the authored level.
+
+**Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing arriving on the page*
+is wiring, and wiring is only provable on the surface. The authored level cannot be cleared by a
+test — unattended it took 28 bricks to 20 in 150 seconds, and steering the bats made it worse — so
+without a level built for it, the one readout the player watches for the end of a level is asserted
+nowhere.
+
+**What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
+behaviour is reachable through it, and it is not level selection — that is a product decision
+[spec-app.md](spec-app.md) would own, and this is not a back door to making it in code.

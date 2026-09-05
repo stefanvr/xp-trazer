@@ -1,6 +1,7 @@
 import { createGameState, step, boundaryOf, STEP_SECONDS, type Input } from './domain/simulation';
 import { destructibleRemaining, levelFromRows } from './domain/level';
 import { FIRST_LEVEL } from './levels/first';
+import { CLEARING_PROOF_LEVEL } from './levels/clearing-proof';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
 
@@ -37,9 +38,24 @@ const batReadout = required('[data-testid="bat-position"]');
 const bricksReadout = required('[data-testid="bricks-left"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
+/**
+ * The level the player meets is always the authored one. `?level=clearing-proof` reaches the level
+ * that exists so the end-to-end suite can watch a level be cleared — playing the authored one to
+ * its last brick is not something a test can do in reasonable time, and clearing that nothing
+ * asserts is clearing nobody notices break.
+ *
+ * The seam substitutes a level and can do nothing else: no rule, no constant, no behaviour is
+ * reachable through it, and any value but the one name gives the authored level. `doc/spec-tech.md`
+ * records it.
+ */
+function chosenLevel(): readonly string[] {
+  const asked = new URLSearchParams(window.location.search).get('level');
+  return asked === 'clearing-proof' ? CLEARING_PROOF_LEVEL : FIRST_LEVEL;
+}
+
 // The seed comes from outside the level — one that authored its own would draw the same bat every
 // time, which is not a draw (doc/spec-domain.md).
-let state = createGameState(levelFromRows(FIRST_LEVEL), Date.now());
+let state = createGameState(levelFromRows(chosenLevel()), Date.now());
 
 // The level decides how big the play area is, so the canvas takes its size from the level.
 const extent = boundaryOf(state);
