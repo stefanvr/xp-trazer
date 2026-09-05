@@ -81,6 +81,10 @@ is the routing — which document answers which question.
 | What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
+**The guides and the skills carry no project.** `doc/guide-*.md` and `.claude/skills/` are written to
+be lifted onto a different project unchanged: no project state, and no domain vocabulary. What is
+about this project lives in `doc/spec-*.md`, `doc/setup-*.md` and `doc/scope.md`.
+
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
 cleared when the goal lands.

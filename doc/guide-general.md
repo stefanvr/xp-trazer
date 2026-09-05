@@ -78,6 +78,9 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
   reader that the whole document can be skimmed.
 - Elaborate only where a specific observation earns it. Where every entry is equally elaborated, the
   ones that deserved the length lose the emphasis length was supposed to give them.
+- **An observation earns its place only if it still reads once nobody remembers it.** Fresh evidence
+  always feels earned; a year on it is history in a document people open to find out what to do — and
+  history lives in the commit message.
 - When the same explanation reaches both a pointer and its target, delete the pointer's copy. Routing
   was its whole job.
 - **Do not write down what the tree already shows.** A note saying which documents do not exist yet
