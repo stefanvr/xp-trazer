@@ -10,7 +10,8 @@ kept separate on purpose: these are written to outlive the project, which is exa
 temporary is stored somewhere deletable. What the machine does is [setup-ai-env.md](setup-ai-env.md), and what it takes to
 have one is [setup-dev-env.md](setup-dev-env.md);
 which technologies are chosen is [spec-tech.md](spec-tech.md); how the code is shaped is
-[guide-design.md](guide-design.md).
+[guide-design.md](guide-design.md), **which outranks this document on that question** — its reason
+is its own to give, and routing was this sentence's whole job.
 
 **A principle earns its place by ruling something out.** That is the test for adding the next one:
 name the decision it would have changed. A principle that would never have changed a decision is a
