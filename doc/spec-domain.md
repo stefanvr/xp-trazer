@@ -27,6 +27,7 @@ The player moves bats. The ball moves itself.
 |---|---|---|
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
+| **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
 | **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
 | **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
@@ -37,6 +38,7 @@ The player moves bats. The ball moves itself.
 | **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
+| **Step** | The simulation advancing once. It is the domain's unit of time, and the only one it has. | `step` |
 | **Event** | Something that happened in the world. A step yields the events that happened during it. | `Event` |
 | **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
