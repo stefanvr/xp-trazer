@@ -7,27 +7,6 @@ lands; the `land` skill gives every item below one of three fates.
 
 ## Open
 
-### Two comments in `src/` cite documents wrongly
-
-Both are comment-only changes, and both belong to the build goal rather than to a specification pass —
-it will open both files anyway, to make `step` announce what happened.
-
-**`src/domain/collision.ts`** documents its `Obstacle` type as *"doc/spec-domain.md's **Collision**"*.
-It is not: in the specification a **Collision** is the meeting, and `Obstacle` is the thing met. The
-vocabulary activity considered promoting `Obstacle` to a specification term and decided against it —
-a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain already
-owns. So `Obstacle` stays a code-internal helper, and the comment should say that instead of claiming
-to be a specification term.
-
-**`src/domain/simulation.ts`**, the module comment, says *"the behaviour is not yet"* and lists a
-level of cells, elements, bats and bat groups, holding and launching, a seed and clearing as
-**absent**. Every one of them is in that file or imported into it. It also cites a paragraph of
-`spec-tech.md` that has since been deleted for being stale in exactly the same way, so the citation
-now resolves to nothing.
-
-The sentence worth keeping from it is the last one — a spec-domain name in the file does not mean the
-rule behind it is built — because **DS-6** is about to be precisely that case.
-
 ### The style preview page now covers half of what spec-style owns
 
 The `style` skill builds a dev-only page demonstrating *"every visual currently named in

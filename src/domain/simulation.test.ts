@@ -12,6 +12,13 @@ import { CELL_PIXELS, levelFromRows } from './level';
 import { obstacleAt } from './collision';
 
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
+
+/**
+ * Most of these tests ask what state a step left, not what it announced. **DS-6.1** makes a step
+ * yield both, so this takes the half they are about. The tests about events call `step` itself.
+ */
+const advance = (state: GameState, input: Input): GameState => step(state, input).state;
+
 /**
  * A far corner of every test level holds one destructible brick, out of reach of anything these
  * tests do. Without it the level is cleared before it starts — DS-5.1 is satisfied by a level with
@@ -43,7 +50,7 @@ describe('a ball meeting the boundary', () => {
   it('comes back with its horizontal direction reversed', () => {
     const state = stateWith({ position: { x: 12, y: 240 }, velocity: { x: -600, y: 0 } });
 
-    const next = step(state, NOTHING_HELD);
+    const next = advance(state, NOTHING_HELD);
 
     expect(next.ball.velocity.x).toBeGreaterThan(0);
     expect(next.ball.position.x).toBeGreaterThanOrEqual(next.ball.radius);
@@ -52,7 +59,7 @@ describe('a ball meeting the boundary', () => {
   it('comes back with its vertical direction reversed', () => {
     const state = stateWith({ position: { x: 320, y: 12 }, velocity: { x: 0, y: -600 } });
 
-    const next = step(state, NOTHING_HELD);
+    const next = advance(state, NOTHING_HELD);
 
     expect(next.ball.velocity.y).toBeGreaterThan(0);
     expect(next.ball.position.y).toBeGreaterThanOrEqual(next.ball.radius);
@@ -61,7 +68,7 @@ describe('a ball meeting the boundary', () => {
   it('counts one collision per boundary it meets', () => {
     const state = stateWith({ position: { x: 12, y: 240 }, velocity: { x: -600, y: 0 } });
 
-    expect(step(state, NOTHING_HELD).collisions).toBe(1);
+    expect(advance(state, NOTHING_HELD).collisions).toBe(1);
   });
 
   // The far corner, because the near one is inside the bat this level puts on row 0 — a ball that
@@ -69,7 +76,7 @@ describe('a ball meeting the boundary', () => {
   it('stays inside the boundary however fast it arrives', () => {
     const state = stateWith({ position: { x: 20, y: 460 }, velocity: { x: -9000, y: 9000 } });
 
-    const next = step(state, NOTHING_HELD);
+    const next = advance(state, NOTHING_HELD);
 
     expect(next.ball.position.x).toBeGreaterThanOrEqual(next.ball.radius);
     expect(next.ball.position.y).toBeLessThanOrEqual(480 - next.ball.radius);
@@ -79,7 +86,7 @@ describe('a ball meeting the boundary', () => {
     // Closer to the boundary than one step of travel, so the offered move overshoots it.
     const state = stateWith({ position: { x: 10.5, y: 240 }, velocity: { x: -260, y: 0 } });
 
-    const next = step(state, NOTHING_HELD);
+    const next = advance(state, NOTHING_HELD);
 
     expect(next.ball.position.x).toBeCloseTo(next.ball.radius, 1);
   });
@@ -89,7 +96,7 @@ describe('a ball crossing open space', () => {
   it('keeps its velocity and counts no collision', () => {
     const state = stateWith({ position: { x: 320, y: 240 }, velocity: { x: 100, y: 200 } });
 
-    const next = step(state, NOTHING_HELD);
+    const next = advance(state, NOTHING_HELD);
 
     expect(next.ball.velocity).toEqual({ x: 100, y: 200 });
     expect(next.collisions).toBe(0);
@@ -106,7 +113,7 @@ describe('a step with a direction held', () => {
   it('moves the horizontal group rightwards while right is held', () => {
     const state = createGameState(BOTH_AXES, 0);
 
-    expect(horizontal(step(state, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
+    expect(horizontal(advance(state, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
       horizontal(state),
     );
   });
@@ -114,13 +121,13 @@ describe('a step with a direction held', () => {
   it('moves the vertical group downwards while down is held', () => {
     const state = createGameState(BOTH_AXES, 0);
 
-    expect(vertical(step(state, { ...NOTHING_HELD, down: true }))).toBeGreaterThan(vertical(state));
+    expect(vertical(advance(state, { ...NOTHING_HELD, down: true }))).toBeGreaterThan(vertical(state));
   });
 
   it('drives both groups at once, because both are live', () => {
     const state = createGameState(BOTH_AXES, 0);
 
-    const next = step(state, { ...NOTHING_HELD, right: true, down: true });
+    const next = advance(state, { ...NOTHING_HELD, right: true, down: true });
 
     expect(horizontal(next)).toBeGreaterThan(horizontal(state));
     expect(vertical(next)).toBeGreaterThan(vertical(state));
@@ -129,7 +136,7 @@ describe('a step with a direction held', () => {
   it('leaves a group alone when both of its directions are held', () => {
     const state = createGameState(BOTH_AXES, 0);
 
-    expect(horizontal(step(state, { ...NOTHING_HELD, left: true, right: true }))).toBe(
+    expect(horizontal(advance(state, { ...NOTHING_HELD, left: true, right: true }))).toBe(
       horizontal(state),
     );
   });
@@ -138,7 +145,7 @@ describe('a step with a direction held', () => {
     const still = { ...createGameState(BOTH_AXES, 0) };
     const stopped = { ...still, ball: { ...still.ball, velocity: { x: 0, y: 0 } } };
 
-    expect(horizontal(step(stopped, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
+    expect(horizontal(advance(stopped, { ...NOTHING_HELD, right: true }))).toBeGreaterThan(
       horizontal(stopped),
     );
   });
@@ -161,19 +168,19 @@ describe('a bat moving into a travelling ball', () => {
   const beside = () => stateWith({ position: { x: 106, y: 16 }, velocity: { x: -260, y: 0 } });
 
   it('puts the ball outside itself rather than closing over it', () => {
-    const next = step(beside(), { ...NOTHING_HELD, right: true });
+    const next = advance(beside(), { ...NOTHING_HELD, right: true });
 
     expect(insideSomething(next)).toBeUndefined();
   });
 
   it('sends the ball away from the side it left on', () => {
-    const next = step(beside(), { ...NOTHING_HELD, right: true });
+    const next = advance(beside(), { ...NOTHING_HELD, right: true });
 
     expect(next.ball.velocity.x).toBeGreaterThan(0);
   });
 
   it('counts it as the collision it is', () => {
-    expect(step(beside(), { ...NOTHING_HELD, right: true }).collisions).toBe(1);
+    expect(advance(beside(), { ...NOTHING_HELD, right: true }).collisions).toBe(1);
   });
 
   it('never traps the ball, however long it keeps coming', () => {
@@ -181,7 +188,7 @@ describe('a bat moving into a travelling ball', () => {
     // of the level into the corner. That is the case that trapped it: no room on the near side.
     let state = beside();
     for (let taken = 0; taken < 600; taken += 1) {
-      state = step(state, { ...NOTHING_HELD, right: true });
+      state = advance(state, { ...NOTHING_HELD, right: true });
       expect(insideSomething(state)).toBeUndefined();
     }
   });
@@ -218,7 +225,7 @@ describe('clearing a level', () => {
       ball: { ...withDestroyed([brick]).ball, velocity: { x: 240, y: 120 } },
     };
 
-    expect(step(cleared, { ...NOTHING_HELD, right: true, down: true, launch: true })).toBe(cleared);
+    expect(advance(cleared, { ...NOTHING_HELD, right: true, down: true, launch: true })).toBe(cleared);
   });
 
   it('becomes cleared on the step that destroys the last brick', () => {
@@ -227,7 +234,7 @@ describe('clearing a level', () => {
       ball: { ...withDestroyed([]).ball, position: { x: 54, y: 80 }, velocity: { x: 240, y: 0 } },
     };
 
-    const next = step(last, NOTHING_HELD);
+    const next = advance(last, NOTHING_HELD);
 
     expect(isCleared(next)).toBe(true);
     // The collision still happened in full — DS-2.4 turns the ball away from what it destroyed.
@@ -239,14 +246,14 @@ describe('the step itself', () => {
   it('gives the same result every time for the same state and input', () => {
     const state = stateWith({ position: { x: 100, y: 100 }, velocity: { x: 37, y: -91 } });
 
-    expect(step(state, NOTHING_HELD)).toEqual(step(state, NOTHING_HELD));
+    expect(advance(state, NOTHING_HELD)).toEqual(advance(state, NOTHING_HELD));
   });
 
   it('does not mutate the state it was given', () => {
     const state = stateWith({ position: { x: 100, y: 100 }, velocity: { x: 37, y: -91 } });
     const before = structuredClone(state);
 
-    step(state, { ...NOTHING_HELD, right: true });
+    advance(state, { ...NOTHING_HELD, right: true });
 
     expect(state).toEqual(before);
   });
@@ -254,7 +261,7 @@ describe('the step itself', () => {
   it('advances by a fixed amount, never by elapsed time', () => {
     const state = stateWith({ position: { x: 320, y: 240 }, velocity: { x: 120, y: 0 } });
 
-    const twice = step(step(state, NOTHING_HELD), NOTHING_HELD);
+    const twice = advance(advance(state, NOTHING_HELD), NOTHING_HELD);
 
     expect(twice.ball.position.x).toBeCloseTo(320 + 2 * 120 * STEP_SECONDS);
   });
@@ -306,7 +313,7 @@ describe('a ball that has not been launched', () => {
   it('moves with the bat holding it, rather than under its own power', () => {
     const state = createGameState(level, 0);
 
-    const next = step(state, { ...NOTHING_HELD, right: true });
+    const next = advance(state, { ...NOTHING_HELD, right: true });
 
     expect(next.ball.position.x).toBeGreaterThan(state.ball.position.x);
     expect(isHeld(next)).toBe(true);
@@ -315,22 +322,22 @@ describe('a ball that has not been launched', () => {
   it('goes nowhere at all while nothing is held down', () => {
     const state = createGameState(level, 0);
 
-    expect(step(state, NOTHING_HELD).ball.position).toEqual(state.ball.position);
+    expect(advance(state, NOTHING_HELD).ball.position).toEqual(state.ball.position);
   });
 
   it('is travelling once launched, and no longer held', () => {
     const state = createGameState(level, 0);
 
-    const next = step(state, { ...NOTHING_HELD, launch: true });
+    const next = advance(state, { ...NOTHING_HELD, launch: true });
 
     expect(isHeld(next)).toBe(false);
     expect(Math.hypot(next.ball.velocity.x, next.ball.velocity.y)).toBeGreaterThan(0);
   });
 
   it('keeps travelling after the launch key is let go', () => {
-    const launched = step(createGameState(level, 0), { ...NOTHING_HELD, launch: true });
+    const launched = advance(createGameState(level, 0), { ...NOTHING_HELD, launch: true });
 
-    const later = step(launched, NOTHING_HELD);
+    const later = advance(launched, NOTHING_HELD);
 
     expect(isHeld(later)).toBe(false);
     expect(later.ball.position.y).not.toBe(launched.ball.position.y);
@@ -354,7 +361,7 @@ describe('a travelling ball meeting something', () => {
   };
 
   it('destroys a destructible brick and turns away from it', () => {
-    const next = step(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
 
     expect(next.destroyed.size).toBe(1);
     expect(next.ball.velocity.x).toBeLessThan(0);
@@ -362,7 +369,7 @@ describe('a travelling ball meeting something', () => {
   });
 
   it('turns away from a permanent brick and destroys nothing, which is DS-4.3', () => {
-    const next = step(travelling({ x: 118, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 118, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
 
     expect(next.destroyed.size).toBe(0);
     expect(next.ball.velocity.x).toBeLessThan(0);
@@ -370,7 +377,7 @@ describe('a travelling ball meeting something', () => {
   });
 
   it('turns away from a bat', () => {
-    const next = step(travelling({ x: 40, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 40, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
 
     expect(next.ball.velocity.y).toBeGreaterThan(0);
     expect(next.collisions).toBe(1);
@@ -379,46 +386,127 @@ describe('a travelling ball meeting something', () => {
   it('leaves a bat on a heading it did not arrive on, which is what makes it playable', () => {
     // Straight up into the bat's near third. Without DS-2.6 it would come straight back down and
     // retrace the same line for ever, and no amount of playing could change that.
-    const next = step(travelling({ x: 8, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 8, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
 
     expect(next.ball.velocity.x).not.toBe(0);
     expect(next.ball.velocity.y).not.toBe(0);
   });
 
   it('comes straight back off the middle of a bat', () => {
-    const next = step(travelling({ x: 48, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 48, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
 
     expect(next.ball.velocity.x).toBe(0);
   });
 
   it('reverses only the component that met the surface, which is the law of reflection here', () => {
-    const next = step(travelling({ x: 54, y: 80 }, { x: 240, y: 120 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 54, y: 80 }, { x: 240, y: 120 }), NOTHING_HELD);
 
     expect(next.ball.velocity.x).toBe(-240);
     expect(next.ball.velocity.y).toBe(120);
   });
 
   it('does not destroy the same brick twice', () => {
-    const first = step(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
-    const again = step({ ...first, ball: { ...first.ball, velocity: { x: 240, y: 0 } } }, NOTHING_HELD);
+    const first = advance(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+    const again = advance({ ...first, ball: { ...first.ball, velocity: { x: 240, y: 0 } } }, NOTHING_HELD);
 
     expect(again.destroyed.size).toBe(1);
   });
 
   it('meets a bat at its face, not short of it', () => {
     // The bat this level puts on row 0 ends at y = 32, so the ball's face meets it at y = 41.
-    const next = step(travelling({ x: 40, y: 42.5 }, { x: 0, y: -260 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 40, y: 42.5 }, { x: 0, y: -260 }), NOTHING_HELD);
 
     expect(next.ball.position.y).toBeCloseTo(41, 1);
   });
 
   it('passes through where a brick used to be', () => {
-    const destroyed = step(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD).destroyed;
+    const destroyed = advance(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD).destroyed;
     const returning = {
       ...travelling({ x: 54, y: 80 }, { x: 240, y: 0 }),
       destroyed,
     };
 
-    expect(step(returning, NOTHING_HELD).ball.position.x).toBeGreaterThan(54);
+    expect(advance(returning, NOTHING_HELD).ball.position.x).toBeGreaterThan(54);
+  });
+});
+
+describe('what a step announces', () => {
+  // The same shape the collision tests use: a destructible brick at column 2 of row 2, a permanent
+  // one at column 4, and a second destructible one in the corner so destroying the first does not
+  // clear the level and stop the step under test.
+  const level = levelFromRows(['-.....', '......', '..d.p.', '......', '.....d', '......']);
+
+  const travelling = (position: { x: number; y: number }, velocity: { x: number; y: number }) => {
+    const state = createGameState(level, 0);
+    return { ...state, ball: { ...state.ball, position, velocity, heldBy: undefined } };
+  };
+
+  it('says nothing when nothing happened', () => {
+    // Crossing open space, meeting none of the three things a collision can be with.
+    expect(step(travelling({ x: 48, y: 176 }, { x: 60, y: 0 }), NOTHING_HELD).events).toEqual([]);
+  });
+
+  it('names the boundary when the ball meets it', () => {
+    const { events } = step(travelling({ x: 12, y: 176 }, { x: -600, y: 0 }), NOTHING_HELD);
+
+    expect(events).toEqual([{ kind: 'collision', met: 'boundary', destroyed: false }]);
+  });
+
+  it('names a bat when the ball meets one', () => {
+    const { events } = step(travelling({ x: 40, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
+
+    expect(events).toEqual([{ kind: 'collision', met: 'bat', destroyed: false }]);
+  });
+
+  it('names a brick and destroys nothing where the brick is permanent, which is DS-4.3', () => {
+    const { events } = step(travelling({ x: 118, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+
+    expect(events).toEqual([{ kind: 'collision', met: 'brick', destroyed: false }]);
+  });
+
+  it('announces both the collision and the destruction when a brick goes, which is DS-6.6', () => {
+    const { events } = step(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+
+    expect(events).toEqual([
+      { kind: 'collision', met: 'brick', destroyed: true },
+      { kind: 'element-destroyed', cell: { column: 2, row: 2 } },
+    ]);
+  });
+
+  it('puts the collision before the destruction it caused', () => {
+    const { events } = step(travelling({ x: 54, y: 80 }, { x: 240, y: 0 }), NOTHING_HELD);
+
+    expect(events.map((event) => event.kind)).toEqual(['collision', 'element-destroyed']);
+  });
+
+  it('announces a collision for a bat that moved into the ball, which is DS-2.7', () => {
+    // The ball is where the bat is about to be: it did not move into the bat, the bat moved into it,
+    // and spec-domain says that is the same collision.
+    const beside = stateWith({ position: { x: 106, y: 16 }, velocity: { x: -260, y: 0 } });
+
+    const { events } = step(beside, { ...NOTHING_HELD, right: true });
+
+    expect(events).toEqual([{ kind: 'collision', met: 'bat', destroyed: false }]);
+  });
+
+  it('says nothing once the level is cleared, because nothing advances', () => {
+    const onlyBrick = levelFromRows(['-....', '..d..', '.....', '.....', '.....']);
+    const state = createGameState(onlyBrick, 0);
+    const cleared = { ...state, destroyed: new Set([1 * 5 + 2]) };
+
+    expect(step(cleared, { ...NOTHING_HELD, right: true, launch: true }).events).toEqual([]);
+  });
+
+  it('says nothing while the ball is still held', () => {
+    expect(step(createGameState(level, 0), NOTHING_HELD).events).toEqual([]);
+  });
+
+  it('counts the same collisions it announces', () => {
+    const before = travelling({ x: 54, y: 80 }, { x: 240, y: 0 });
+
+    const { state: after, events } = step(before, NOTHING_HELD);
+
+    const announced = events.filter((event) => event.kind === 'collision').length;
+    expect(after.collisions - before.collisions).toBe(announced);
   });
 });

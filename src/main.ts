@@ -1,4 +1,11 @@
-import { createGameState, step, boundaryOf, STEP_SECONDS, type Input } from './domain/simulation';
+import {
+  createGameState,
+  step,
+  boundaryOf,
+  STEP_SECONDS,
+  type Event,
+  type Input,
+} from './domain/simulation';
 import { destructibleRemaining, levelFromRows } from './domain/level';
 import { FIRST_LEVEL } from './levels/first';
 import { CLEARING_PROOF_LEVEL } from './levels/clearing-proof';
@@ -129,8 +136,16 @@ function frame(now: number): void {
     down: held.has('ArrowDown'),
     launch: launchRequested,
   };
+  /**
+   * A frame can cover several steps, and each announces its own events — so they are collected
+   * across the whole frame and heard together. Dropping the ones from every step but the last would
+   * silence a brick destroyed in a frame that happened to run twice.
+   */
+  const announced: Event[] = [];
   while (unspent >= STEP_SECONDS) {
-    state = step(state, input);
+    const stepped = step(state, input);
+    state = stepped.state;
+    announced.push(...stepped.events);
     unspent -= STEP_SECONDS;
   }
   launchRequested = false;
