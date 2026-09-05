@@ -50,6 +50,26 @@ or returned to — there is no second place for anything to be.
 step has a transition to animate — the ball's motion is the simulation advancing, which
 [spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
 
+### Touch acts on the same steps, through on-screen buttons
+
+**No new step, and no new activity.** Touch does not change what a player does — it is a second way
+to act on the two steps above, for the screen where a keyboard is not to be had.
+
+**Two bat groups, live at once, is what a keyboard's four held keys give for free and a touchscreen
+does not.** A drag on a bat, or a tap on a screen edge, both fail the same test: neither reliably
+gives two independent, simultaneous, held inputs on a small screen, and *"both are live at once"* is
+not a detail — [scope.md](scope.md) names it. Five on-screen buttons do, the same way two hands on a
+keyboard do: four directional, one per key they replace, and one to launch.
+
+| Step | How the player acts |
+|---|---|
+| **Launch the ball** | A directional button **held** moves its bat group for as long as it is held, exactly as its key does. The **launch** button, tapped once, launches. |
+| **Play until the level is cleared** | The same five buttons, the same way. |
+
+**A button holds exactly the state its key holds, and nothing else.** `touchstart` sets the same flag
+`keydown` does; `touchend` clears it. [spec-domain.md](spec-domain.md)'s `Input` is not touched, and
+does not need to be — it already asked for four directions and a launch, never for how they arrived.
+
 ## Layout
 
 **One screen, and nothing to navigate.** No header, no footer, no menu, no dialog. Version one has
