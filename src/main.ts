@@ -11,6 +11,8 @@ import { FIRST_LEVEL } from './levels/first';
 import { CLEARING_PROOF_LEVEL } from './levels/clearing-proof';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
+import { soundFor } from './audio/sounds';
+import { play } from './audio/play';
 
 /**
  * The edge. Everything the domain is not allowed to know lives here: the clock, the keyboard, the
@@ -149,6 +151,13 @@ function frame(now: number): void {
     unspent -= STEP_SECONDS;
   }
   launchRequested = false;
+
+  // What the world did back — doc/spec-app.md. `soundFor` is spec-style's table, and it answers
+  // `undefined` for a collision that destroyed what it met, whose destruction is heard instead.
+  for (const event of announced) {
+    const sound = soundFor(event);
+    if (sound !== undefined) play(sound);
+  }
 
   collisionReadout.textContent = String(state.collisions);
   const horizontal = state.bats.find((bat) => bat.orientation === 'horizontal');
