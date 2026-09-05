@@ -26,9 +26,7 @@ A project is brought into being in this order:
    `app` skill), `doc/spec-style.md` (the `style` skill), `doc/spec-tech.md` (the `tech` skill) —
    **in any order**. No dependency is implied between them, so none of them blocks another.
 
-**Each of the four has a skill, and each skill ends in a scrutiny pass.** That is the half that
-earns them: two specifications were written without one, and both had to be corrected later by
-someone reading them rather than by the routine that produced them.
+**Each of the four skills ends in a scrutiny pass.**
 
 A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
 something missing.

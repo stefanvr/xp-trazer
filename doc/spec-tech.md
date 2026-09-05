@@ -71,31 +71,12 @@ choice about the surface. What else the page shows is [spec-app.md](spec-app.md)
 This project's application of [guide-design.md](guide-design.md) — rules that are true here and would
 not be true on a different project, which is why they are not in that document.
 
-**This set is expected to grow.** An architecture is learned by building against it, so the rules
-arrive one at a time and late rather than all at once and early. A pass that adds none is normal; a
-project that has added none in a long while has probably stopped noticing rather than stopped
-learning.
+**Expected to grow**, one rule at a time and late — an architecture is learned by building against
+it. What earns a rule is [guide-general.md](guide-general.md)'s test for any principle; what makes one
+this document's rather than [guide-design.md](guide-design.md)'s is that document's.
 
-**What earns a rule here.** One of exactly two things, and a candidate that is neither is a
-preference:
-
-- **It rules something out**, before the thing it rules out gets chosen by whoever needed it first.
-  **A-1** excludes every technology that owns the game loop, and it did so before the stack was
-  picked.
-- **It records a departure from [guide-design.md](guide-design.md)**, which that document asks for in
-  one line so the next reader meets a decision rather than a rule being quietly ignored. **A-2** is
-  one: a dev-only seam that ships enabled.
-
-**The counter-example is worth as much as the two above.** Choosing Web Audio was put up for an
-**A-3** and refused: it rules no technology out, and it departs from nothing — the domain announces
-events and an adapter at the edge turns them into noise, which is guide-design's *domain imports no
-infrastructure* with no twist. A rule recording that would have had no observation behind it, and
-[guide-general.md](guide-general.md) says such a rule is ignored by the third session, taking the
-credibility of the real ones with it.
-
-**A number, once issued, is never reused**, the same way [spec-domain.md](spec-domain.md)'s are —
-these are cited from the code, so a citation in old code resolves to the rule it meant or to nothing,
-never to a different one.
+**A number, once issued, is never reused**, like [spec-domain.md](spec-domain.md)'s. These are cited
+from the code.
 
 ### A-1 · The simulation advances by a fixed step
 

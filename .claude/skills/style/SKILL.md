@@ -51,12 +51,9 @@ oversights if the document only lists values.
 - **Rules are put as options with a recommendation, and waited on.** They are the ones that change
   what the player perceives.
 
-**This is the pass that went wrong last time it was skipped.** Writing spec-style's sound section,
-the agent asked about three decisions and then made three more inside the writing — that segments
-play in sequence, that a collision is pitched where a destruction is not, and that a permanent brick
-shares the collision sound — reporting them only once they were in the document. *Confirm before it
-is recorded, not after*: naming the mode out loud is what makes that visible while there is still
-time.
+**Observed:** writing spec-style's sound section, the agent asked about three decisions and then made
+three more inside the writing, reporting them only once they were in the document. Naming the mode
+out loud is what makes that visible while there is still time to *confirm before it is recorded*.
 
 ## Scrutiny
 

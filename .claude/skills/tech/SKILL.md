@@ -30,7 +30,7 @@ scrutiny pass below is not optional.
 | Activity | Produces | Skip it when |
 |---|---|---|
 | **Stack choice** | A row in the table, what it beat, and the argument where the loser was close | Nothing is being chosen |
-| **Architecture rule** | An `A-n` — but only if it earns one, and the document says what earns one | The change rules nothing out and departs from nothing |
+| **Architecture rule** | An `A-n`, where [guide-general.md](../../../doc/guide-general.md)'s test for a principle is met | The change rules nothing out and departs from nothing |
 | **Scrutiny** | The document's claims, checked against the tree and the world | **Never.** Run it on every pass |
 
 **Scrutiny is not optional here and is on every pass, which is a departure from the other spec
@@ -38,9 +38,8 @@ skills.** Their scrutiny checks a document against itself; this one checks it ag
 moves underneath it. Left alone the document does not become wrong loudly — it goes on describing a
 project that has changed, in sentences that still read as authority.
 
-**Refusing an `A-n` is a result, not a non-result.** Say which of the two criteria the candidate
-failed. spec-tech keeps one such refusal on the page, because a refusal shows the test working where
-two acceptances only show it applied.
+**Refusing an `A-n` is a result, not a non-result.** Say so, and say what the candidate failed — in
+the commit, not in the document.
 
 ## Name the mode before running an activity
 
