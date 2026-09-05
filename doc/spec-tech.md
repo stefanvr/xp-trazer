@@ -1,8 +1,14 @@
 # Technical specification
 
-**Owns.** What technologies chosen either for development purposes or runnning the application — the tech stack and tools.
+**Owns.** Which technologies this project uses, for development and for running the application — and
+this project's own architecture rules, which are its application of
+[guide-design.md](guide-design.md) and outrank it where the two disagree.
 
-**Not here.** Anything that owned by the setup-* docs
+**Not here.** Anything a `setup-*` document owns — how this machine behaves and what lies to you is
+[setup-ai-env.md](setup-ai-env.md), what it takes to develop here [setup-dev-env.md](setup-dev-env.md),
+where the application runs [setup-app-env.md](setup-app-env.md). How code is shaped in general, on any
+project, is [guide-design.md](guide-design.md).
+
 ---
 
 ## The stack
@@ -13,6 +19,7 @@
 | Runtime | Node 24 LTS | — |
 | Dev server, build | Vite | — |
 | Renderer | Canvas 2D | PixiJS. |
+| Sound | Web Audio, synthesised | The same effects as rendered audio files. |
 | Domain tests | Vitest | `node:test`. |
 | Surface tests | Playwright | — |
 | Host | GitHub Pages | Cloudflare Pages, Netlify, Firebase Hosting — all lost to simplicity. |
@@ -37,19 +44,27 @@ Three of the rejections are worth a line, because each was close:
 - **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
   tests and the application read the same imports.
 
-**The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Boundary
-reflection, the collision count and the acceleration an arrow key applies were written to exercise
-the stack, before [spec-domain.md](spec-domain.md) existed to own any of them. **Nothing may cite
-them as a rule**, and spec-domain replaces them without owing an argument.
+**Sound is generated, not fetched.** The reference material supplies both — ten effects in four
+formats, and the parameter model they were rendered from. Version one uses two of them, so shipping
+files would mean sending every visitor four formats of two sounds to produce something the browser
+can already make. Generating them also keeps them tunable: [spec-style.md](spec-style.md) carries the
+parameters, and changing one is an edit to a number rather than a re-render.
 
-**The code uses spec-domain's names, and that is all it uses of it.** A level of cells, elements,
-bats and bat groups, holding and launching, a seed and clearing are all unbuilt. **A spec-domain name
-found in `src/` does not mean the rule behind it is implemented.**
+**What it costs.** A synthesised effect is not bit-identical to the rendered one, so the recordings
+stop being the definition of the sound and spec-style's table becomes it. That is a real reference
+point given up, accepted because the recordings are themselves reconstructions rather than captures
+of the original hardware — which the material says of itself.
+
+**A-1 is untouched.** The audio clock belongs to the edge, as the animation frame already does. The
+simulation announces what happened and never asks when.
+
+**A spec-domain rule number found in `src/` does not mean the rule behind it is implemented.** A
+citation says which rule the code means to satisfy, not that it succeeds. **DS-6** is the live
+example: announced by [spec-domain.md](spec-domain.md), and not in the code at all.
 
 **The built page carries the commit it was built from.** A deployment is verified by fetching the
 artefact and reading that identifier (**SF-8**), so it is a requirement of the stack rather than a
-choice about the surface. What else the page shows is [spec-app.md](spec-app.md)'s, including which
-of the proof's instruments survive.
+choice about the surface. What else the page shows is [spec-app.md](spec-app.md)'s.
 
 ## Architecture
 
@@ -84,8 +99,7 @@ column the resting ball launches up. Any other value, and the absent case, load 
 **Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing arriving on the page*
 is wiring, and wiring is only provable on the surface. The authored level cannot be cleared by a
 test — unattended it took 28 bricks to 20 in 150 seconds, and steering the bats made it worse — so
-without a level built for it, the one readout the player watches for the end of a level is asserted
-nowhere.
+without a level built for it, the sign that a level has ended is asserted nowhere.
 
 **What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
 behaviour is reachable through it, and it is not level selection — that is a product decision

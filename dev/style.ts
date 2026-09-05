@@ -34,7 +34,8 @@ type Panel = {
 function after(state: GameState, times: number, input: Partial<Input>): GameState {
   let reached = state;
   for (let taken = 0; taken < times; taken += 1) {
-    reached = step(reached, { ...NOTHING_HELD, ...input });
+    // This page is about what a state looks like, so it takes the state and drops the events.
+    reached = step(reached, { ...NOTHING_HELD, ...input }).state;
   }
   return reached;
 }

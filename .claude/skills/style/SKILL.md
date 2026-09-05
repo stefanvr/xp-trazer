@@ -62,6 +62,22 @@ This page has no purpose but to be looked at: it is a deliverable for the owner,
 the product rather than the evidence. The distinction is worth keeping straight, because a page that
 *is* the answer and a page driven to *find* the answer look identical while you are on it.
 
+## What it does not show
+
+**Sound.** [spec-style.md](../../../doc/spec-style.md) owns *look, sound and feel*, and since it
+gained a sound section this page demonstrates the visual half only.
+
+**That is a gap, not a boundary of principle.** The argument above — that this page *is* the answer,
+because *does this read as Tron* is a judgement no suite reaches — holds word for word for *does this
+sound like the C64*, and the sounds come from one module of real values
+([src/audio/sounds.ts](../../../src/audio/sounds.ts)) played by real code
+([src/audio/play.ts](../../../src/audio/play.ts)), exactly as the colors do. Everything this routine
+is built on applies.
+
+**Named rather than closed**, because building it is a goal and not something to slip into a landing.
+What matters until then is that anyone running this skill after changing spec-style's sound section
+knows the page cannot show what they changed.
+
 ## When to run it
 
 - `spec-style.md` gains, loses, or changes an element.

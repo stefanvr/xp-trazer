@@ -8,8 +8,13 @@ import {
 } from './level';
 
 /**
- * What the ball is touching — doc/spec-domain.md's **Collision**: the ball meeting a boundary, a bat
- * or a brick. Pure functions over plain types.
+ * What the ball is touching. Pure functions over plain types.
+ *
+ * **`Obstacle` is this module's own word, and not the specification's.** doc/spec-domain.md's
+ * **Collision** is the *meeting*; this is the thing met. The vocabulary deliberately has no term for
+ * it — a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain
+ * already owns — so this type stays a code-internal helper and **DS-6.3** is written in those words
+ * rather than in this one.
  *
  * Every surface here is axis-aligned, because an element occupies exactly one cell and a bat lies
  * along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one component

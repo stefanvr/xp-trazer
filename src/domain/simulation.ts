@@ -19,11 +19,10 @@ import {
  * between frames. The accumulator that decides *how often* to call `step` lives at the edge, in
  * main.ts, because that is the part that has to know what time it is.
  *
- * **The names here are doc/spec-domain.md's; the behaviour is not yet.** Ball, boundary and
- * collision are that document's words and this module uses them. Everything else it describes — a
- * level of cells, elements, bats and bat groups, holding and launching, a seed, clearing — is
- * absent, and spec-tech.md records what is here as the stack proof's scaffolding rather than a
- * domain decision. **A spec-domain name in this file does not mean the rule behind it is built.**
+ * **The names here are doc/spec-domain.md's, and so are the rules.** DS-1 to DS-5 are implemented and
+ * cited where they apply, and DS-6 is what this module announces. **A rule number in a comment says
+ * which rule the code means to satisfy, not that it succeeds** — spec-tech.md carries that warning,
+ * and the tests are what answer it.
  */
 
 export const STEP_SECONDS = 1 / 120;
@@ -84,6 +83,37 @@ export type GameState = {
    */
   readonly destroyed: ReadonlySet<number>;
 };
+
+/**
+ * Something that happened in the world — doc/spec-domain.md's **Event**, and **DS-6.2**: two are
+ * announced and no other is.
+ *
+ * **`met` says brick and the other event says element, and that is the specification's own wording**
+ * rather than a slip here. A collision names what the ball met, and what it met is a brick; the
+ * destruction names an element, which in version one is the same thing.
+ */
+export type Event =
+  | {
+      readonly kind: 'collision';
+      /** **DS-6.3** — what the ball met. */
+      readonly met: 'boundary' | 'bat' | 'brick';
+      /** **DS-6.4** — whether this collision destroyed what it met. False wherever nothing can be. */
+      readonly destroyed: boolean;
+    }
+  | {
+      readonly kind: 'element-destroyed';
+      /** **DS-6.5** — the cell the element occupied. A cell, not the index the level stores. */
+      readonly cell: { readonly column: number; readonly row: number };
+    };
+
+/**
+ * What a step yields: the state after it, and the events that happened during it — **DS-6.1**.
+ *
+ * **The events are not part of the state**, which doc/spec-domain.md says in as many words. A state
+ * that answered *what just happened* would be right until the next step and wrong for every reader
+ * after it.
+ */
+export type Stepped = { readonly state: GameState; readonly events: readonly Event[] };
 
 /** DS-1.5 — the ball is held, or it is travelling. */
 export function isHeld(state: GameState): boolean {
@@ -225,15 +255,22 @@ function pushedOutOfBats(
   return undefined;
 }
 
-/** Advances one fixed step. The same state and the same input always give the same result. */
-export function step(state: GameState, input: Input): GameState {
+/**
+ * Advances one fixed step. The same state and the same input always give the same result.
+ *
+ * Yields the events that happened during it as well as the state after it — **DS-6.1**. They are
+ * built here, where what happened is known, rather than reconstructed afterwards by comparing two
+ * states: a comparison can see that the collision count rose and not what was hit, which is the
+ * whole reason the domain announces rather than leaving it to be worked out.
+ */
+export function step(state: GameState, input: Input): Stepped {
   const { ball, level } = state;
 
   /**
    * DS-5.2 — a cleared level does not advance. Asked before anything else, because *nothing*
    * advances: DS-3.4 moves bats while the ball is held or travelling, and cleared is neither.
    */
-  if (isCleared(state)) return state;
+  if (isCleared(state)) return { state, events: [] };
 
   // DS-3.4: bats move whether the ball is held or travelling, so this happens every step.
   const reach = BAT_PIXELS_PER_SECOND * STEP_SECONDS;
@@ -246,14 +283,26 @@ export function step(state: GameState, input: Input): GameState {
     const resting = restingOn(level, bat, ball.radius);
 
     if (!input.launch) {
-      return { ...state, bats, ball: { ...ball, position: resting } };
+      return { state: { ...state, bats, ball: { ...ball, position: resting } }, events: [] };
     }
 
     // DS-2.2 — launching sets it travelling, perpendicular to the bat and away from it.
     return {
-      ...state,
-      bats,
-      ball: { ...ball, position: resting, velocity: launchVelocity(level, bat), heldBy: undefined },
+      state: {
+        ...state,
+        bats,
+        ball: {
+          ...ball,
+          position: resting,
+          velocity: launchVelocity(level, bat),
+          heldBy: undefined,
+        },
+      },
+      /**
+       * **DS-6.2** announces two events, and *Ball launched* is not one of them. A held ball meets
+       * nothing, so there is nothing else this branch could have to report.
+       */
+      events: [],
     };
   }
 
@@ -268,6 +317,14 @@ export function step(state: GameState, input: Input): GameState {
   let y = from.y;
   let collisions = state.collisions + (escape === undefined ? 0 : 1);
   let destroyed = state.destroyed;
+
+  /**
+   * **DS-6.1** — in the order they happened, which is why this is appended to as the step runs
+   * rather than assembled at the end. **DS-6.7**: a bat pushing the ball out is one collision, and
+   * each axis below can add another, so three in one step is reachable.
+   */
+  const events: Event[] = [];
+  if (escape !== undefined) events.push({ kind: 'collision', met: 'bat', destroyed: false });
 
   /**
    * One axis at a time, because every surface is a cell face — **DS-2.4**. Meeting something on the
@@ -311,10 +368,27 @@ export function step(state: GameState, input: Input): GameState {
     }
 
     // DS-4.2 — a destructible brick is destroyed by a collision. DS-4.3 leaves a permanent one.
-    if (hit.kind === 'element' && hit.destructible) {
+    const destroying = hit.kind === 'element' && hit.destructible;
+    if (destroying) {
       const gone = new Set(destroyed);
       gone.add(hit.index);
       destroyed = gone;
+    }
+
+    /**
+     * **DS-6.6** — a collision that destroys an element announces both, and the collision comes
+     * first because it is what caused the destruction (doc/spec-domain.md's *What happens*).
+     */
+    events.push({
+      kind: 'collision',
+      met: hit.kind === 'element' ? 'brick' : hit.kind,
+      destroyed: destroying,
+    });
+    if (destroying && hit.kind === 'element') {
+      events.push({
+        kind: 'element-destroyed',
+        cell: { column: hit.index % level.columns, row: Math.floor(hit.index / level.columns) },
+      });
     }
   };
 
@@ -326,10 +400,13 @@ export function step(state: GameState, input: Input): GameState {
   });
 
   return {
-    ...state,
-    bats,
-    ball: { ...ball, position: { x, y }, velocity: { x: velocityX, y: velocityY } },
-    collisions,
-    destroyed,
+    state: {
+      ...state,
+      bats,
+      ball: { ...ball, position: { x, y }, velocity: { x: velocityX, y: velocityY } },
+      collisions,
+      destroyed,
+    },
+    events,
   };
 }

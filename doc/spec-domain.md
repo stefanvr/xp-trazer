@@ -27,6 +27,7 @@ The player moves bats. The ball moves itself.
 |---|---|---|
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
+| **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
 | **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
 | **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
@@ -37,6 +38,8 @@ The player moves bats. The ball moves itself.
 | **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
+| **Step** | The simulation advancing once. It is the domain's unit of time, and the only one it has. | `step` |
+| **Event** | Something that happened in the world. A step yields the events that happened during it. | `Event` |
 | **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 | **Game state** | Everything that changes while a level is played. | `GameState` |
@@ -131,6 +134,33 @@ a new heading, which is what makes reaching it the point of moving one.
 - **DS-5.1** A level is cleared when every destructible element has been destroyed.
 - **DS-5.2** A cleared level does not advance.
 
+### DS-6 · What the domain announces
+
+- **DS-6.1** A step yields the events that happened during it, in the order they happened. A step in
+  which none happened yields none.
+- **DS-6.2** Two events are announced: **Collision** and **Element destroyed**. No other event this
+  document names is.
+- **DS-6.3** A collision names what the ball met — a boundary, a bat or a brick.
+- **DS-6.4** A collision says whether it destroyed what it met.
+- **DS-6.5** An element destroyed names the element that went.
+- **DS-6.6** A collision that destroys an element announces both. The ball turned and the element
+  went, and **DS-2.4** and **DS-4.2** are each true of it.
+- **DS-6.7** A step may announce several collisions.
+
+**DS-6.4 is not derivable from DS-6.3, and that is the point.** *Which brick was met* answers *was it
+destroyed* only while **DS-4.2** destroys one in a single collision. A brick that has to be hit more
+than once breaks that implication without touching anything here, and a consumer that had inferred
+destruction from the kind would go on inferring it wrongly. The collision says what happened to what
+it met, rather than leaving that to be worked out from a rule that may change.
+
+**DS-6.5 names the element although the state also records it.** An event that cannot be understood
+without diffing the state it arrived with is not an announcement, and not having to diff is what
+**DS-6** is for.
+
+**DS-6.7 is not decoration.** A step can produce a collision from a bat pushing the ball out under
+**DS-2.7**, and then one on each axis. A reader who assumed one collision per step would be wrong on
+the first bat that moves into a travelling ball.
+
 ## What a level is, as data
 
 **A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
@@ -168,10 +198,40 @@ A level is what was authored and never changes. The game state is everything tha
 - **Whether the ball is held — and by which bat — or travelling.**
 - **Whether the level is cleared.**
 
+**Events are not held.** A step's events say what changed; the state says what is. Keeping them here
+would mean a state that answers *what just happened*, which is true only until the next step and
+wrong for every reader who arrives after it.
+
 **The ball's speed is state, even though nothing in version one changes it.** **DS-2.5** fixes it for
 now, but speed is the kind of thing a later rule alters as a game goes on, and something that changes
 over time belongs to the state rather than to the level or to a constant. Putting it here costs
 nothing now and means such a rule adds a rule rather than a re-modelling.
+
+## What an event is, as data
+
+**An event is a value, and there are two kinds.**
+
+| Event | Carries |
+|---|---|
+| **Collision** | What the ball met — a boundary, a bat or a brick — and whether the collision destroyed it |
+| **Element destroyed** | The cell the element occupied |
+
+**A collision does not say which bat or which brick.** Nothing reads it, and where a brick goes,
+**DS-6.5** already names the cell.
+
+**An element destroyed names a cell.** A level is a grid of cells, so a cell is what the domain has
+to point with; how one is stored is the implementation's business and not this document's.
+
+**The destroyed flag is answerable for every collision, and is false for a boundary and a bat.**
+Neither can be destroyed, so the question has an answer everywhere rather than existing on one of the
+three shapes and not the others.
+
+**An event carries no time.** A step is the unit of time and an event happened during the step that
+yielded it, so there is nothing for a moment to add. Written down because the field that would break
+this looks harmless: the simulation may not consult the clock, and a timestamp is the clock.
+
+**Nothing is authored and nothing is looked up.** A level authors elements and bats; events are
+produced by play, so there is no reference data here.
 
 ## Not named, because version one does not need them
 

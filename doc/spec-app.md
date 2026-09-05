@@ -44,9 +44,19 @@ or returned to — there is no second place for anything to be.
 | **Launch the ball** | An arrow key **held** moves its bat group for as long as it is held. **Space**, pressed once, launches. |
 | **Play until the level is cleared** | The same four keys, the same way. The cleared indication appears on the level, where the player is already looking. |
 
-**Nothing triggers sound or animation.** There is no sound, and no step has a transition to animate —
-the ball's motion is the simulation advancing, which [spec-domain.md](spec-domain.md) owns, not an
-effect this document asks for.
+**No step triggers a sound, and nothing animates.** Sound is not something the player does — it is
+what the world does back. What makes a noise happens inside *play until the level is cleared* rather
+than completing any step of it, and which things those are is [spec-style.md](spec-style.md)'s to
+say. No step waits for a sound, and none is prevented by one.
+
+Still nothing to animate: the ball's motion is the simulation advancing, which
+[spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
+
+**The player has always acted before the first sound.** The ball is held until it is launched
+— [spec-domain.md](spec-domain.md)'s **DS-1.5** — and a held ball collides with nothing, so nothing
+can make a noise before the player's own first press.
+Stated rather than arranged: a browser will not start audio until the player has acted, and this game
+cannot make a sound before that happens, so there is no unlock step for this document to add.
 
 ### Touch acts on the same steps, through on-screen buttons
 
