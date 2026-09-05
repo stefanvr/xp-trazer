@@ -7,18 +7,26 @@ lands; the `land` skill gives every item below one of three fates.
 
 ## Open
 
-### `Obstacle`'s comment names the wrong specification term
+### Two comments in `src/` cite documents wrongly
 
-`src/domain/collision.ts` documents its `Obstacle` type as *"doc/spec-domain.md's **Collision**"*. It
-is not: in the specification a **Collision** is the meeting, and `Obstacle` is the thing met.
+Both are comment-only changes, and both belong to the build goal rather than to a specification pass —
+it will open both files anyway, to make `step` announce what happened.
 
-The vocabulary activity considered promoting `Obstacle` to a specification term and decided against
-it — a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain
-already owns. So `Obstacle` stays a code-internal helper, and its comment should say that instead of
-claiming to be a specification term.
+**`src/domain/collision.ts`** documents its `Obstacle` type as *"doc/spec-domain.md's **Collision**"*.
+It is not: in the specification a **Collision** is the meeting, and `Obstacle` is the thing met. The
+vocabulary activity considered promoting `Obstacle` to a specification term and decided against it —
+a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain already
+owns. So `Obstacle` stays a code-internal helper, and the comment should say that instead of claiming
+to be a specification term.
 
-**Not fixed here**, because a specification pass writes specifications; the code change belongs to
-the build goal, which will open that file anyway.
+**`src/domain/simulation.ts`**, the module comment, says *"the behaviour is not yet"* and lists a
+level of cells, elements, bats and bat groups, holding and launching, a seed and clearing as
+**absent**. Every one of them is in that file or imported into it. It also cites a paragraph of
+`spec-tech.md` that has since been deleted for being stale in exactly the same way, so the citation
+now resolves to nothing.
+
+The sentence worth keeping from it is the last one — a spec-domain name in the file does not mean the
+rule behind it is built — because **DS-6** is about to be precisely that case.
 
 ### The style preview page now covers half of what spec-style owns
 
@@ -33,26 +41,6 @@ reach a question like *does this sound right*, which is a judgement rather than 
 
 **Whose it is:** the skill's, not this goal's. Raised here so the landing gives it a fate rather than
 leaving it to be met by someone running `style` and wondering why sound is missing.
-
-### spec-tech says the domain is unbuilt, and it is not
-
-`doc/spec-tech.md` still carries this, from when spec-domain was newly written and the code had only
-borrowed its words:
-
-> **The code uses spec-domain's names, and that is all it uses of it.** A level of cells, elements,
-> bats and bat groups, holding and launching, a seed and clearing are all unbuilt. **A spec-domain
-> name found in `src/` does not mean the rule behind it is implemented.**
-
-It is false now. `src/` cites DS-1.2 through DS-5.2 across `level.ts`, `bat.ts`, `collision.ts` and
-`simulation.ts`, and `npm test` passes 118 tests over them. Verified rather than assumed: the
-citations were counted and the suite was run.
-
-The last sentence is still worth keeping in some form — a cited number is not proof of an
-implementation, and **DS-6** is about to be exactly that case, specified and unbuilt. What has to go
-is the list of things called unbuilt that are built.
-
-**Not fixed here** — it is a content change to a document this pass was not asked to revise, and the
-replacement wording is the owner's call.
 
 ## Carried forward, for a goal that is not this one
 
