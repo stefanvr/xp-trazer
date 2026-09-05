@@ -34,6 +34,26 @@ reach a question like *does this sound right*, which is a judgement rather than 
 **Whose it is:** the skill's, not this goal's. Raised here so the landing gives it a fate rather than
 leaving it to be met by someone running `style` and wondering why sound is missing.
 
+### spec-tech says the domain is unbuilt, and it is not
+
+`doc/spec-tech.md` still carries this, from when spec-domain was newly written and the code had only
+borrowed its words:
+
+> **The code uses spec-domain's names, and that is all it uses of it.** A level of cells, elements,
+> bats and bat groups, holding and launching, a seed and clearing are all unbuilt. **A spec-domain
+> name found in `src/` does not mean the rule behind it is implemented.**
+
+It is false now. `src/` cites DS-1.2 through DS-5.2 across `level.ts`, `bat.ts`, `collision.ts` and
+`simulation.ts`, and `npm test` passes 118 tests over them. Verified rather than assumed: the
+citations were counted and the suite was run.
+
+The last sentence is still worth keeping in some form — a cited number is not proof of an
+implementation, and **DS-6** is about to be exactly that case, specified and unbuilt. What has to go
+is the list of things called unbuilt that are built.
+
+**Not fixed here** — it is a content change to a document this pass was not asked to revise, and the
+replacement wording is the owner's call.
+
 ## Carried forward, for a goal that is not this one
 
 ### The original has bricks that take more than one hit

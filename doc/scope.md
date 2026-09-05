@@ -64,7 +64,7 @@ Checked off the day the document that owns it is written, without removing the r
 |---|---|---|
 | The domain announces its events — which ones, and what each carries | [spec-domain.md](spec-domain.md) | ☑ |
 | That there is sound, what may make it, and that its identity is the C64's | [spec-style.md](spec-style.md) | ☑ |
-| Web Audio, synthesised from the parameter model, nothing fetched at runtime | [spec-tech.md](spec-tech.md) | ☐ |
+| Web Audio, synthesised from the parameter model, nothing fetched at runtime | [spec-tech.md](spec-tech.md) | ☑ |
 | That the level makes sound — *"Nothing triggers sound or animation"* stops being true | [spec-app.md](spec-app.md) | ☑ |
 
 **How sound is verified belongs to the first goal inside this scope, not to this document.** *The

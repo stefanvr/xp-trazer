@@ -13,6 +13,7 @@
 | Runtime | Node 24 LTS | — |
 | Dev server, build | Vite | — |
 | Renderer | Canvas 2D | PixiJS. |
+| Sound | Web Audio, synthesised | The same effects as rendered audio files. |
 | Domain tests | Vitest | `node:test`. |
 | Surface tests | Playwright | — |
 | Host | GitHub Pages | Cloudflare Pages, Netlify, Firebase Hosting — all lost to simplicity. |
@@ -36,6 +37,20 @@ Three of the rejections are worth a line, because each was close:
   2D `shadowBlur` is already enough.
 - **`node:test`** is one fewer dependency. Vitest wins on sharing Vite's module resolution, so domain
   tests and the application read the same imports.
+
+**Sound is generated, not fetched.** The reference material supplies both — ten effects in four
+formats, and the parameter model they were rendered from. Version one uses two of them, so shipping
+files would mean sending every visitor four formats of two sounds to produce something the browser
+can already make. Generating them also keeps them tunable: [spec-style.md](spec-style.md) carries the
+parameters, and changing one is an edit to a number rather than a re-render.
+
+**What it costs.** A synthesised effect is not bit-identical to the rendered one, so the recordings
+stop being the definition of the sound and spec-style's table becomes it. That is a real reference
+point given up, accepted because the recordings are themselves reconstructions rather than captures
+of the original hardware — which the material says of itself.
+
+**A-1 is untouched.** The audio clock belongs to the edge, as the animation frame already does. The
+simulation announces what happened and never asks when.
 
 **The ball's behaviour is the proof's scaffolding, and is not a domain decision.** Boundary
 reflection, the collision count and the acceleration an arrow key applies were written to exercise
