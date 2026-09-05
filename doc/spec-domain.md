@@ -5,11 +5,11 @@ Independent of any screen.
 
 **Not here.** What the player meets — screens, input, flow, layout — is
 [spec-app.md](spec-app.md); how it looks is [spec-style.md](spec-style.md); what it is built with is
-[spec-tech.md](spec-tech.md). What is in version one at all is [scope.md](scope.md).
+[spec-tech.md](spec-tech.md).
 
-**Scoped to version one.** The brainstorm describes hazards, two modes, runs, lives and a map of
-levels; [scope.md](scope.md) puts every one of them out. None of them is named here — a rule written
-three goals early is written from a worse understanding, and this is the expensive place to be wrong.
+**Scoped to version one.** Hazards, two modes, runs, lives and a map of levels are not part of it,
+and none of them is named here — a rule written three goals early is written from a worse
+understanding, and this is the expensive place to be wrong.
 
 **This document states the desired state.** Where the code disagrees with a name below, the code is
 wrong.
@@ -176,5 +176,4 @@ nothing now and means such a rule adds a rule rather than a re-modelling.
 ## Not named, because version one does not need them
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
-**journey**, **map**, **unlocked**, **selection**. The brainstorm carries all of them and
-[scope.md](scope.md) puts them out of version one.
+**journey**, **map**, **unlocked**, **selection**. None of them is part of version one.

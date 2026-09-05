@@ -1,5 +1,5 @@
 /**
- * Version one's one authored level — `doc/scope.md`.
+ * Version one's one authored level.
  *
  * One character per cell: `.` empty, `d` a destructible brick, `p` a permanent one, `-` and `|` the
  * low end of a horizontal or vertical bat. A target with a permanent core, set away from every edge

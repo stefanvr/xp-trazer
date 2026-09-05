@@ -21,6 +21,11 @@ is chosen. `.claude/skills/scope/SKILL.md` owns both, and neither happens inside
 while the document that owns it is unwritten, so a goal that holds any tracks where each of its
 answers ends up, and checks them off as they leave.
 
+**No specification cites this document.** Not as justification, and not as routing. A goal is cleared
+when it is reached, so every citation of it becomes a pointer to nothing — while still reading as
+authority to anyone who does not open the file. A specification states its decisions as its own,
+which is what owning them means, and how a decision was reached is in the history.
+
 ---
 
 **No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
