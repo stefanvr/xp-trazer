@@ -11,7 +11,7 @@ it — DS-6 in `spec-domain.md`, the sound table in `spec-style.md`, Web Audio i
 
 | Task | What makes it checkable |
 |---|---|
-| **4 · The audio check can fail** | Break the mapping on purpose, watch task 3's assertion fail, revert, watch it pass unmutated. A check that has never failed is a claim |
+| *(none left — every task is implemented)* | |
 
 ## The verification question the scope deferred to this goal
 

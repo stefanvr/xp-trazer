@@ -144,13 +144,27 @@ function frame(now: number): void {
    * silence a brick destroyed in a frame that happened to run twice.
    */
   const announced: Event[] = [];
+  let anyStepTaken = false;
   while (unspent >= STEP_SECONDS) {
     const stepped = step(state, input);
     state = stepped.state;
     announced.push(...stepped.events);
     unspent -= STEP_SECONDS;
+    anyStepTaken = true;
   }
-  launchRequested = false;
+
+  /**
+   * **Cleared only once a step has actually seen it.** A frame can arrive with less than one step's
+   * worth of time owing — the first few after load, or any of them where the display runs faster
+   * than the simulation — and it then takes no step at all. Clearing the latch there swallows the
+   * press, and spec-app's *"Space, pressed once, launches"* silently stops being true: the ball
+   * stays held and nothing says why.
+   *
+   * Observed as a 30% failure rate in an end-to-end test that pressed Space immediately after the
+   * page loaded. The tests that happened to await something first were not affected, which is what
+   * made it look like flakiness rather than a dropped input.
+   */
+  if (anyStepTaken) launchRequested = false;
 
   // What the world did back — doc/spec-app.md. `soundFor` is spec-style's table, and it answers
   // `undefined` for a collision that destroyed what it met, whose destruction is heard instead.
