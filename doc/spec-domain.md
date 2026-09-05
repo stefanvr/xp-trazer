@@ -205,6 +205,32 @@ now, but speed is the kind of thing a later rule alters as a game goes on, and s
 over time belongs to the state rather than to the level or to a constant. Putting it here costs
 nothing now and means such a rule adds a rule rather than a re-modelling.
 
+## What an event is, as data
+
+**An event is a value, and there are two kinds.**
+
+| Event | Carries |
+|---|---|
+| **Collision** | What the ball met — a boundary, a bat or a brick — and whether the collision destroyed it |
+| **Element destroyed** | The cell the element occupied |
+
+**A collision does not say which bat or which brick.** Nothing reads it, and where a brick goes,
+**DS-6.5** already names the cell.
+
+**An element destroyed names a cell.** A level is a grid of cells, so a cell is what the domain has
+to point with; how one is stored is the implementation's business and not this document's.
+
+**The destroyed flag is answerable for every collision, and is false for a boundary and a bat.**
+Neither can be destroyed, so the question has an answer everywhere rather than existing on one of the
+three shapes and not the others.
+
+**An event carries no time.** A step is the unit of time and an event happened during the step that
+yielded it, so there is nothing for a moment to add. Written down because the field that would break
+this looks harmless: the simulation may not consult the clock, and a timestamp is the clock.
+
+**Nothing is authored and nothing is looked up.** A level authors elements and bats; events are
+produced by play, so there is no reference data here.
+
 ## Not named, because version one does not need them
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
