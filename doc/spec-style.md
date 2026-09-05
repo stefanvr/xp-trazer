@@ -1,15 +1,15 @@
 # Style specification
 
 **Owns.** How version one looks. *"Look, sound and feel"* is the routing's full remit
-([CLAUDE.md](../.claude/CLAUDE.md)), but sound and everything felt rather than seen have nothing in
-`doc/scope.md` yet to attach to — see *What this leaves open*.
+([CLAUDE.md](../.claude/CLAUDE.md)), but version one has no sound and nothing felt rather than seen
+— see *What this leaves open*.
 
 **Not here.** The rules of the world — [spec-domain.md](spec-domain.md); what the player and
 developer meet — screens, input, flow — [spec-app.md](spec-app.md); which rendering technology draws
 any of this — [spec-tech.md](spec-tech.md). This document says what should appear on screen, not what
 code produces it.
 
-**Scoped to what `doc/scope.md`'s "In" list needs**, not to the whole game brainstormed in
+**Scoped to what version one needs**, not to the whole game brainstormed in
 `doc/brainstorm/2026-09-02.md`. A hazard, a map, a HUD — none of them are in version one, so none of
 them get a look here yet.
 
@@ -17,7 +17,7 @@ them get a look here yet.
 
 ## The reference — Tron, neon on black
 
-Named in `doc/scope.md`'s first-version "In" list, and carried from
+Version one looks like Tron, and carries it from
 [the brainstorm](brainstorm/2026-09-02.md): Tron was the owner's screenshot answer, given "without
 hesitation". The C64 heritage of Traz and Arkanoid is a flavour on this project, not a visual
 constraint — *"just feels like it"* is the entire argument for it — and it yields to Tron wherever the
@@ -75,15 +75,14 @@ leaving.
 Named rather than guessed at, so a later goal knows what it is deciding rather than rediscovering that
 nothing was decided:
 
-- **Sound.** Out of scope for version one (`doc/scope.md`), and brainstorm's either/or on when it
-  arrives was answered "yes" — unresolved. Nothing here commits to it being part of the feel or added
-  last.
-- **HUD / UI chrome.** Version one has no score, no lives, no menu, no map — nothing in scope needs a
+- **Sound.** Not part of version one, and brainstorm's either/or on when it arrives was answered
+  "yes" — unresolved. Nothing here commits to it being part of the feel or added last.
+- **HUD / UI chrome.** Version one has no score, no lives, no menu, no map — nothing in it needs a
   look for any of them yet.
 - **Typography beyond the one word above.** Version one's level carries `CLEARED` and nothing else,
   so the face is chosen and nothing else about type is — no scale, no second weight, no body text.
 - **What would make it visually wrong.** Asked in brainstorm, answered "no idea" — free rather than
   missing, and the cheapest kind of decision to leave for when something forces an answer.
 - **The Tron/C64 tension for anything beyond version one.** Brainstorm left it standing rather than
-  resolved; version one sidesteps it because scope already committed to Tron. A future level that wants
+  resolved; version one sidesteps it because this document commits to Tron. A future level that wants
   C64 chunkiness reopens it.

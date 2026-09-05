@@ -5,11 +5,10 @@ screens take.
 
 **Not here.** The rules of the world are [spec-domain.md](spec-domain.md); how anything looks is
 [spec-style.md](spec-style.md); which technologies produce any of it is
-[spec-tech.md](spec-tech.md). What is in version one at all is [scope.md](scope.md).
+[spec-tech.md](spec-tech.md).
 
-**Scoped to version one.** The brainstorm describes level selection on a map, returning to selection
-after dying, and progress kept between sessions. [scope.md](scope.md) puts all of them out, so none
-is here.
+**Scoped to version one.** Level selection on a map, returning to selection after dying, and progress
+kept between sessions are not part of it, and none of them is here.
 
 **This document states the desired state.** Where the code disagrees, the code is wrong.
 
@@ -19,8 +18,7 @@ is here.
 
 ### The activity
 
-**Play a level.** One, because [scope.md](scope.md) leaves a player exactly one thing to do: there is
-no menu, no selection, no map and nothing kept between sessions.
+**Play a level.** One. There is no menu, no selection, no map, and nothing kept between sessions.
 
 ### The steps, and what completes each
 
@@ -46,9 +44,9 @@ or returned to — there is no second place for anything to be.
 | **Launch the ball** | An arrow key **held** moves its bat group for as long as it is held. **Space**, pressed once, launches. |
 | **Play until the level is cleared** | The same four keys, the same way. The cleared indication appears on the level, where the player is already looking. |
 
-**Nothing triggers sound or animation.** [scope.md](scope.md) puts sound out of version one, and no
-step has a transition to animate — the ball's motion is the simulation advancing, which
-[spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
+**Nothing triggers sound or animation.** There is no sound, and no step has a transition to animate —
+the ball's motion is the simulation advancing, which [spec-domain.md](spec-domain.md) owns, not an
+effect this document asks for.
 
 ### Touch acts on the same steps, through on-screen buttons
 
@@ -57,9 +55,9 @@ to act on the two steps above, for the screen where a keyboard is not to be had.
 
 **Two bat groups, live at once, is what a keyboard's four held keys give for free and a touchscreen
 does not.** A drag on a bat, or a tap on a screen edge, both fail the same test: neither reliably
-gives two independent, simultaneous, held inputs on a small screen, and *"both are live at once"* is
-not a detail — [scope.md](scope.md) names it. Five on-screen buttons do, the same way two hands on a
-keyboard do: four directional, one per key they replace, and one to launch.
+gives two independent, simultaneous, held inputs on a small screen, and both bat groups being live at
+once is not a detail this document may trade away. Five on-screen buttons do, the same way two hands
+on a keyboard do: four directional, one per key they replace, and one to launch.
 
 | Step | How the player acts |
 |---|---|
@@ -93,8 +91,7 @@ it**, so nothing the player plays inside carries them, and no step needs them.
 **Both conditions decide it, not either alone.** The screen is narrower than **700px**, *and* the
 device reports touch support. A narrow desktop window without touch stays on the keyboard layout —
 narrow is not the same as untouchable, and a resized window is not a phone. A wide touch screen also
-stays on it — width is scope's own axis (*"the keyboard on a desktop-sized screen, and touch on a
-small one"*), and a large touchscreen is assumed to have room and, often, a keyboard.
+stays on it — a large touchscreen is assumed to have room and, often, a keyboard.
 
 700px is chosen against the level itself: the authored level is 640px wide, so anything narrower
 cannot show it at its natural size, and 700px leaves a little past that before the switch fires.

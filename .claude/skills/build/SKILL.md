@@ -81,6 +81,12 @@ letting them find out afterwards.
   [guide-general.md](../../../doc/guide-general.md) carries the argument.
 - **A check that has never failed is a claim, not evidence.** Make it fail on purpose once, and say
   what you did to make it fail.
+- **Mutate from a copy, and end by re-running unmutated.** `git checkout --` reverts to the last
+  commit, not to what you had, so on an uncommitted change it deletes the very thing being proven —
+  and every mutation still fails exactly as predicted, which reads as the proof succeeding. Observed
+  here: a two-mutation proof of the clearing test where both mutations failed correctly and the seam
+  had already been erased before the first one ran. **The final unmutated run is the only step that
+  separates a proof from a deletion**, so it is not optional. Commit first, or revert from a copy.
 - **A departure from guide-design is recorded in spec-tech in one line** — that document's own
   instruction. A rule broken quietly becomes the new rule by accident, and nobody ever decides to
   make that change.

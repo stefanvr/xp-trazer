@@ -49,12 +49,18 @@ the project root in development, while its default *build* entry is `index.html`
 is left out of `vite build` with no extra configuration. That omission *is* the gate, and adding
 `dev/style.html` to `build.rollupOptions.input` would remove it, so don't.
 
-## Verifying it
+## Looking at it
 
-Run the dev server, load `/dev/style.html`, and screenshot it — per
-[guide-general.md](../../../doc/guide-general.md), a page that builds without error is not a page that
-looks right. Check the labelled panel count against spec-style.md's palette table by hand; nothing
-enforces that they match, because the routine that would enforce it is the one being run.
+Run the dev server, load `/dev/style.html`, and screenshot it. Check the labelled panel count against
+spec-style.md's palette table by hand; nothing enforces that they match, because the routine that
+would enforce it is the one being run.
+
+**This is not the verification [guide-general.md](../../../doc/guide-general.md) rules out.** That
+rule says the suite verifies and the product is not driven by hand to settle a claim — and it is
+right, because a claim settled by looking proves one thing once. **Nothing is being claimed here.**
+This page has no purpose but to be looked at: it is a deliverable for the owner, and the looking is
+the product rather than the evidence. The distinction is worth keeping straight, because a page that
+*is* the answer and a page driven to *find* the answer look identical while you are on it.
 
 ## When to run it
 

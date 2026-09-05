@@ -48,7 +48,8 @@ before it is written.
   the log is worth, or a second person is working on a branch.
 * Always let the user approve a merge to main for release
 * On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and where the
-  landing looks like it reaches the overarching goal it calls `scope check`, which marks it reached
+  landing looks like it reaches the overarching goal it calls `scope check`, which clears the goal
+  and leaves a pointer to what comes next
 * **Setting the next overarching goal is never part of a landing** — it is bootstrap step 2, run as
   `scope create`, separately and whenever the owner chooses
 * **Merge with `--no-ff`, so every landing leaves one commit named for what landed** — `Merge

@@ -69,9 +69,13 @@ state that looks like progress and is not.
 Most goals land *inside* the overarching goal and leave `doc/scope.md` alone. Ask anyway, because
 asking is one sentence: **read the scope's *Done means* and ask whether it is now true.**
 
+**A scope holding no goal has nothing to check.** That is a state the project is allowed to sit in —
+a goal is cleared when it is reached, and the next one is set whenever the owner chooses — so open
+the document, find no goal, and move on. It is not a finding, and it is not a reason to set one.
+
 If it is not reached, there is nothing to do. If it reads as reached, **run
 [scope](../scope/SKILL.md) in `check` mode and stop reading here.** That skill owns the document, the
-proposal to the owner, and the marker it writes.
+proposal to the owner, and what it writes in the goal's place.
 
 **Landing does not set the next goal.** Not by writing one, and not by clearing the way for one. A
 landing that decided what gets built next would be doing two jobs, and setting the overarching goal
