@@ -104,5 +104,17 @@ it, never over it.** A finger on the level would be a finger on the ball. The re
 buttons — they are still not the player's, so they take whatever is left rather than a place chosen
 for them.
 
+**Each group keeps its own corner**, so a thumb never crosses the other group's buttons to reach its
+own:
+
+| | | |
+|---|---|---|
+| **up** | **launch** | ← one button, across both |
+| **down** | **left** | **right** |
+
+The vertical group runs down the left, the horizontal group along the bottom, and launch fills what
+is left above them — the largest target of the five, because it is the one pressed under no time
+pressure and the one a player new to the game looks for first.
+
 **No other chrome.** The one screen, and the one activity, are the same in both modes — a mode is how
 the level's steps are reached, not a second surface.

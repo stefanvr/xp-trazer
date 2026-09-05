@@ -56,12 +56,17 @@ canvas {
     height: auto;
   }
 
+  /*
+   * The arrangement is doc/spec-app.md's: the vertical group down the left, the horizontal group
+   * along the bottom, and launch filling the space above them. Each group keeps its own corner, so
+   * a thumb never has to cross the other group's buttons to reach its own.
+   */
   #touch-controls {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas:
-      'left launch right'
-      'up   launch down';
+      'up   launch launch'
+      'down left   right';
     gap: 0.5rem;
     width: 100%;
     max-width: 640px;
