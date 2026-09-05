@@ -33,8 +33,6 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
 - Don't build, and don't specify, further than the goal in front of you needs. A rule written three
   goals early is written from a worse understanding, and a specification is the expensive place to be
   wrong — its identifiers are cited from the code and from the tests.
-- Don't decide on the owner's behalf — not the product, not the scope. Options and a recommendation,
-  then wait. Confirm before it is recorded, not after.
 - Which document owns a decision is settled by the routing in [CLAUDE.md](../.claude/CLAUDE.md), not
   by judgement in the moment.
 

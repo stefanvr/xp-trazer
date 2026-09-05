@@ -6,14 +6,6 @@ Read it **before running any command**: doc/setup-ai-env.md
 
 ## Workflow
 
-Start with asking the goal of the session.
-
-### Reporting
-
-* Structure it — a table wherever the content has repeating fields
-* Mark a question as a question. Never leave an ask implied inside an observation, and say plainly
-  when a note needs no answer
-
 ### Bootstrap
 
 A project is brought into being in this order:
@@ -73,6 +65,7 @@ is the routing — which document answers which question.
 | What has gone wrong with a particular technology before? | `doc/lessons/<technology>.md` |
 | What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
 | Where does it run, how does it get there, and how do we know it did? | `doc/setup-app-env.md` |
+| Who decides what, how is it reported, and where does a lesson go? | `doc/guide-collaboration.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
 | What outranks those principles for this project, and until when? | `doc/guide-override.md` |
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
@@ -111,5 +104,6 @@ lesson file, or a lesson file's technology gets chosen.**
 
 **Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
 above, then
-`doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
-`doc/scope.md`, then whichever document above owns the decision in front of you.
+`doc/guide-collaboration.md` — it carries how the session opens — then `doc/guide-general.md` with
+`doc/guide-override.md` beside it, never instead of it, then `doc/scope.md`, then whichever document
+above owns the decision in front of you.
