@@ -48,9 +48,11 @@ does, and the unit and end-to-end suites are what say so. **Do not drive the run
 settle it** — that is expensive, it proves one thing once, and it leaves nothing behind. Where a
 clause of *Done means* is asserted nowhere, that is a gap in the tests: close it there.
 
-**Confirm the scope has finished moving out.** Its *Where each answer ends up* table checks off each
-answer the day its specification is written, without removing the row. Every row must be checked
-before the goal is cleared — a row still unchecked is an answer that exists nowhere but here, and
+**Confirm the scope has finished moving out**, where the goal tracks that. A goal holding answers
+carries a *Where each answer ends up* table, checking each off the day its specification is written
+without removing the row; a goal that held none has no such table and nothing to confirm. Every row
+that exists must be checked before the goal is cleared — a row still unchecked is an answer that
+exists nowhere but here, and
 clearing the section under it would lose it outright.
 
 **It is a proposal, not a finding.** Put it to the owner and wait. Say that the edge reads as met and
