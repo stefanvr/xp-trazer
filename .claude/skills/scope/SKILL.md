@@ -1,12 +1,13 @@
 ---
 name: scope
-description: Own doc/scope.md at both moments it changes — checking whether the overarching goal is reached and marking it so (`check`), and setting the next overarching goal (`create`). Use when a landing looks like it reaches the goal, when asked whether the goal is reached, or when setting a new scope.
+description: Own doc/scope.md at both moments it changes — checking whether the overarching goal is reached and, on approval, clearing it for a pointer to what comes next (`check`), and setting the next overarching goal (`create`). Use when a landing looks like it reaches the goal, when asked whether the goal is reached, or when setting a new scope.
 ---
 
 # Scope
 
 **Owns.** The overarching goal in `doc/scope.md`, at both moments it changes: **`check`** asks
-whether it is reached and marks it so, **`create`** sets the next one. Nothing else writes that goal.
+whether it is reached and, on approval, clears it; **`create`** sets the next one. Nothing else
+writes that goal.
 The document's own header rules are the document's, and are edited like any other document's.
 
 **Not here.** The cleanup a goal needs when it lands — clearing `doc/scratchpad/` — is
@@ -20,8 +21,8 @@ landing decide what gets built next — a single-responsibility violation, and a
 setting the overarching goal is bootstrap step 2 and has its own place in the sequence.
 
 **`create` is optional, and never automatic.** Nothing forces a new goal to exist the moment an old
-one ends. A scope marked reached and not yet replaced is a true statement about the project, and it
-is allowed to sit there.
+one ends. A scope holding no goal is a true statement about the project, and it is allowed to sit
+there.
 
 ---
 
@@ -32,8 +33,8 @@ is allowed to sit there.
 | `check` | A landing looks like it reaches the goal, or someone asks whether it is reached |
 | `create` | Setting the overarching goal — bootstrap step 2, or after a `check` marked one reached |
 
-With no argument, read the document and say which you chose before doing anything: a goal not marked
-reached wants `check`, a goal marked reached wants `create`.
+With no argument, read the document and say which you chose before doing anything: a document holding
+a goal wants `check`, a document holding none wants `create`.
 
 ---
 
@@ -49,23 +50,28 @@ clause of *Done means* is asserted nowhere, that is a gap in the tests: close it
 
 **Confirm the scope has finished moving out.** Its *Where each answer ends up* table checks off each
 answer the day its specification is written, without removing the row. Every row must be checked
-before the goal is marked reached — a row still unchecked is an answer that exists nowhere but here.
+before the goal is cleared — a row still unchecked is an answer that exists nowhere but here, and
+clearing the section under it would lose it outright.
 
 **It is a proposal, not a finding.** Put it to the owner and wait. Say that the edge reads as met and
 what it was answered against. Reporting that it looks reached is not the approval, and an overarching
 goal is the owner's to declare over.
 
-**On approval, mark it reached in place.** One line, immediately above the goal's own heading:
+**On approval, clear the goal and say what comes next.** Everything from the goal's own heading down
+is replaced by this. The header above it is the document's own rules and stays:
 
 ```markdown
-**Reached.** The next overarching goal is not set yet — `scope create` sets it.
+**No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
+have left open, then `scope create` to set the next one.
 ```
 
-Nothing else in the document changes. **The goal's text stays, every word of it.** It is what the
-next scope is chosen against, and deleting it the moment it is finished throws that away at exactly
-the moment it is most useful.
+**The goal's text goes, every word of it.** The commit history already records what landed, and a
+document still full of a finished goal is what makes the next goal *less* obvious — it goes on
+reading as though something is being built. An emptied scope is the signal that one must be set, and
+it is the one signal that cannot be skim-read past.
 
-**Write no new goal here.** That is `create`, it is a separate decision, and it is the owner's.
+**Write no new goal here.** That is `create`, it is a separate decision, and it is the owner's. What
+this leaves behind points at `create`; it does not anticipate it.
 
 ## `create` — set the overarching goal
 
@@ -89,9 +95,9 @@ applying it.
 forbids it of a goal; the scope is the container those goals sit inside, so it can hold the choice
 and resolve it by making it the first goal within itself.
 
-**Replace, do not append.** Everything from the goal's heading down belonged to the goal that ended,
-the reached marker included. The header above it is the document's own rules and stays. One
-overarching goal at a time — the commit history is what records the ones before it.
+**Replace, do not append.** What `create` writes goes where the pointer left by `check` is, under
+the document's own rules, which stay. One overarching goal at a time — the commit history is what
+records the ones before it.
 
 ## What it touches
 
