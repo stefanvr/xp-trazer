@@ -5,7 +5,17 @@
 **Not here.** Which technologies implement any of it — [spec-tech.md](spec-tech.md) — and this
 project's own architectural rules, which are its application of what follows. What the project is
 about — its subject matter, and the rules of the world it models — belongs to the specifications and
-never here. Which principle wins when two of these disagree is [guide-general.md](guide-general.md).
+never here. Which principle wins when two rules *within this document* disagree is
+[guide-general.md](guide-general.md).
+
+**On how code is shaped, this document outranks [guide-general.md](guide-general.md).** That is the
+one direction the routing did not previously state, and it is the direction that matters: a general
+principle is written without knowing what a seam costs, so it loses to a design rule on a design
+question. It still wins everywhere else, and it is still what settles a tie between two rules here.
+
+**Precedence, in one line.** [spec-tech.md](spec-tech.md) beats this document, which beats
+[guide-general.md](guide-general.md) on the shape of code — and guide-general beats everything on
+anything else.
 
 **[spec-tech.md](spec-tech.md) outranks this document wherever the two disagree.** What follows is
 written to hold on any project; a project's own architecture is written knowing what is being built,
