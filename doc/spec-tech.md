@@ -90,3 +90,15 @@ nowhere.
 **What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
 behaviour is reachable through it, and it is not level selection — that is a product decision
 [spec-app.md](spec-app.md) would own, and this is not a back door to making it in code.
+
+**It departs from [guide-design.md](guide-design.md), which wants a dev-only affordance gated so it
+never ships enabled.** This one ships enabled: the parameter works on the deployed page. The gate
+that document has in mind is the one `dev/style.html` uses — being left out of the build — and it
+cannot be used here, because the end-to-end suite runs against the built page on purpose, so a gate
+that excludes the seam from the build excludes it from the only place it is needed. Gating on a
+build-time flag instead would mean the suite tests a build that is not the one deployed, which costs
+more than it buys.
+
+**What the departure costs, and what contains it.** A visitor who guesses the parameter reaches a
+five-cell level with one brick. That is the whole exposure: the seam substitutes a level, and the
+paragraph above is what keeps it that way.
