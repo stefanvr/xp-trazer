@@ -120,12 +120,23 @@ author who reaches this should meet the sentence before meeting the bug.
 - **DS-2.7** The ball is never inside what it collides with. It turns at the surface it met, and a
   bat that moves into the ball puts the ball outside itself — a bat meeting the ball is the same
   collision as the ball meeting the bat, because which of them moved does not change what happened.
+- **DS-2.8** A bat's end also turns the ball, split into two zones rather than three: the half nearer
+  one side sends it one way and the half nearer the other sends it the other way, and there is no
+  middle zone that leaves it alone.
 
-**Without DS-2.6 the ball never changes heading.** Reflection off an axis-aligned surface only ever
-reverses one component, and **DS-4.4** leaves no other kind of surface to meet — so a ball keeps the
-heading it was launched on for as long as it travels, and one launched along an axis retraces a
-single line for ever. A bat is the only thing that can put it on a new heading, which is what makes
-reaching one the point of moving them.
+**Without DS-2.6 and DS-2.8 the ball never changes heading.** Reflection off an axis-aligned surface
+only ever reverses one component, and **DS-4.4** leaves no other kind of surface to meet — so a ball
+keeps the heading it was launched on for as long as it travels, and one launched along an axis
+retraces a single line for ever. A bat is the only thing that can put it on a new heading: **DS-2.6**
+on its long face, **DS-2.8** on its ends.
+
+**DS-2.8 turns the axis DS-2.6 turns, not the one it is met on.** An end is a face along the bat's own
+length, so meeting one is what **DS-2.4** already reverses there — the same axis a long face leaves
+alone and **DS-2.6** turns instead. Without a rule of its own, an end left that second axis exactly as
+it found it, so a ball meeting only ends, or only the boundary, could retrace a line for ever the same
+way one meeting no bat at all does. **Near and far are which half of the end's width the ball met**,
+the width being the bat's own thickness rather than its length — an end is one cell wide, too narrow
+for a third zone to mean anything the way the long face's middle third does.
 
 ### DS-3 · Bats
 
