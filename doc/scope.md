@@ -35,9 +35,15 @@ which is what owning them means, and how a decision was reached is in the histor
 
 ## A level you can lose
 
-**Done means** a level can be lost as well as cleared — a trap destroys the ball, the last of five
-lives ends the level, and the page draws a new room — and no bat can leave the ball on a path that
-repeats for ever.
+**Done means** a level can be lost as well as cleared — a trap destroys the ball, the last of a
+player's five lives ends the level, and the page draws a new room — and no bat can leave the ball on
+a path that repeats for ever.
+
+**Lives belong to a player, not to a level.** A level is drawn, played and replaced; a player is what
+a later arcade mode would carry a life count across from one room to the next, so this is where that
+separation starts rather than something arcade mode would have to retrofit into a level that never
+expected to outlive one room. This scope does not build arcade mode and decides nothing about it —
+only that the count this goal adds is asked of the right thing from the rule that first reads it.
 
 **The path is part of the edge rather than a goal beside it.** A ball keeps the heading it was
 launched on until something turns it, and today only the long face of a bat does: an end reverses one
@@ -55,5 +61,5 @@ opening the page does — and there is still no map and no selection.
 |---|---|---|
 | ☐ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
 | ☐ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
-| ☐ | **A level has lives, and runs out of them** | A destroyed ball costs one of five, and the level goes on until the last is gone. This is the state the domain says today does not exist, and the count has to be readable from outside or nothing can assert it. |
+| ☐ | **A player has lives, and runs out of them** | A destroyed ball costs the player one of five, and the level goes on until the last is gone. This is the state the domain says today does not exist, and the count has to be readable from outside or nothing can assert it. |
 | ☐ | **Losing is shown, and the page draws a new room** | The player is told the level was lost, where they are already looking, and then meets another room as though the page had been opened again. |
