@@ -16,7 +16,8 @@ import {
  * already owns — so this type stays a code-internal helper and **DS-6.3** is written in those words
  * rather than in this one.
  *
- * Every surface here is axis-aligned, because an element occupies exactly one cell and a bat lies
+ * Every surface here is axis-aligned, because an element the rules read occupies exactly one cell —
+ * **DS-7.2** — and a bat lies
  * along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one component
  * and leaves the other alone, and there is no other kind of surface to meet.
  */
