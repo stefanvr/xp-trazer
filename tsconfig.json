@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node"],
     "strict": true,
@@ -14,5 +15,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src", "dev", "e2e", "vite.config.ts", "playwright.config.ts"]
+  "include": ["src", "dev", "e2e", "scripts", "vite.config.ts", "playwright.config.ts"]
 }
