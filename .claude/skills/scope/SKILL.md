@@ -1,13 +1,13 @@
 ---
 name: scope
-description: Own doc/scope.md at both moments it changes — checking whether the overarching goal is reached and, on approval, clearing it for a pointer to what comes next (`check`), and setting the next overarching goal (`create`). Use when a landing looks like it reaches the goal, when asked whether the goal is reached, or when setting a new scope.
+description: Own doc/scope.md at both moments it changes — marking the goal's steps that a landing finished, asking whether the overarching goal is reached and, on approval, clearing it for a pointer to what comes next (`check`), and setting the next overarching goal (`create`). Use on every landing, when asked whether the goal is reached, or when setting a new scope.
 ---
 
 # Scope
 
-**Owns.** The overarching goal in `doc/scope.md`, at both moments it changes: **`check`** asks
-whether it is reached and, on approval, clears it; **`create`** sets the next one. Nothing else
-writes that goal.
+**Owns.** The overarching goal in `doc/scope.md`, everywhere it changes: **`check`** marks the steps
+a landing finished, asks whether the goal is reached and, on approval, clears it; **`create`** sets
+the next one. Nothing else writes that goal.
 The document's own header rules are the document's, and are edited like any other document's.
 
 **Not here.** The cleanup a goal needs when it lands — clearing `doc/scratchpad/` — is
@@ -30,7 +30,7 @@ there.
 
 | Argument | Use it when |
 |---|---|
-| `check` | A landing looks like it reaches the goal, or someone asks whether it is reached |
+| `check` | Every landing — it marks what that landing finished, then asks whether the goal is reached — or someone asks whether it is reached |
 | `create` | Setting the overarching goal — bootstrap step 2, or after a `check` marked one reached |
 
 With no argument, read the document and say which you chose before doing anything: a document holding
@@ -38,9 +38,24 @@ a goal wants `check`, a document holding none wants `create`.
 
 ---
 
-## `check` — is the goal reached, and say so in the document
+## `check` — mark what landed, then ask whether the goal is reached
 
-**Read the scope's *Done means* and ask whether it is now true.** That sentence is the edge, and it is
+**First, tick the steps this landing finished.** A goal broken into steps carries them as a table,
+and a step that is done is marked done in place — the row stays, with its wording untouched. Read
+each unticked row against what the landing actually delivered, judged the way the edge is judged:
+from the suites, not from the commit log. Ticking is a write to this document, so it happens here
+rather than in the landing that prompted it.
+
+**A tick is a fact about the tree, not a reward for the branch.** A landing may finish more than one
+step, or none. Where a row is only partly delivered it stays unticked; splitting it to tick half of
+it is rewriting the goal, which is `create`'s business.
+
+**Unticked steps are the reason the marking exists.** A goal whose steps are all ticked while *Done
+means* is still not true says plainly that the breakdown was incomplete, and a goal still holding
+unticked steps is the fastest answer to *what is left* — otherwise recoverable only by reading the
+whole history.
+
+**Then read the scope's *Done means* and ask whether it is now true.** That sentence is the edge, and it is
 the only thing being answered. Most goals land *inside* the overarching goal and the answer is no.
 
 **Answer it from the suites, not from the commit log.** The edge is a claim about what the program
@@ -97,16 +112,21 @@ applying it.
 forbids it of a goal; the scope is the container those goals sit inside, so it can hold the choice
 and resolve it by making it the first goal within itself.
 
+**A goal broken into steps writes them as a table with a column to tick**, every row unticked, because
+`check` marks them as they land and a table with nowhere to record that leaves the marking to prose.
+
 **Replace, do not append.** What `create` writes goes where the pointer left by `check` is, under
 the document's own rules, which stay. One overarching goal at a time — the commit history is what
 records the ones before it.
 
 ## What it touches
 
-`doc/scope.md`, and nothing else. **In `check` it writes one line, and only after the owner agrees.**
+`doc/scope.md`, and nothing else. **In `check` it ticks the steps that landed, and clears the goal
+only after the owner agrees.**
 
 ## When not to run it
 
-- **`check` mid-goal, as a status report.** Reading the edge is free; writing the marker is what this
-  is for, and the marker is a landing's business.
+- **`check` mid-goal, as a status report.** Reading the edge is free, and so is reading which steps
+  are ticked; writing to the document is what this is for, and a step is ticked when it lands, not
+  when it looks nearly done.
 - **`create` inside a landing.** That is the violation this skill was split in two to prevent.
