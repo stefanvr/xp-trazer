@@ -132,6 +132,25 @@ a new heading, which is what makes reaching it the point of moving one.
 - **DS-4.1** An element never moves.
 - **DS-4.2** A destructible brick is destroyed by a collision with the ball.
 - **DS-4.3** A permanent brick is never destroyed.
+- **DS-4.4** An element occupies every cell of its footprint, a rectangle of whole cells anchored at
+  the cell the level places it in. No two elements share a cell, and no element reaches outside the
+  level.
+- **DS-4.5** An element is one thing wherever it is met. A collision with any of its cells is a
+  collision with it, and destroying it frees every cell of its footprint at once.
+
+**DS-4.4 is what keeps DS-2.4 exact.** An element's surfaces are the outer faces of the cells it
+occupies, so they are horizontal or vertical and nothing else, whatever its footprint — a collision
+still reflects across one axis, and there is still no other kind of surface to meet. A footprint
+larger than one cell makes an element bigger; it does not make it a new shape.
+
+**A level authored elsewhere may place two elements on one cell, and DS-4.4 does not refuse it.** It
+is carried like everything else **DS-7** carries, and the level cannot be played: which of the two is
+met has no answer, and inventing one would be deciding a rule at the door. One of the original's
+rooms does this, which is how it was found.
+
+**DS-4.5 is why a footprint is not the same as a group of elements.** Two bricks side by side are two
+things: destroying one leaves the other. One brick two cells wide is one thing: meeting either half
+meets all of it, and it goes as a whole. Nothing else in this document distinguishes them.
 
 ### DS-5 · Clearing
 
@@ -172,8 +191,11 @@ dropped**, because a level whose author's intent is thrown away at the door cann
 what it came from, and nothing would say how much of it went. Each rule below names the datum and the
 rule that ignores it.
 
-**A level carrying any of DS-7.1, DS-7.2, DS-7.4 or DS-7.5 cannot be played**, because the rule it
+**A level carrying any of DS-7.1, DS-7.4 or DS-7.5 cannot be played**, because the rule it
 needs does not exist. Carrying it is what makes that answerable rather than invisible.
+
+**This list is meant to shrink.** A datum leaves it the day a rule reads it, and its number stays
+here pointing at the rule that took it over — **DS-7.2** is the first to go that way.
 
 - **DS-7.1** A level may place an element of a kind no rule gives behaviour to. It occupies its cells
   and nothing else about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say
@@ -187,8 +209,9 @@ needs does not exist. Carrying it is what makes that answerable rather than invi
   | Vertical trap | `VerticalTrap` |
   | Bumper | `Bumper` |
 
-- **DS-7.2** An element may occupy more than one cell. Its footprint is carried; what surfaces a
-  larger element presents is undecided, so nothing reads a footprint that is not one cell.
+- **DS-7.2** *Moved.* A footprint larger than one cell is no longer carried and unread: **DS-4.4**
+  says which cells an element occupies and **DS-4.5** what meeting one of them means. The number
+  stays so that a citation of it resolves to where it went.
 - **DS-7.3** Every element carries a color id, and so does the level. No rule reads either, and
   neither changes anything that happens.
 - **DS-7.4** A level may author where the ball starts. **DS-1.4** draws the bat that holds it from the
@@ -215,11 +238,11 @@ back to.
 **A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
 or holds one element.
 
-**Cells are the only thing elements know about.** An element the rules read occupies exactly one cell,
-so every surface in a level is a cell face — horizontal or vertical, never anything else. That is what
-makes **DS-2.4** exact rather than approximate: a collision reflects across one axis, and there is no
-other kind of surface to meet. **DS-7.2** carries larger footprints and nothing reads them, so this
-sentence holds of everything that is played.
+**Cells are the only thing elements know about.** An element occupies a rectangle of whole cells —
+**DS-4.4** — so every surface in a level is a cell face, horizontal or vertical, never anything else.
+That is what makes **DS-2.4** exact rather than approximate: a collision reflects across one axis, and
+there is no other kind of surface to meet. A footprint changes how many cells an element covers and
+nothing about the surfaces it presents.
 
 **The ball and the bats are continuous; elements are not.**
 
@@ -265,13 +288,15 @@ nothing now and means such a rule adds a rule rather than a re-modelling.
 | Event | Carries |
 |---|---|
 | **Collision** | What the ball met — a boundary, a bat or a brick — and whether the collision destroyed it |
-| **Element destroyed** | The cell the element occupied |
+| **Element destroyed** | The cells the element occupied |
 
 **A collision does not say which bat or which brick.** Nothing reads it, and where a brick goes,
-**DS-6.5** already names the cell.
+**DS-6.5** already names the cells.
 
-**An element destroyed names a cell.** A level is a grid of cells, so a cell is what the domain has
-to point with; how one is stored is the implementation's business and not this document's.
+**An element destroyed names cells.** A level is a grid of cells, so a cell is what the domain has to
+point with; how one is stored is the implementation's business and not this document's. It names all
+of them rather than one, because **DS-4.5** frees all of them, and a reader given one cell of a
+four-cell brick would leave three behind.
 
 **The destroyed flag is answerable for every collision, and is false for a boundary and a bat.**
 Neither can be destroyed, so the question has an answer everywhere rather than existing on one of the
