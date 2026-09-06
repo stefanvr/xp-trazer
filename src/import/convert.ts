@@ -66,8 +66,8 @@ const KINDS = new Map<string, { readonly kind: ElementKind; readonly footprint: 
  * The level's own color id — **DS-7.3**.
  *
  * The export gives a room three colors: a shared multicolor, a background color and a border color.
- * The domain carries one, so this takes the background color and the other two do not survive. That
- * is a narrowing, and it is written down here rather than left to be noticed.
+ * The domain carries one, and says which: the level's id is its background, and the other two are
+ * dropped.
  */
 function levelColorId(room: SourceRoom): ColorId {
   return room.background_color;
