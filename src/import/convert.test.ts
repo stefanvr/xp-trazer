@@ -49,12 +49,17 @@ describe('converting a room of the original', () => {
     expect(convertRoom(room24).origin).toEqual({ room: 24 });
   });
 
-  it('fails loudly on an object kind it has no name for', () => {
+  /**
+   * The layer is what identifies an object, and the export's own name for it is carried into the
+   * message alone — so this asserts both halves: the unknown layer is refused, and what the export
+   * called it survives into what a person reads.
+   */
+  it('fails loudly on an object arriving on a layer it has no kind for', () => {
     const strange = {
       ...room24,
-      objects: [{ element_name: 'Wormhole', color_index: 1, row: 2, col: 3 }],
+      objects: [{ layer: 9, element_name: 'Wormhole', color_index: 1, row: 2, col: 3 }],
     };
-    expect(() => convertRoom(strange)).toThrow(/no kind for: Wormhole/);
+    expect(() => convertRoom(strange)).toThrow(/no kind for: layer 9, which the export calls Wormhole/);
   });
 
   it('fails loudly on a bat lying along no axis', () => {

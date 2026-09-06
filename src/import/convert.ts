@@ -25,7 +25,12 @@ export const ROOM_ROWS = 25;
 /**
  * One object of the export, as the decode wrote it down.
  *
- * Every field the export also carries and this type does not — `layer`, `element_id`,
+ * **An object is identified by its raw `layer`, and never by the name written beside it.**
+ * `OBJECT_KINDS` says why. `element_name` is carried for the error message alone, so that a layer
+ * this module has no kind for can be reported as the export described it — nothing reads it to
+ * decide what an object is.
+ *
+ * Every field the export also carries and this type does not — `element_id`,
  * `semantic_confidence`, `color`, `screen_address`, `footprint_cells`, `char_codes` — is read by
  * nobody here. `footprint_cells` in particular is not trusted over `OBJECT_KINDS`: the shape a kind
  * occupies is this module's own table, asserted against the export rather than read from it, so a
@@ -33,6 +38,7 @@ export const ROOM_ROWS = 25;
  * between rooms.
  */
 export type SourceObject = {
+  readonly layer: number;
   readonly element_name: string;
   readonly color_index: number;
   readonly row: number;
@@ -66,27 +72,31 @@ export type SourceRoom = {
  * this module's knowledge: the domain models a footprint and never learns what the original's
  * inventory is.
  *
- * **Glass refractor and Bumper were swapped here until the corrected export.** The previous decode
- * gave the glass refractor's own 3×3 shape the label `Bumper`, and the real bumper's 2×2 shape the
- * label `Monster generator` — a labelling mistake, not a border case: every room with a glass
- * refractor stood it as a permanent brick instead of leaving it out, which is 141 placements across
- * 42 rooms blocking the ball where the original does not. `ELEMENTS.md` in the corrected export
- * measures each shape directly against the original's own char codes, and the real Monster
- * generator places nowhere in the stock 64 rooms — its 4×3 footprint is carried for
- * `dev/elements.ts`'s panel and nothing else exercises it.
+ * **Keyed on the export's raw layer, because its names have been wrong three times.** Two decodes
+ * and a supplied legend name layers 3, 4 and 7 three different ways, and none of the three matches
+ * the original: layer 7 is the monster generator, layer 4 the glass refractor, and layer 3 the
+ * bumper, which the stock 64 rooms place nowhere at all. A layer is the field the export promises
+ * to keep still — *raw layer and character information is preserved so a later semantic refinement
+ * does not invalidate the room data* — and a name is the field it has already moved twice, so the
+ * label below is this project's own and nothing here reads the export's.
+ *
+ * **A shape follows from the layer's character range, and no decode has ever disagreed about one.**
+ * Nine characters (`$5A–$62`) occupy 3×3, four (`$52–$55`) occupy 2×2, twelve (`$46–$51`) occupy
+ * 3×4. Only which name went with which layer ever moved, which is why getting the names from
+ * elsewhere costs nothing here: the geometry was never in question.
  */
 export const OBJECT_KINDS = new Map<
-  string,
-  { readonly kind: ElementKind; readonly footprint: Footprint }
+  number,
+  { readonly label: string; readonly kind: ElementKind; readonly footprint: Footprint }
 >([
-  ['Horizontal brick', { kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
-  ['Vertical brick', { kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
-  ['Dimpled solid block', { kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
-  ['Glass refractor', { kind: 'glassRefractor', footprint: { columns: 3, rows: 3 } }],
-  ['Monster generator', { kind: 'monsterGenerator', footprint: { columns: 4, rows: 3 } }],
-  ['Horizontal trap', { kind: 'horizontalTrap', footprint: { columns: 2, rows: 1 } }],
-  ['Vertical trap', { kind: 'verticalTrap', footprint: { columns: 1, rows: 2 } }],
-  ['Bumper', { kind: 'bumper', footprint: { columns: 2, rows: 2 } }],
+  [0, { label: 'Horizontal brick', kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
+  [1, { label: 'Vertical brick', kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
+  [2, { label: 'Dimpled solid block', kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
+  [3, { label: 'Bumper', kind: 'bumper', footprint: { columns: 3, rows: 4 } }],
+  [4, { label: 'Glass refractor', kind: 'glassRefractor', footprint: { columns: 2, rows: 2 } }],
+  [5, { label: 'Horizontal trap', kind: 'horizontalTrap', footprint: { columns: 2, rows: 1 } }],
+  [6, { label: 'Vertical trap', kind: 'verticalTrap', footprint: { columns: 1, rows: 2 } }],
+  [7, { label: 'Monster generator', kind: 'monsterGenerator', footprint: { columns: 3, rows: 3 } }],
 ]);
 
 /**
@@ -102,10 +112,11 @@ function levelColorId(room: SourceRoom): ColorId {
 
 export function convertRoom(room: SourceRoom): ImportedRoom {
   const elements = room.objects.map((object) => {
-    const known = OBJECT_KINDS.get(object.element_name);
+    const known = OBJECT_KINDS.get(object.layer);
     if (known === undefined) {
       throw new Error(
-        `room ${room.room_index} places an object the import has no kind for: ${object.element_name}`,
+        `room ${room.room_index} places an object the import has no kind for: ` +
+          `layer ${object.layer}, which the export calls ${object.element_name}`,
       );
     }
     return element(

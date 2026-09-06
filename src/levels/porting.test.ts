@@ -37,11 +37,11 @@ describe('what an imported room gives up so that it can be played', () => {
     }
   });
 
-  it('stands a bumper as a permanent brick, where it stood and as big (P-5)', () => {
+  it('stands a monsterGenerator as a permanent brick, where it stood and as big (P-4)', () => {
     const imported = ROOMS.find((candidate) =>
-      candidate.elements.some((element) => element.kind === 'bumper'),
+      candidate.elements.some((element) => element.kind === 'monsterGenerator'),
     );
-    const original = imported?.elements.find((element) => element.kind === 'bumper');
+    const original = imported?.elements.find((element) => element.kind === 'monsterGenerator');
     const stood = portedLevel(imported!).elements.find(
       (element) => element.column === original?.column && element.row === original?.row,
     );
@@ -53,12 +53,13 @@ describe('what an imported room gives up so that it can be played', () => {
   });
 
   /**
-   * The corrected export places no monster generator anywhere in the stock 64 rooms —
-   * `src/import/convert.ts`'s own note on `OBJECT_KINDS` says why — so there is no room to find one
-   * in, and the concession is asserted over a level built for the purpose instead.
+   * The original places no bumper anywhere in the stock 64 rooms — `src/import/convert.ts`'s own
+   * note on `OBJECT_KINDS` says which layer carries it and why nothing arrives on that layer — so
+   * there is no room to find one in, and the concession is asserted over a level built for the
+   * purpose instead.
    */
-  it('stands a monsterGenerator as a permanent brick, where it stood and as big (P-4)', () => {
-    const original = placedElement('monsterGenerator', 2, 2, 4, 3, 5);
+  it('stands a bumper as a permanent brick, where it stood and as big (P-5)', () => {
+    const original = placedElement('bumper', 2, 2, 3, 4, 5);
     const synthetic: ImportedRoom = {
       origin: { room: -1 },
       columns: 8,
