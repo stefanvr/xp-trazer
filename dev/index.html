@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trazer — dev pages</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Dev-only pages</h1>
+      <p class="lede">
+        Reached only through <code>npm run dev</code> — none of these is in <code>vite build</code>'s
+        entry, so none of them ships. Each demonstrates a specification against the project's real
+        code rather than a mockup of it.
+      </p>
+      <ul id="pages">
+        <li><a href="./style.html">Style, seen</a> — doc/spec-style.md's palette and typography</li>
+        <li><a href="./audio.html">Style, heard</a> — doc/spec-style.md's two sounds and what silences them</li>
+        <li><a href="./elements.html">Elements, played</a> — doc/spec-domain.md's element kinds, each in a real, playable level</li>
+      </ul>
+    </main>
+  </body>
+</html>

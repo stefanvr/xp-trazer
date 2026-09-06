@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trazer — element test bed</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>doc/spec-domain.md's elements, played</h1>
+      <p class="lede">
+        One real, playable level per element kind — the two bricks, and the five DS-7.1 names but
+        gives no rule to. Every level runs through the real simulation loop: the same
+        <code>createGameState</code>, <code>step</code>, <code>draw</code> and sounds
+        <code>src/main.ts</code> calls, never a second copy of any of them. Pick a panel, then drive
+        it with the arrow keys and Space, same as the game. Dev-only — this page is never built.
+      </p>
+      <nav id="picker" aria-label="Element kind"></nav>
+      <canvas id="stage" width="224" height="160"></canvas>
+      <p class="readout">
+        collisions <span data-testid="collision-count">0</span>
+        &middot; bricks left <span data-testid="bricks-left">0</span>
+        &middot; playable <span data-testid="playable">—</span>
+        &middot; unplayable because <span data-testid="unplayable-reasons">—</span>
+      </p>
+      <p><a href="./index.html">&larr; dev pages</a></p>
+    </main>
+    <script type="module" src="./elements.ts"></script>
+  </body>
+</html>
