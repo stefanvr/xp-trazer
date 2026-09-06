@@ -48,7 +48,19 @@ goal 3 before anything else in that goal is written.
 | 1 | **Stub rules for everything the export carries that is not implemented** — the unsupported element kinds, elements occupying more than one cell, per-object and per-room colors, an authored ball start, and a bat that stands free of every edge | Each one is named in the specification that owns it and marked as carried but not yet honoured. No datum the export holds is silently dropped |
 | 2 | **Generalise the clearing proof into a test bed for elements**, reached from a dev-only page that also links the existing style and audio pages | Every element the domain names is reachable and exercisable from that page, and the seam that substitutes a level into the played game is unchanged — the page is a separate dev route rather than a widening of it |
 | 3 | **Import the rooms, every one of them, each carrying whether it can be played** | The export's rooms are in the tree in this project's format; a room that depends on a rule goal 1 only stubbed is marked unplayable rather than omitted; the suite asserts a converted room against its source |
+| 3b | **Support an element that occupies more than one cell**, so that what the rooms are made of reaches the rules rather than only being carried | The domain gives a footprint larger than one cell surfaces the ball collides with, and a room whose only obstacle was that footprint is no longer unplayable for it |
 | 4 | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
+
+**Goal 3b was added once the import had been done, which is what a scope changing mid-flight is
+for.** Every object the original places is larger than one cell, so a rule reading only one-cell
+footprints reaches nothing the rooms are made of. It is named as its own goal rather than folded into
+goal 4, because giving a footprint surfaces is a rule of the world and drawing a room at random is
+not.
+
+**Goal 3b alone does not make a room playable, and goal 4 is where that is settled.** An imported
+room also places kinds no rule gives behaviour to, authors where the ball starts, and stands its bats
+free of both perpendicular sides. Which of those goal 4 needs answered, and how, is goal 4's to find
+out.
 
 **Every room is imported, including the ones that cannot yet be played.** Importing only what the
 current rules support would make the import a second place where those rules are decided, and would

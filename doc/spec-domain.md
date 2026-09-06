@@ -203,6 +203,13 @@ topology, which exits lead where and which rooms a game may start in — **DS-7.
 survives of it · and the bookkeeping of whatever decoded the original, which describes that
 decoding rather than the level.
 
+**A level has one color id, and a level authored elsewhere may hold more than one.** The original
+colors a room three times over — a color shared by everything in it, a background, and an edge —
+where **DS-7.3** carries one id for the level and one for each element. The level's id is its
+background, and the other two are dropped. A second id would have to be named, drawn and told apart
+from the first, and nothing draws the first yet; the day something does, this is the sentence to come
+back to.
+
 ## What a level is, as data
 
 **A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
