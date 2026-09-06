@@ -49,9 +49,18 @@ export type SourceRoom = {
  *
  * The two bricks and the solid block are the three the rules read; the other five are **DS-7.1**'s,
  * carried and given no behaviour. **Every one of them is larger than one cell**, which is the
- * original's geometry rather than a decision made here — **DS-7.2** is what carries that.
+ * original's geometry rather than a decision made here — **DS-7.2** is what carries that. A
+ * destructible brick is the only kind with two shapes; the solid block is horizontal alone.
+ *
+ * **Exported because it is the one place these shapes are written down**, and a second reader —
+ * `dev/elements.ts`'s test bed — shows them rather than holding a copy that could drift. It stays
+ * this module's knowledge: the domain models a footprint and never learns what the original's
+ * inventory is.
  */
-const KINDS = new Map<string, { readonly kind: ElementKind; readonly footprint: Footprint }>([
+export const OBJECT_KINDS = new Map<
+  string,
+  { readonly kind: ElementKind; readonly footprint: Footprint }
+>([
   ['Horizontal brick', { kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
   ['Vertical brick', { kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
   ['Dimpled solid block', { kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
@@ -75,7 +84,7 @@ function levelColorId(room: SourceRoom): ColorId {
 
 export function convertRoom(room: SourceRoom): ImportedRoom {
   const elements = room.objects.map((object) => {
-    const known = KINDS.get(object.type);
+    const known = OBJECT_KINDS.get(object.type);
     if (known === undefined) {
       throw new Error(`room ${room.room} places an object the import has no kind for: ${object.type}`);
     }
