@@ -24,6 +24,11 @@ exactly this list and nothing else.
 | P-4 | **DS-7.1** monster generator | Stands as a permanent brick, keeping its footprint and its place | The generator has behaviour |
 | P-5 | **DS-7.1** bumper | Stands as a permanent brick, keeping its footprint and its place | The bumper has behaviour |
 
+**P-5 is conceded for nothing, and stays in force anyway.** The original places no bumper in any of
+its 64 rooms, so the line changes no room today and the suite asserts it over a level built for the
+purpose. It is here because the kind exists and the concession is what would happen to one — a
+concession removed for being unused would be re-decided in code the moment a bumper arrived.
+
 **One thing is not conceded, and the room holding it stays unplayable.**
 
 - **DS-4.4** — two elements on one cell. Which of the two the ball met has no answer, and inventing

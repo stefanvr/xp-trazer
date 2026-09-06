@@ -1,27 +1,34 @@
 # Goal 6 — re-import from the corrected export
 
 Kind: **repair**. Matched against `doc/spec-tech.md`'s **A-3** — the rooms are converted once and
-committed, from an export that stays outside the tree — and `src/import/convert.ts`'s own claim that
-`OBJECT_KINDS`' footprints are "the original's geometry rather than a decision made here". Nothing in
-`doc/spec-domain.md` or `doc/spec-domain-porting-todo.md` names a footprint size or which export a
-kind's label comes from, so correcting both is making the code match what it already claims to be
-sourced from, not a new decision.
+committed, from an export that stays outside the tree — and against `src/levels/rooms.generated.ts`
+as the owner has settled it. Nothing in `doc/spec-domain.md` or `doc/spec-domain-porting-todo.md`
+names a footprint size or says which layer of the export carries which kind, so writing both down at
+the border is making the code match what it already claims to be sourced from.
 
-## What the new export actually corrects
+## Which object is which, and why no name is trusted
 
-Measured directly against `TRAZ_pass2_updated_importable/traz_rooms_all.json` and its `ELEMENTS.md`,
-against what is committed today:
+The same two layers have been named four different ways, three of them in writing:
 
-| Kind | Committed today | The real export | Consequence |
-|---|---|---|---|
-| `bumper` (141 instances, footprint 3×3) | Labelled `bumper` | Is **Glass refractor** | Stands as a permanent brick today (P-5); should be dropped (P-2) — the ball is currently blocked by walls 42 rooms' worth of glass that should not be there at all |
-| `monsterGenerator` (375 instances, footprint 2×2) | Labelled `monsterGenerator` | Is **Bumper** | No visible effect — both concede to `permanent` (P-4, P-5) — but the carried kind is wrong |
-| Real `Monster generator` | 0 instances (matches the export — it places none) | 0 instances, footprint documented as 4×3 | Nothing to fix in the rooms; `OBJECT_KINDS`' own footprint entry is still wrong and feeds `dev/elements.ts`'s demo panel |
+| Objects | Pass-1 export | Pass-2 `ELEMENTS.md` and the JSON | `room-legenda.txt` | **In force** |
+|---|---|---|---|---|
+| 141, 3×3, 42 rooms — layer 7, `$5A–$62` | Bumper | Glass refractor | Bumper | **Monster generator** |
+| 375, 2×2, 28 rooms — layer 4, `$52–$55` | Monster generator | Bumper | Glass refractor | **Glass refractor** |
+| 0 placements, 12 chars — layer 3, `$46–$51` | Monster generator | Monster generator (provisional) | Monster generator | **Bumper** |
 
-So the previous export's decode swapped two labels wholesale — this is not a border case, it is 141
-walls that should not exist. Room 29 is confirmed still the sole `DS-4.4` conflict in the new export
-(checked directly against `traz_rooms_all.json`, ahead of writing any code), which is what makes it
-safe to assume the room numbering itself did not move under the correction.
+**The right-hand column is the owner's, from the original itself, and it is what the tree holds.**
+The export's own names are not read at all — which is why the converter is keyed on the raw `layer`,
+the field the export preserves for exactly this reason (`README.md`: *raw layer and character
+information is preserved so a later semantic refinement does not invalidate the room data*).
+
+**The shapes are not in dispute anywhere.** A layer's footprint follows from its char range — nine
+characters is 3×3, four is 2×2, twelve is 3×4 — and all four namings agree on them cell for cell.
+Only which name goes with which layer ever moved.
+
+**What it changes about play.** The 375 two-by-two objects are now the glass refractor, so **P-2**
+leaves them out of the played level; the 141 three-by-three objects are now the monster generator, so
+**P-4** stands each one up as a permanent brick where it stood. That is the reverse of what the
+previous commit on this branch did, and it moves what the ball meets in 42 rooms and in 28.
 
 ## What is left
 
@@ -31,24 +38,25 @@ safe to assume the room numbering itself did not move under the correction.
 
 ## Kept for the landing to read
 
-All seven tasks are done: `convert.ts` and `import-rooms.ts` parse the new export's shape; the
-footprint table matches `ELEMENTS.md` (glass 3×3, bumper 2×2, monster generator 4×3 — unplaced);
-`rooms.generated.ts` and the `room-24` fixture are regenerated from `traz_rooms_all.json`;
-`convert.test.ts` and `porting.test.ts` were updated for the new field names and for the corrected
-export placing no monster generator anywhere (asserted over a level built for the purpose instead).
-`npm run check`, `npm run test` (182 passing) and `npm run test:e2e` (16 passing) are all clean.
+**The rooms were reproduced, not replaced.** Running `scripts/import-rooms.ts` against
+`traz_rooms_all.json` with the layer-keyed table left `src/levels/rooms.generated.ts` and the room-24
+fixture byte-for-byte as the owner's own correction had them. That is what says the table and the
+committed rooms mean the same thing, and it is a stronger check than any assertion written for it.
 
-**The counts held.** Room 29 is still the sole `DS-4.4` conflict — checked directly against the raw
-export before writing any code, and again by the suite after — so 63 of 64 rooms are still playable
-and `doc/spec-domain-porting-todo.md`'s quoted counts needed no edit.
+**The counts held, and no document needed correcting for them.** Still 63 of the 64 rooms playable,
+still room 29 as the sole **DS-4.4** conflict — even though which objects are dropped and which stand
+as permanent bricks is now the reverse of what it was. `doc/spec-domain-porting-todo.md` gained one
+paragraph, saying that **P-5** is conceded for nothing because the original places no bumper.
 
-**Checked visually.** `dev/levels.html` (goal 5) draws room 0 — which the corrected data gives a
-glass refractor — and the two permanent-brick blocks that used to flank its anchor brick are gone,
-replaced by empty space. That is `P-2` working on data that is actually glass now, rather than on
-data mislabelled as something else.
+**The mutation proof turned up a real hole, and it is the finding worth keeping.** Layers 4 and 7
+were swapped in `OBJECT_KINDS` and the rooms regenerated from it — and **the entire suite passed**,
+185 tests, because every assertion about the rooms compared them against the table that generated
+them. A table that is wrong about a name produces rooms that agree with it perfectly. The counts in
+`src/levels/rooms.test.ts` are the answer: they come from the original rather than from the export,
+so they are the one thing a renamed layer moves. Re-running the same mutation now fails there, and
+only there. Reverted, regenerated, and the unmutated suite clean at 186 unit and 23 end-to-end.
 
-**The mutation proof.** `OBJECT_KINDS`' glass and bumper footprints were set back to their previous,
-wrong values (4×3 and 3×3) and the rooms regenerated from them. The suite caught it hard: 30 rooms
-newly failed `DS-4.4` (their now-larger footprints overlapping a neighbour), where before only room
-29 did. Reverted, rooms regenerated again from the correct table, and the unmutated suite passed
-clean — 182 unit, 16 end-to-end.
+**Where the naming decision lives.** In `src/import/convert.ts`'s comment on `OBJECT_KINDS`, and in
+the counts that test asserts. Nothing in `doc/` owns it: it is a fact about the border, and the
+border is that module's. This file's table of four namings is the fullest record of how it was
+reached, and it goes when the scratchpad is cleared — which is right, because the history keeps it.

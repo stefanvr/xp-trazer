@@ -55,7 +55,7 @@ goal 3 before anything else in that goal is written.
 | 3b | ✅ | **Support an element that occupies more than one cell**, so that what the rooms are made of reaches the rules rather than only being carried | The domain gives a footprint larger than one cell surfaces the ball collides with, and a room whose only obstacle was that footprint is no longer unplayable for it |
 | 4 | ✅ | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
 | 5 | ✅ | **Add a level preview page**, reachable from the dev index alongside the existing style, audio and elements pages | The dev index links the page; opening it shows one imported room at its real dimensions; pressing keyup or keydown steps to the next or previous room, cycling across all of them, including the ones marked unplayable |
-| 6 |   | **Re-import the rooms from the corrected export**, `TRAZ_pass2_updated_importable`, which fixes a range of characters the previous export misclassified and is now identified as the glass refractor | The tree's rooms come from the corrected export; the converter's fixture and every room count the suite asserts are re-checked against it; a room whose only unplayable reason was the misclassified range is playable, or unplayable for a reason that still holds |
+| 6 |   | **Re-import the rooms from the corrected export**, `TRAZ_pass2_updated_importable`, and settle which object each character range actually is — three decodes name three of the ranges three different ways, and the original itself is what says which is right | The tree's rooms come from the corrected export and carry the names the original gives them, asserted by a count no decode of the export can satisfy; the converter's fixture and every room count the suite asserts are re-checked against it; a room whose only unplayable reason was a misnamed range is playable, or unplayable for a reason that still holds |
 
 **Goal 3b was added once the import had been done, which is what a scope changing mid-flight is
 for.** Every object the original places is larger than one cell, so a rule reading only one-cell
@@ -81,10 +81,14 @@ folded into goal 4 or into each other.
 
 **Goal 6 exists because the export itself was wrong, not because a rule was missing.** The
 concessions in `spec-domain-porting-todo.md` still stand — glass has no behaviour yet, and P-2 still
-leaves it out of the played level — but the previous export misidentified the character range that
-draws it, and whatever it was misidentified as may have stood in the ball's way when the original
-never put anything there. Correcting the source is separate from giving glass a rule, and only the
-second ends the concession.
+leaves it out of the played level — but the export misidentified the character range that draws it,
+and whatever it was misidentified as stood in the ball's way where the original never put anything.
+Correcting the source is separate from giving glass a rule, and only the second ends the concession.
+
+**No decode of the export ever got those names right, which is why the goal ends at the original and
+not at a better export.** Three of them name the same three ranges three different ways, and the
+answer is in the game rather than in any of the files: the import now identifies an object by the
+raw layer every decode agrees on, and the names beside it are this project's own.
 
 **Colors are the aspect most easily lost.** They are metadata on every object and on the room's
 background, they change nothing about play, and nothing fails when they are dropped — which is
