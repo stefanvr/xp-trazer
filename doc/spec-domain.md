@@ -7,9 +7,9 @@ Independent of any screen.
 [spec-app.md](spec-app.md); how it looks is [spec-style.md](spec-style.md); what it is built with is
 [spec-tech.md](spec-tech.md).
 
-**Not specified yet.** Hazards, two modes, runs, lives and a map of levels. None of them is named
-here — a rule written three goals early is written from a worse
-understanding, and this is the expensive place to be wrong.
+**Not specified yet.** Two modes, runs, lives and a map of levels. None of them is named here — a
+rule written three goals early is written from a worse understanding, and this is the expensive
+place to be wrong.
 
 **This document states the desired state.** Where the code disagrees with a name below, the code is
 wrong.
@@ -29,10 +29,11 @@ The player moves bats. The ball moves itself.
 | **Boundary** | The level's edge. | `Boundary` |
 | **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
 | **Element** | A fixed thing a level places. | `Element` |
-| **Element kind** | Which kind of thing an element is. Two kinds have rules — the bricks below; **DS-7.1** carries five that have none. | `ElementKind` |
+| **Element kind** | Which kind of thing an element is. Four kinds have rules — the bricks and the trap below; **DS-7.1** carries three that have none. | `ElementKind` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
 | **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
 | **Permanent brick** | A brick that is never destroyed, and that clearing ignores. | `PermanentBrick` |
+| **Trap** | An element that destroys the ball on collision, and unlike a brick is never destroyed itself. | `TrapKind` |
 | **Footprint** | The cells one element occupies. | `footprint` |
 | **Color id** | What an element or a level is authored to be colored. An id and not a color — [spec-style.md](spec-style.md) says what an id is drawn in. | `colorId` |
 | **Origin** | Which room of the original a level was imported from. | `origin` |
@@ -45,7 +46,7 @@ The player moves bats. The ball moves itself.
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
 | **Step** | The simulation advancing once. It is the domain's unit of time, and the only one it has. | `step` |
 | **Event** | Something that happened in the world. A step yields the events that happened during it. | `Event` |
-| **Collision** | The ball meeting a boundary, a bat or a brick. | `Collision` |
+| **Collision** | The ball meeting a boundary, a bat or a brick — never a trap, which destroys the ball instead of colliding with it. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 | **Game state** | Everything that changes while a level is played. | `GameState` |
 
