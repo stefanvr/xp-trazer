@@ -22,9 +22,18 @@ import type { ColorId, ElementKind, Footprint } from '../domain/level';
 export const ROOM_COLUMNS = 40;
 export const ROOM_ROWS = 25;
 
-/** One object of the export, as the decode wrote it down. */
+/**
+ * One object of the export, as the decode wrote it down.
+ *
+ * Every field the export also carries and this type does not — `layer`, `element_id`,
+ * `semantic_confidence`, `color`, `screen_address`, `footprint_cells`, `char_codes` — is read by
+ * nobody here. `footprint_cells` in particular is not trusted over `OBJECT_KINDS`: the shape a kind
+ * occupies is this module's own table, asserted against the export rather than read from it, so a
+ * decode that gets one room's footprint wrong is a fixture failure and not a silent difference
+ * between rooms.
+ */
 export type SourceObject = {
-  readonly type: string;
+  readonly element_name: string;
   readonly color_index: number;
   readonly row: number;
   readonly col: number;
@@ -37,11 +46,11 @@ export type SourceBat = {
 };
 
 export type SourceRoom = {
-  readonly room: number;
+  readonly room_index: number;
   readonly objects: readonly SourceObject[];
   readonly bats: readonly SourceBat[];
   readonly ball_start: { readonly x_col: number; readonly y_row: number } | null;
-  readonly background_color: number;
+  readonly colors: { readonly background: { readonly index: number } };
 };
 
 /**
@@ -56,6 +65,15 @@ export type SourceRoom = {
  * `dev/elements.ts`'s test bed — shows them rather than holding a copy that could drift. It stays
  * this module's knowledge: the domain models a footprint and never learns what the original's
  * inventory is.
+ *
+ * **Glass refractor and Bumper were swapped here until the corrected export.** The previous decode
+ * gave the glass refractor's own 3×3 shape the label `Bumper`, and the real bumper's 2×2 shape the
+ * label `Monster generator` — a labelling mistake, not a border case: every room with a glass
+ * refractor stood it as a permanent brick instead of leaving it out, which is 141 placements across
+ * 42 rooms blocking the ball where the original does not. `ELEMENTS.md` in the corrected export
+ * measures each shape directly against the original's own char codes, and the real Monster
+ * generator places nowhere in the stock 64 rooms — its 4×3 footprint is carried for
+ * `dev/elements.ts`'s panel and nothing else exercises it.
  */
 export const OBJECT_KINDS = new Map<
   string,
@@ -64,11 +82,11 @@ export const OBJECT_KINDS = new Map<
   ['Horizontal brick', { kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
   ['Vertical brick', { kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
   ['Dimpled solid block', { kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
-  ['Glass refractor', { kind: 'glassRefractor', footprint: { columns: 4, rows: 3 } }],
-  ['Monster generator', { kind: 'monsterGenerator', footprint: { columns: 2, rows: 2 } }],
+  ['Glass refractor', { kind: 'glassRefractor', footprint: { columns: 3, rows: 3 } }],
+  ['Monster generator', { kind: 'monsterGenerator', footprint: { columns: 4, rows: 3 } }],
   ['Horizontal trap', { kind: 'horizontalTrap', footprint: { columns: 2, rows: 1 } }],
   ['Vertical trap', { kind: 'verticalTrap', footprint: { columns: 1, rows: 2 } }],
-  ['Bumper', { kind: 'bumper', footprint: { columns: 3, rows: 3 } }],
+  ['Bumper', { kind: 'bumper', footprint: { columns: 2, rows: 2 } }],
 ]);
 
 /**
@@ -79,14 +97,16 @@ export const OBJECT_KINDS = new Map<
  * dropped.
  */
 function levelColorId(room: SourceRoom): ColorId {
-  return room.background_color;
+  return room.colors.background.index;
 }
 
 export function convertRoom(room: SourceRoom): ImportedRoom {
   const elements = room.objects.map((object) => {
-    const known = OBJECT_KINDS.get(object.type);
+    const known = OBJECT_KINDS.get(object.element_name);
     if (known === undefined) {
-      throw new Error(`room ${room.room} places an object the import has no kind for: ${object.type}`);
+      throw new Error(
+        `room ${room.room_index} places an object the import has no kind for: ${object.element_name}`,
+      );
     }
     return element(
       known.kind,
@@ -100,13 +120,15 @@ export function convertRoom(room: SourceRoom): ImportedRoom {
 
   const bats = room.bats.map((source) => {
     if (source.orientation !== 'horizontal' && source.orientation !== 'vertical') {
-      throw new Error(`room ${room.room} places a bat lying along no axis: ${source.orientation}`);
+      throw new Error(
+        `room ${room.room_index} places a bat lying along no axis: ${source.orientation}`,
+      );
     }
     return bat(source.orientation, source.x_col, source.y_row);
   });
 
   return {
-    origin: { room: room.room },
+    origin: { room: room.room_index },
     columns: ROOM_COLUMNS,
     rows: ROOM_ROWS,
     colorId: levelColorId(room),

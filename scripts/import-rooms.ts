@@ -6,7 +6,7 @@
  * is kept, and what it produces is committed. Nothing in the application or the suite runs it, and
  * nothing at build time does — the rooms in the tree are the rooms that ship.
  *
- *   node scripts/import-rooms.ts <path to rooms_full.json>
+ *   node scripts/import-rooms.ts <path to traz_rooms_all.json>
  *
  * Node runs this file directly; the types are stripped rather than compiled.
  */
@@ -88,21 +88,23 @@ function generatedSource(rooms: readonly ImportedRoom[]): string {
 }
 
 const path = process.argv[2];
-if (path === undefined) throw new Error('usage: node scripts/import-rooms.ts <rooms_full.json>');
+if (path === undefined) throw new Error('usage: node scripts/import-rooms.ts <traz_rooms_all.json>');
 
-const export_ = JSON.parse(readFileSync(path, 'utf8')) as Record<string, SourceRoom>;
-const numbers = Object.keys(export_)
-  .map(Number)
-  .sort((left, right) => left - right);
+const export_ = JSON.parse(readFileSync(path, 'utf8')) as { readonly rooms: readonly SourceRoom[] };
+const byNumber = new Map(export_.rooms.map((source) => [source.room_index, source]));
+const numbers = [...byNumber.keys()].sort((left, right) => left - right);
 
 const rooms = numbers.map((number) => {
-  const source = export_[String(number)];
+  const source = byNumber.get(number);
   if (source === undefined) throw new Error(`the export has no room ${number}`);
   return convertRoom(source);
 });
 
+const fixtureSource = byNumber.get(FIXTURE_ROOM);
+if (fixtureSource === undefined) throw new Error(`the export has no room ${FIXTURE_ROOM}`);
+
 writeFileSync(GENERATED, generatedSource(rooms));
-writeFileSync(FIXTURE, `${JSON.stringify(export_[String(FIXTURE_ROOM)], null, 1)}\n`);
+writeFileSync(FIXTURE, `${JSON.stringify(fixtureSource, null, 1)}\n`);
 
 console.log(`${rooms.length} rooms -> ${GENERATED}`);
 console.log(`room ${FIXTURE_ROOM}'s source record -> ${FIXTURE}`);

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { ROOMS } from './rooms.generated';
 import { portedLevel } from './porting';
-import { levelOf } from './room-notation';
+import { bat as placedBat, element as placedElement, levelOf, type ImportedRoom } from './room-notation';
 import { unplayableReasons } from '../domain/playable';
 import { isBrickKind } from '../domain/level';
 
@@ -37,23 +37,45 @@ describe('what an imported room gives up so that it can be played', () => {
     }
   });
 
-  it.each(['monsterGenerator', 'bumper'] as const)(
-    'stands a %s as a permanent brick, where it stood and as big (P-4, P-5)',
-    (kind) => {
-      const imported = ROOMS.find((candidate) =>
-        candidate.elements.some((element) => element.kind === kind),
-      );
-      const original = imported?.elements.find((element) => element.kind === kind);
-      const stood = portedLevel(imported!).elements.find(
-        (element) => element.column === original?.column && element.row === original?.row,
-      );
+  it('stands a bumper as a permanent brick, where it stood and as big (P-5)', () => {
+    const imported = ROOMS.find((candidate) =>
+      candidate.elements.some((element) => element.kind === 'bumper'),
+    );
+    const original = imported?.elements.find((element) => element.kind === 'bumper');
+    const stood = portedLevel(imported!).elements.find(
+      (element) => element.column === original?.column && element.row === original?.row,
+    );
 
-      expect(original).not.toBeUndefined();
-      expect(stood?.kind).toBe('permanent');
-      expect(stood?.footprint).toEqual(original?.footprint);
-      expect(stood?.colorId).toBe(original?.colorId);
-    },
-  );
+    expect(original).not.toBeUndefined();
+    expect(stood?.kind).toBe('permanent');
+    expect(stood?.footprint).toEqual(original?.footprint);
+    expect(stood?.colorId).toBe(original?.colorId);
+  });
+
+  /**
+   * The corrected export places no monster generator anywhere in the stock 64 rooms —
+   * `src/import/convert.ts`'s own note on `OBJECT_KINDS` says why — so there is no room to find one
+   * in, and the concession is asserted over a level built for the purpose instead.
+   */
+  it('stands a monsterGenerator as a permanent brick, where it stood and as big (P-4)', () => {
+    const original = placedElement('monsterGenerator', 2, 2, 4, 3, 5);
+    const synthetic: ImportedRoom = {
+      origin: { room: -1 },
+      columns: 8,
+      rows: 8,
+      colorId: 0,
+      ballStart: { column: 0, row: 0 },
+      bats: [placedBat('horizontal', 0, 7)],
+      elements: [original],
+    };
+    const stood = portedLevel(synthetic).elements.find(
+      (element) => element.column === original.column && element.row === original.row,
+    );
+
+    expect(stood?.kind).toBe('permanent');
+    expect(stood?.footprint).toEqual(original.footprint);
+    expect(stood?.colorId).toBe(original.colorId);
+  });
 
   it('gives a played room only kinds the rules read', () => {
     for (const imported of ROOMS) {

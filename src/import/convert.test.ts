@@ -50,7 +50,10 @@ describe('converting a room of the original', () => {
   });
 
   it('fails loudly on an object kind it has no name for', () => {
-    const strange = { ...room24, objects: [{ type: 'Wormhole', color_index: 1, row: 2, col: 3 }] };
+    const strange = {
+      ...room24,
+      objects: [{ element_name: 'Wormhole', color_index: 1, row: 2, col: 3 }],
+    };
     expect(() => convertRoom(strange)).toThrow(/no kind for: Wormhole/);
   });
 
