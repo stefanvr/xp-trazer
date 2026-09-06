@@ -15,6 +15,10 @@ is chosen. `.claude/skills/scope/SKILL.md` owns both, and neither happens inside
 
 **Expected to change mid-flight**, on the branch of whatever found the reason.
 
+**A goal broken into steps ticks each one as it lands**, in place and with its wording untouched, so
+what is left is read here rather than reconstructed from the history. The tick is written by
+`.claude/skills/scope/SKILL.md` in `check` mode, which every landing runs.
+
 **No backlog, no parked list, no next-up** — `.claude/skills/land/SKILL.md` carries the argument.
 
 **A specification outranks this document the moment it exists.** An answer is recorded here only
@@ -43,13 +47,13 @@ goal 3 before anything else in that goal is written.
 
 ### The goals, in order
 
-| | Goal | Done when |
-|---|---|---|
-| 1 | **Stub rules for everything the export carries that is not implemented** — the unsupported element kinds, elements occupying more than one cell, per-object and per-room colors, an authored ball start, and a bat that stands free of every edge | Each one is named in the specification that owns it and marked as carried but not yet honoured. No datum the export holds is silently dropped |
-| 2 | **Generalise the clearing proof into a test bed for elements**, reached from a dev-only page that also links the existing style and audio pages | Every element the domain names is reachable and exercisable from that page, and the seam that substitutes a level into the played game is unchanged — the page is a separate dev route rather than a widening of it |
-| 3 | **Import the rooms, every one of them, each carrying whether it can be played** | The export's rooms are in the tree in this project's format; a room that depends on a rule goal 1 only stubbed is marked unplayable rather than omitted; the suite asserts a converted room against its source |
-| 3b | **Support an element that occupies more than one cell**, so that what the rooms are made of reaches the rules rather than only being carried | The domain gives a footprint larger than one cell surfaces the ball collides with, and a room whose only obstacle was that footprint is no longer unplayable for it |
-| 4 | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
+| | | Goal | Done when |
+|---|---|---|---|
+| 1 | ✅ | **Stub rules for everything the export carries that is not implemented** — the unsupported element kinds, elements occupying more than one cell, per-object and per-room colors, an authored ball start, and a bat that stands free of every edge | Each one is named in the specification that owns it and marked as carried but not yet honoured. No datum the export holds is silently dropped |
+| 2 |   | **Generalise the clearing proof into a test bed for elements**, reached from a dev-only page that also links the existing style and audio pages | Every element the domain names is reachable and exercisable from that page, and the seam that substitutes a level into the played game is unchanged — the page is a separate dev route rather than a widening of it |
+| 3 | ✅ | **Import the rooms, every one of them, each carrying whether it can be played** | The export's rooms are in the tree in this project's format; a room that depends on a rule goal 1 only stubbed is marked unplayable rather than omitted; the suite asserts a converted room against its source |
+| 3b | ✅ | **Support an element that occupies more than one cell**, so that what the rooms are made of reaches the rules rather than only being carried | The domain gives a footprint larger than one cell surfaces the ball collides with, and a room whose only obstacle was that footprint is no longer unplayable for it |
+| 4 |   | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
 
 **Goal 3b was added once the import had been done, which is what a scope changing mid-flight is
 for.** Every object the original places is larger than one cell, so a rule reading only one-cell

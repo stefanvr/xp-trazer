@@ -1,6 +1,6 @@
 ---
 name: land
-description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope skill, which owns it. Use when the owner approves a merge to main, before merging.
+description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope skill, which marks what this landing finished and asks whether the overarching goal is reached. Use when the owner approves a merge to main, before merging.
 ---
 
 # Land
@@ -9,8 +9,9 @@ description: Run the cleanup a goal needs at the moment it lands — the point w
 main. One task — clearing `doc/scratchpad/`, on every landing. Further landing tasks go here as they
 earn their place.
 
-**Not here.** `doc/scope.md`. Whether the overarching goal is reached, and what the next one is, both
-belong to [scope](../scope/SKILL.md); this skill calls it and writes nothing to that document itself.
+**Not here.** `doc/scope.md`. Marking which of its steps this landing finished, whether the
+overarching goal is reached, and what the next one is, all belong to [scope](../scope/SKILL.md);
+this skill calls it on every landing and writes nothing to that document itself.
 Nor the git mechanics — branch before a goal, commit task-sized, push before returning, approval
 before merging, delete the branch after — all in [CLAUDE.md](../../CLAUDE.md), which is also where the
 hook that calls this skill lives.
@@ -64,18 +65,20 @@ A backlog file is the obvious fourth fate and it is the wrong one:
 A finding either gets fixed, or gets decided and recorded, or comes back next run. A list is a fourth
 state that looks like progress and is not.
 
-## When this landing reaches the scope
+## What this landing did to the scope
 
-Most goals land *inside* the overarching goal and leave `doc/scope.md` alone. Ask anyway, because
-asking is one sentence: **read the scope's *Done means* and ask whether it is now true.**
+**Run [scope](../scope/SKILL.md) in `check` mode on every landing, and stop reading here.** Not only
+when the overarching goal looks reached — a landing that finishes one step of a goal has changed the
+scope too, and `check` is what records it: it marks the steps this landing finished, and only then
+asks whether the goal itself is now reached.
+
+That skill owns the document, the marking, the proposal to the owner, and what it writes in the
+goal's place. **This skill writes nothing to `doc/scope.md` itself**, which is why every landing goes
+through `check` rather than reaching for the file when the marking looks obvious.
 
 **A scope holding no goal has nothing to check.** That is a state the project is allowed to sit in —
 a goal is cleared when it is reached, and the next one is set whenever the owner chooses — so open
 the document, find no goal, and move on. It is not a finding, and it is not a reason to set one.
-
-If it is not reached, there is nothing to do. If it reads as reached, **run
-[scope](../scope/SKILL.md) in `check` mode and stop reading here.** That skill owns the document, the
-proposal to the owner, and what it writes in the goal's place.
 
 **Landing does not set the next goal.** Not by writing one, and not by clearing the way for one. A
 landing that decided what gets built next would be doing two jobs, and setting the overarching goal
