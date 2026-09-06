@@ -44,7 +44,7 @@ and line proving it, and that names what would close it. Three tests, all of the
 
 **There is deliberately no "admitted gap" kind.** An earlier version of this skill had one — *a
 document states that a decision is not made* — and its first run duly reported that the stack was
-unchosen and that no document owned the game. Both were true and neither was a finding: the project
+unchosen and that no document owned the subject matter. Both were true and neither was a finding: the project
 had simply not reached them. That kind was removed rather than qualified, because a qualified version
 would have been argued back into scope on the next run.
 

@@ -1,6 +1,6 @@
 ---
 name: brainstorm
-description: Interview the owner about their ideas for the project and write the result to doc/brainstorm/ as draft. Step 1 of the bootstrap sequence, before the first-version scope and the four minimal specs. Use when starting a project or a major part of one, when the specs need material, or when asked to brainstorm, explore the idea, or work out what the game is.
+description: Interview the owner about their ideas for the project and write the result to doc/brainstorm/ as draft. Step 1 of the bootstrap sequence, before the first-version scope and the four minimal specs. Use when starting a project or a major part of one, when the specs need material, or when asked to brainstorm, explore the idea, or work out what the product is.
 ---
 
 # Brainstorm
@@ -17,7 +17,7 @@ this one. What a document may own is routed in [CLAUDE.md](../../CLAUDE.md); how
 decided** — so a brainstorm is the one place ranging ahead is free, provided what comes out is
 labelled draft and stays out of the documents that own decisions.
 
-**An interview extracts; it does not supply.** The failure mode is an agent that proposes a game, the
+**An interview extracts; it does not supply.** The failure mode is an agent that proposes a product, the
 owner says "yes, fine", and a fortnight later nobody can tell which parts were ever chosen. Guard it
 mechanically: **write down who said each thing**, and never let a suggestion the owner merely
 tolerated read like something they wanted.
@@ -28,11 +28,11 @@ tolerated read like something they wanted.
 
 - **One topic at a time.** A batch of ten questions comes back with one answer, and it will be to the
   easiest question.
-- **Ask about the thing, not about the document.** *"What does the player do in the first ten
+- **Ask about the thing, not about the document.** *"What does the user do in the first ten
   seconds?"* — never *"what should spec-domain say?"* Routing an answer to its document is your job,
   and asking the owner to do it changes what they tell you.
-- **Ground every question in something that exists.** The owner has references — Traz, Arkanoid, a
-  screenshot, a game they bounced off. Comparative questions get real answers where blank-page
+- **Ground every question in something that exists.** The owner has references — things they have used, a
+  screenshot, something they bounced off. Comparative questions get real answers where blank-page
   questions get a shrug.
 - **Where you have a view, give options and a recommendation, then wait** — *don't decide on the
   owner's behalf*. Then mark the result as yours-accepted, not theirs-stated.
@@ -52,9 +52,9 @@ rather than filling them.
 
 | Feeds | Ask about | Seed questions |
 |---|---|---|
-| **spec-domain** | the rules of the world, independent of any screen | What does the player do in the first ten seconds, and what makes them do it again? · Traz and Arkanoid are both paddle-and-brick — what does yours have that neither had, and what does it drop? · What can the player lose, and what does losing cost? · What moves that the player does not control? |
-| **spec-app** | what a player and a developer actually meet | What does the player meet before play starts, if anything? · What input is assumed, and does it survive without a keyboard, or without a mouse? · What is still there tomorrow, and what is gone when the window closes? · What state are they in when they stop for the night? |
-| **spec-style** | how it looks, sounds and feels | Name a screenshot you would be happy to have it mistaken for. · Is the C64 palette a constraint or a flavour — sixteen colours, or merely that feeling? · Is sound part of the feel or the last thing added? · What single visual choice would make it wrong? |
+| **spec-domain** | the rules of the world, independent of any screen | What does the user do in the first ten seconds, and what makes them do it again? · Name two things in the same space as yours — what does yours have that neither had, and what does it drop? · What can the user lose, and what does losing cost? · What moves that the user does not control? |
+| **spec-app** | what a user and a developer actually meet | What does the user meet before the main activity starts, if anything? · What input is assumed, and does it survive without a keyboard, or without a mouse? · What is still there tomorrow, and what is gone when the window closes? · What state are they in when they stop for the night? |
+| **spec-style** | how it looks, sounds and feels | Name a screenshot you would be happy to have it mistaken for. · Is the reference an actual constraint or a flavour — its real palette, or merely that feeling? · Is sound part of the feel or the last thing added? · What single visual choice would make it wrong? |
 | **spec-tech** | **constraints only — never the choice** | Where does it have to run, on what, for whom? · What must be true whatever the stack is? · What is ruled out, and why? |
 
 **Do not settle the stack here.** *A goal never carries an unmade technology decision* — the choice
@@ -62,9 +62,9 @@ becomes a goal of its own, proven by the smallest thing that exercises it. What 
 collects is what **rules technologies out**, which is the shape
 [spec-tech.md](../../../doc/spec-tech.md) already records under A-1.
 
-**Scope is the next step, but seed it while the owner is warm:** if only one level ships, which, and
+**Scope is the next step, but seed it while the owner is warm:** if only one piece of it ships, which, and
 what does it have to prove? · What gets cut first under pressure? · What is the smallest version you
-would still enjoy playing?
+would still enjoy using?
 
 ## Recording
 

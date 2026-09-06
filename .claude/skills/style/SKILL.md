@@ -18,8 +18,8 @@ settled it is. The [domain](../domain/SKILL.md) skill carries the full argument;
 unchanged.
 
 **The document's remit is *look, sound and feel*** — the routing's words. A pass that touches only
-one of the three is normal; a pass that forgets the other two exist is how sound went unwritten for
-four goals.
+one of the three is normal; a pass that forgets the other two exist is how a whole sense goes
+unwritten for goals at a time.
 
 ---
 
@@ -34,7 +34,7 @@ four goals.
 | **Values** | The numbers and names that decide what it *is* — hues, sizes, waveforms, envelopes | The pass changes no value |
 | **What this leaves open** | What is named as undecided, so a later goal knows it is deciding rather than discovering | Nothing was left open and nothing that was is now closed |
 
-**A reference is per sense, and they may disagree.** This project's do: Tron in the eye, the C64 in
+**A reference is per sense, and they may disagree.** One reference for the eye and a different one for
 the ear. That is a split rather than an inconsistency, and it was worth writing down as one — a
 reader meeting both without the sentence would take one for a mistake.
 
@@ -49,7 +49,7 @@ oversights if the document only lists values.
 - **The agent proposes the values, and the owner corrects.** These are craft, and the owner
   correcting a proposal is cheaper for them than producing twenty numbers.
 - **Rules are put as options with a recommendation, and waited on.** They are the ones that change
-  what the player perceives.
+  what the user perceives.
 
 **Observed:** writing spec-style's sound section, the agent asked about three decisions and then made
 three more inside the writing, reporting them only once they were in the document. Naming the mode
@@ -71,8 +71,8 @@ out loud is what makes that visible while there is still time to *confirm before
    after this pass. *Something the specification names that no page shows is the finding* — and if it
    cannot be shown yet, the skill says so rather than the reader discovering it.
 5. **What this leaves open is still open.** *An entry that a later pass closed, and left listed, is
-   the finding.* Observed: the sound pass had to correct both a bullet saying there was no sound and
-   one saying the document committed to Tron outright.
+   the finding.* Observed: a pass adding a whole sense had to correct both a bullet saying that sense
+   was absent and one saying the document committed to a single reference outright.
 
 ## When not to run it
 

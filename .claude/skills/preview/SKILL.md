@@ -6,9 +6,8 @@ description: Build or refresh the dev-only pages that demonstrate everything doc
 # Preview
 
 **Owns.** Keeping the pages that show, with real code, everything
-[spec-style.md](../../../doc/spec-style.md) currently names — so "does this still read as a Tron
-neon-on-black bat" and "does this still sound like the C64" do not depend on someone remembering what
-the last session decided.
+[spec-style.md](../../../doc/spec-style.md) currently names — so *does this still look and sound the
+way it was meant to* does not depend on someone remembering what the last session decided.
 
 **Two pages, one job.** `dev/style.html` shows what the specification decides about the eye, and
 `dev/audio.html` what it decides about the ear. They are separate pages because a sound has no shape
@@ -37,9 +36,9 @@ the page is missing a row until this routine runs again.
 ## How the visual page stays real, not a mockup
 
 - **An element the domain already models is drawn by calling the project's actual render function**,
-  not a re-implementation of it. Right now that is the ball and the boundary, drawn by calling
-  `draw()` in [src/render/draw.ts](../../../src/render/draw.ts) against a real `World`.
-- **An element spec-style.md names ahead of the domain owning it — a brick, a bat — is drawn directly**,
+  not a re-implementation of it — `draw()` in [src/render/draw.ts](../../../src/render/draw.ts),
+  against a real state reached by real steps.
+- **An element spec-style.md names ahead of the domain owning it is drawn directly**,
   shape and color taken straight from the spec, and labelled as not yet backed by a domain type. Never
   invent a domain type to justify drawing it; that is [build](../build/SKILL.md)'s "a proof contains no
   product decisions" showing up here too.
@@ -48,15 +47,15 @@ the page is missing a row until this routine runs again.
   of a hex the specification decides is exactly the drift this routine exists to catch, so there must
   never be a second copy. **Chrome is not one of those**: spec-style.md leaves UI chrome unowned, so
   this page's own background and text stay in `dev/style.css`. The application's page is not chrome —
-  its background sits against the level, so it takes the specification's value.
+  its background sits against what the specification decides, so it takes the specification's value.
 
 ## What the sound page shows
 
 One panel per sound spec-style names, and **one per event that decides whether a sound happens at
-all**. The second set is not decoration: the specification's most consequential decision about sound
-is a *silence* — a collision that destroyed what it met makes no noise, because its destruction is
-what is heard — and a silence is the one thing a list of sounds cannot show. It gets a panel wearing
-a disabled button, so it reads as a decision rather than as a missing one.
+all**. The second set is not decoration: a specification's most consequential decision about sound is
+usually a *silence* — something that happens and is deliberately not heard, because something it
+caused is heard instead — and a silence is the one thing a list of sounds cannot show. It gets a panel
+wearing a disabled button, so it reads as a decision rather than as a missing one.
 
 Each sound's panel also prints its segments in the specification's own terms — waveform, length,
 sweep, gain, envelope, filter — so the page can be read against the document rather than only heard.
@@ -70,10 +69,10 @@ The same rule as the visual page, one layer over:
 - **Every value spec-style names lives in one module** —
   [src/audio/sounds.ts](../../../src/audio/sounds.ts), what
   [src/render/palette.ts](../../../src/render/palette.ts) is for the colors — imported by the real
-  game and by this page. A panel carrying its own copy of an envelope could go on sounding right
+  product and by this page. A panel carrying its own copy of an envelope could go on sounding right
   after the audio edge stopped, which is the drift this exists to catch.
-- **Which event is heard as what comes from `soundFor`**, the same function the game calls. The page
-  cannot show a mapping the game does not have.
+- **Which event is heard as what comes from the mapping function the product itself calls.** The page
+  cannot show a mapping the product does not have.
 
 **Nothing here waits on a browser's audio gesture.** A page whose panels are buttons is all gesture,
 so the first press is the unlock — which is why sound gets a page and not a screenshot.
@@ -95,7 +94,7 @@ the one being run.
 
 **The sound page has to be listened to, and that is not a weaker check — it is the only one there
 is.** An automated test can assert the page asked for a sound; nothing it can assert answers *does
-this sound like the C64*.
+this sound the way it was meant to*.
 
 **Neither is the verification [guide-general.md](../../../doc/guide-general.md) rules out.** That rule
 says the suite verifies and the product is not driven by hand to settle a claim — and it is right,
@@ -118,4 +117,4 @@ are on it.
   and confirmed there first — by the [style](../style/SKILL.md) skill, which authors it. This one only
   shows what was already decided.
 - **For anything spec-domain.md or spec-app.md would own.** These pages draw and play looks and
-  sounds, not behaviour, input, or flow — a brick that breaks or a bat that moves is a different goal.
+  sounds, not behaviour, input, or flow — something that reacts or moves is a different goal.

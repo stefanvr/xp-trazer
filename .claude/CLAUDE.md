@@ -74,9 +74,19 @@ is the routing — which document answers which question.
 | What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
-**The guides and the skills carry no project.** `doc/guide-*.md` and `.claude/skills/` are written to
-be lifted onto a different project unchanged: no project state, and no domain vocabulary. What is
-about this project lives in `doc/spec-*.md`, `doc/setup-*.md` and `doc/scope.md`.
+**The guides and the skills carry no project.** `doc/guide-general.md`, `doc/guide-design.md`,
+`doc/guide-collaboration.md` and everything in `.claude/skills/` are written to be lifted onto a
+different project unchanged: no project state, and no domain vocabulary. What is about this project
+lives in `doc/spec-*.md`, `doc/setup-*.md` and `doc/scope.md`.
+
+**`doc/guide-override.md` is the exception, and it is the whole reason that file exists** — it holds
+what is true for this project only, which is why it is kept apart from the principles it outranks and
+why it is meant to be deleted rather than emptied.
+
+**A skill may point at an artefact; it may not describe one.** A routine that keeps a file honest has
+to name that file, and a path is configuration — the sentence around it still has to read on a
+project that has never heard of this one. The test: could this skill be copied to another project
+and made to work by changing paths alone?
 
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,

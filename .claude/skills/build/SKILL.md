@@ -16,7 +16,7 @@ own architectural rules are [spec-tech.md](../../../doc/spec-tech.md), and the g
 **This routine exists because it was once skipped.** A goal that read *choose the stack* produced a
 working program carrying wall reflection, a bounce count and an acceleration model, at a point where
 `spec-domain.md` did not exist to own any of them. Nothing was wrong with the code. What was wrong is
-that the game's physics got decided in a commit about a toolchain, by whoever was typing.
+that the product's own rules got decided in a commit about a toolchain, by whoever was typing.
 
 ---
 
@@ -49,7 +49,7 @@ to ask them, not a conclusion to reach from the documents alone.
 
 **Before the first line of code**, write the breakdown to a file in `doc/scratchpad/`: two columns,
 the task and **what makes it checkable**. Checkable means the observable thing the owner can look at
-and judge — *"bats answer the keyboard"*, not *"the bat module"*. A task that can only be checked by
+and judge — *"the controls answer the keyboard"*, not *"the input module"*. A task that can only be checked by
 reading the diff is a layer, and layers are not tasks.
 
 **Remove a task once it is implemented.** The file then always reads as what is left, which is what
@@ -71,9 +71,9 @@ the backstop for what genuinely belongs to a later goal, not the intended reader
 
 ## A proof contains no product decisions
 
-**The test is mechanical: remove a rule, and ask whether any seam stopped being proven.** A ball that
-bounces off a wall proves nothing about a fixed-step loop that a dot moving in a straight line does
-not. If deleting a rule leaves every seam still exercised, that rule was product functionality
+**The test is mechanical: remove a rule, and ask whether any seam stopped being proven.** Something
+that reacts to what it meets proves nothing about a loop that something moving in a straight line
+does not. If deleting a rule leaves every seam still exercised, that rule was product functionality
 wearing a proof's clothes.
 
 So a proof **names its seams before it is written**, and every line afterwards is answerable to one

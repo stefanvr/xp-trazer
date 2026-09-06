@@ -55,8 +55,8 @@ The five passes, and every one of them has caught something.
 
 1. **Every claim about the tree is still true.** Read each sentence that describes what the code does
    or does not have, and check it. *A sentence describing a project two goals ago is the finding.*
-   Observed: a paragraph listing cells, elements, bats, holding, launching, a seed and clearing as
-   *unbuilt* while `src/` cited DS-1 through DS-5 and 118 tests passed over them.
+   Observed: a paragraph listing seven parts of the domain as *unbuilt* while the code cited the
+   rules for all of them and a hundred-odd tests passed over them.
 2. **Every claim about the outside world was verified, not remembered.** Hosting, visibility,
    pricing, a platform's behaviour. *A claim nobody has checked since it was written is the finding* —
    and check it by fetching the artefact, never by asking a control API, which reports "not there"
