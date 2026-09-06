@@ -2,9 +2,15 @@
 
 ## AI mandatory instructions for local dev environment
 
-Read it **before running any command**: doc/setup-ai-env.md 
+Read it **before running any command**: doc/setup-ai-env.md — its rules half is what a session needs
+to work here, and its evidence half is why each of those rules exists.
 
 ## Workflow
+
+### Session
+
+Every session opens with the `session` skill — quick by default, full on a machine not already known
+to work, or the moment a check answers badly.
 
 ### Bootstrap
 
@@ -121,7 +127,7 @@ It reaches code comments too, which cite the specifications and go stale the sam
 project does not use is a lesson held for the project that does — never a choice, and never a
 backlog.
 
-**Active lessons — read these at session start:**
+**Active lessons — the technologies this project uses that have one written:**
 
 * `doc/lessons/node.md`
 * `doc/lessons/playwright.md`
@@ -134,8 +140,6 @@ to read. Where the list and those two disagree, **the list is wrong**. It can on
 moments, and both are moments something else is already being edited: **a chosen technology gains a
 lesson file, or a lesson file's technology gets chosen.**
 
-**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
-above, then
-`doc/guide-collaboration.md` — it carries how the session opens — then `doc/guide-general.md` with
-`doc/guide-override.md` beside it, never instead of it, then `doc/scope.md`, then whichever document
-above owns the decision in front of you.
+**What a session reads at its start, and in which order, is the `session` skill's** — it differs by
+mode, and `doc/setup-ai-env.md` comes before any command in both. After the opening it is whichever
+document above owns the decision in front of you.
