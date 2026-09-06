@@ -26,9 +26,24 @@ main {
   gap: 0.75rem;
 }
 
+/*
+ * doc/spec-app.md: the level is drawn at its own size and scaled to fit the space it is given,
+ * keeping its aspect ratio. A room is larger than the window on every mode, so this is the normal
+ * case and not the small screen's special problem.
+ *
+ * The canvas keeps its own width and height attributes — the room's real pixel extent, which is what
+ * the renderer draws into and what the simulation's units are in. Only the box it is displayed in
+ * shrinks, which is why `Nothing about the level changes when it is scaled` stays true: `width` and
+ * `height` here are presentation, and the drawing surface never hears about them.
+ */
 canvas {
   border-radius: 2px;
   box-shadow: 0 0 42px color-mix(in srgb, var(--line) 30%, transparent);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  /* Room for the readouts beside it, so the level never pushes them off the screen. */
+  max-height: calc(100vh - 5rem);
 }
 
 .readout {

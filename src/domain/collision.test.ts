@@ -8,7 +8,7 @@ const NOTHING_DESTROYED: ReadonlySet<number> = new Set();
 const RADIUS = 9;
 
 // Four columns, four rows. A destructible brick at (1,1) and a permanent one at (2,1).
-const LEVEL = levelFromRows(['-...', '.dp.', '....', '....']);
+const LEVEL = levelFromRows(['-*..', '.dp.', '....', '....']);
 const NO_BATS = LEVEL.bats.map((bat) => ({ ...bat, position: -1000 }));
 
 // An element is named by its index in the level, not by the cell it sits in — DS-4.5.

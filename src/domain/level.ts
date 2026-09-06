@@ -188,7 +188,8 @@ export function cellsOf(level: Level, index: number): readonly { column: number;
  * business, and a different format would change nothing the specification claims.
  *
  * `.` empty · `d` destructible brick · `p` permanent brick · `-` a horizontal bat's low end ·
- * `|` a vertical bat's low end. A bat glyph leaves its cell empty: a bat is not an element.
+ * `|` a vertical bat's low end · `*` the ball start, which **DS-1.4** requires of every level. A bat
+ * glyph and the ball start both leave their cell empty: neither is an element.
  */
 const ELEMENT_FOR_GLYPH = new Map<string, BrickKind>([
   ['d', 'destructible'],
@@ -199,6 +200,7 @@ const ORIENTATION_FOR_GLYPH = new Map<string, Orientation>([
   ['|', 'vertical'],
 ]);
 const EMPTY_GLYPH = '.';
+const BALL_START_GLYPH = '*';
 
 /** What a level is made of, before the grid the rules read is derived from it. */
 export type LevelParts = {
@@ -265,6 +267,7 @@ export function levelFromRows(rows: readonly string[]): Level {
 
   const elements: PlacedElement[] = [];
   const bats: Bat[] = [];
+  let ballStart: BallStart | undefined;
 
   for (const [row, line] of rows.entries()) {
     if (line.length !== columns) {
@@ -280,6 +283,11 @@ export function levelFromRows(rows: readonly string[]): Level {
         });
         continue;
       }
+      if (glyph === BALL_START_GLYPH) {
+        if (ballStart !== undefined) throw new Error('a level authors one ball start, not two');
+        ballStart = { column, row };
+        continue;
+      }
       if (glyph === EMPTY_GLYPH) continue;
 
       const kind = ELEMENT_FOR_GLYPH.get(glyph);
@@ -289,6 +297,7 @@ export function levelFromRows(rows: readonly string[]): Level {
   }
 
   if (bats.length === 0) throw new Error('a level has at least one bat (DS-1.3)');
+  if (ballStart === undefined) throw new Error('a level authors where the ball starts (DS-1.4)');
 
-  return levelFrom({ columns, rows: rows.length, elements, bats });
+  return levelFrom({ columns, rows: rows.length, elements, bats, ballStart });
 }

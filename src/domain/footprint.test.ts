@@ -10,15 +10,16 @@ import {
   type PlacedElement,
 } from './level';
 import { obstacleAt } from './collision';
+import { BALL_PIXELS_PER_SECOND } from './ball';
 import { createGameState, isCleared, step, type GameState, type Input } from './simulation';
 
 /**
  * An element that occupies more than one cell — **DS-4.4** and **DS-4.5**. One brick two cells wide,
  * played, is the whole of what these rules add, so one level is what they are asked of.
  *
- * The bat is on the last row, which is what **DS-1.6** wants, and its low end is at column 0 — so the
- * held ball rests at the middle of column 1 and **DS-2.2**'s launch drives it straight into the
- * brick's left half.
+ * The ball starts below the brick's left half. **DS-2.2** draws the launch heading from the seed, so
+ * the direction is not something a level can arrange — the travelling ball is given its heading here
+ * instead, aimed at that half, which is the only thing these two rules are being asked about.
  */
 const WIDE_BRICK: PlacedElement = {
   kind: 'destructible',
@@ -33,6 +34,7 @@ const LEVEL = levelFrom({
   rows: 6,
   elements: [WIDE_BRICK],
   bats: [{ orientation: 'horizontal', line: 5, position: 0 }],
+  ballStart: { column: 1, row: 3 },
 });
 
 const NOTHING_HELD: Input = {
@@ -48,10 +50,13 @@ const middleOf = (column: number, row: number) => ({
   y: row * CELL_PIXELS + CELL_PIXELS / 2,
 });
 
-/** The state a launched ball is in, at rest on the bat with nothing destroyed. */
+/** A ball travelling straight up from the ball start, into the brick's left half. */
 function launched(): GameState {
   const held = createGameState(LEVEL, 0);
-  return step(held, { ...NOTHING_HELD, launch: true }).state;
+  return {
+    ...held,
+    ball: { ...held.ball, held: false, velocity: { x: 0, y: -BALL_PIXELS_PER_SECOND } },
+  };
 }
 
 /** Steps until the events say something happened, or gives up. */

@@ -1,4 +1,4 @@
-import { BAT_LENGTH_PIXELS, CELL_PIXELS, type Bat, type Level } from './level';
+import { CELL_PIXELS, type Level } from './level';
 
 /**
  * Where a held ball sits, and where it goes when launched — **DS-2.1** and **DS-2.2**. Pure
@@ -17,65 +17,61 @@ export const BAT_DEFLECTION_PIXELS_PER_SECOND = 90;
 export type Vector = { readonly x: number; readonly y: number };
 
 /**
- * Which way the ball leaves its bat — the open side, per **DS-1.6** and **DS-2.2**.
+ * **DS-2.1** — a held ball waits at the ball start the level authors, and nothing moves it.
  *
- * **DS-1.6** says a bat has something the ball cannot pass on one perpendicular side. The ball rests
- * on the other, and leaves that way. Today the only such thing is the level's edge; when a hazard
- * can sit against a bat, this is where it is read.
- *
- * A bat with both sides open, or neither, has no answer. That is a level that **DS-1.6** forbids, so
- * this fails loudly rather than picking one — `createGameState` asks for every bat at start, which is
- * where such a level is refused.
+ * The middle of that cell, so the ball sits where the author pointed rather than in its corner. A
+ * cell is wider than the ball, so the middle of one is always clear of the boundary and there is
+ * nothing to clamp.
  */
-export function awayFrom(level: Level, bat: Bat): Vector {
-  const last = bat.orientation === 'horizontal' ? level.rows - 1 : level.columns - 1;
-  const blockedBefore = bat.line === 0;
-  const blockedAfter = bat.line === last;
-
-  if (blockedBefore === blockedAfter) {
-    const sides = blockedBefore ? 'both sides blocked' : 'nothing on either side';
-    throw new Error(
-      `a ${bat.orientation} bat on line ${bat.line} has ${sides}; DS-1.6 wants exactly one`,
-    );
+export function heldAt(level: Level): Vector {
+  const start = level.ballStart;
+  if (start === undefined) {
+    throw new Error('a level authors no ball start, and DS-1.4 says every level authors one');
   }
-
-  const forwards = blockedBefore;
-  if (bat.orientation === 'horizontal') return { x: 0, y: forwards ? 1 : -1 };
-  return { x: forwards ? 1 : -1, y: 0 };
-}
-
-/** **DS-2.1** — a held ball rests on its bat, so its place is the bat's place. */
-export function restingOn(level: Level, bat: Bat, radius: number): Vector {
-  const away = awayFrom(level, bat);
-  const middle = bat.position + BAT_LENGTH_PIXELS / 2;
-  const near = bat.line * CELL_PIXELS;
-  const far = near + CELL_PIXELS;
-
-  if (bat.orientation === 'horizontal') {
-    return { x: middle, y: away.y > 0 ? far + radius : near - radius };
-  }
-  return { x: away.x > 0 ? far + radius : near - radius, y: middle };
-}
-
-/** **DS-2.2** — launching sets it travelling, at the one speed **DS-2.5** allows. */
-export function launchVelocity(level: Level, bat: Bat): Vector {
-  const away = awayFrom(level, bat);
-  return { x: away.x * BALL_PIXELS_PER_SECOND, y: away.y * BALL_PIXELS_PER_SECOND };
+  return { x: (start.column + 0.5) * CELL_PIXELS, y: (start.row + 0.5) * CELL_PIXELS };
 }
 
 /**
- * **DS-1.4** — one of the level's bats, drawn from the seed.
+ * A fraction in [0, 1) from a seed, spread so that seeds one apart are not answers one apart.
  *
- * guide-design: anything random is seeded, and ties break deterministically. The same seed and the
- * same level always name the same bat, which is what makes a level start reproducible in a test.
+ * The seed is a clock reading at the edge, and two page loads a moment apart differ only in their
+ * last digits — so using it directly would launch every ball of a session on nearly one heading,
+ * which is a draw in name alone.
  */
+function fractionFrom(seed: number): number {
+  let value = Math.abs(Math.trunc(seed)) % 2147483647;
+  value = (value ^ 61) ^ (value >>> 16);
+  value = value + (value << 3);
+  value = value ^ (value >>> 4);
+  value = Math.imul(value, 0x27d4eb2d);
+  value = value ^ (value >>> 15);
+  return (value >>> 0) / 4294967296;
+}
+
+/**
+ * **DS-2.2** — launching sets the ball travelling on a heading drawn from the seed, at the one speed
+ * **DS-2.5** allows.
+ *
+ * Any heading over the whole circle: the rule says the seed decides and says nothing further, and
+ * narrowing it here — excluding the headings along an axis, say — would be a rule invented in code.
+ * The same seed always launches the same way, which is guide-design's *anything random is seeded*
+ * and what lets a test repeat a start exactly.
+ */
+export function launchVelocity(seed: number): Vector {
+  const angle = fractionFrom(seed) * Math.PI * 2;
+  return {
+    x: Math.cos(angle) * BALL_PIXELS_PER_SECOND,
+    y: Math.sin(angle) * BALL_PIXELS_PER_SECOND,
+  };
+}
+
 /**
  * **DS-2.6** — a bat turns the ball by where along it the ball was met. The outer thirds send it
  * away from the middle; the middle third leaves the angle reflection gave it.
  *
- * **This is what makes the game playable at all.** Launching is perpendicular and reflection off an
- * axis-aligned surface only reverses one component, so without a bat to turn it the ball would
- * retrace one line for ever.
+ * **This is what makes the game playable at all.** Reflection off an axis-aligned surface only
+ * reverses one component, so without a bat to turn it the ball keeps the heading it was launched on
+ * for as long as it travels — and one launched along an axis retraces a single line for ever.
  */
 export function deflectedByBat(
   velocity: Vector,
@@ -100,6 +96,3 @@ export function deflectedByBat(
   };
 }
 
-export function batHoldingTheBall(level: Level, seed: number): number {
-  return Math.abs(Math.trunc(seed)) % level.bats.length;
-}

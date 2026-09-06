@@ -21,10 +21,10 @@ const kindsIn = (number: number) =>
   new Set(portedLevel(room(number)).elements.map((element) => element.kind));
 
 describe('what an imported room gives up so that it can be played', () => {
-  it('leaves the authored ball start behind, so DS-1.4 draws from the seed (P-1)', () => {
+  it('keeps the ball start the room authors, which DS-1.4 now reads (P-1 ended)', () => {
     for (const imported of ROOMS) {
       expect(imported.ballStart).not.toBeUndefined();
-      expect(portedLevel(imported).ballStart).toBeUndefined();
+      expect(portedLevel(imported).ballStart).toEqual(imported.ballStart);
     }
   });
 
@@ -72,14 +72,14 @@ describe('what an imported room gives up so that it can be played', () => {
 describe('how many of the original rooms can be played', () => {
   const playable = ROOMS.filter((imported) => unplayableReasons(portedLevel(imported)).length === 0);
 
-  it('plays 28 of the 64', () => {
-    expect(playable).toHaveLength(28);
+  it('plays 63 of the 64', () => {
+    expect(playable).toHaveLength(63);
   });
 
-  it('refuses the rest only for a free-standing bat or two elements on one cell', () => {
+  it('refuses the rest only for two elements on one cell', () => {
     const refused = ROOMS.filter((imported) => !playable.includes(imported));
     for (const imported of refused) {
-      expect(unplayableReasons(portedLevel(imported)).join(' ')).toMatch(/DS-7\.5|DS-4\.4/);
+      expect(unplayableReasons(portedLevel(imported)).join(' ')).toMatch(/DS-4\.4/);
     }
   });
 

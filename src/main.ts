@@ -6,9 +6,9 @@ import {
   type Event,
   type Input,
 } from './domain/simulation';
-import { destructibleRemaining, levelFromRows } from './domain/level';
-import { FIRST_LEVEL } from './levels/first';
-import { CLEARING_PROOF_LEVEL } from './levels/clearing-proof';
+import { destructibleRemaining, type Level } from './domain/level';
+import { clearingProofLevel } from './levels/clearing-proof';
+import { roomDrawnFrom } from './levels/drawn-room';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
 import { soundFor } from './audio/sounds';
@@ -44,27 +44,49 @@ const context = context2dOf(canvas);
 
 const collisionReadout = required('[data-testid="collision-count"]');
 const batReadout = required('[data-testid="bat-position"]');
+const batGroupReadout = required('[data-testid="bat-group"]');
 const bricksReadout = required('[data-testid="bricks-left"]');
+const roomReadout = required('[data-testid="room"]');
 required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
 /**
- * The level the player meets is always the authored one. `?level=clearing-proof` reaches the level
- * that exists so the end-to-end suite can watch a level be cleared — playing the authored one to
- * its last brick is not something a test can do in reasonable time, and clearing that nothing
- * asserts is clearing nobody notices break.
+ * The level the player meets is one of the original's rooms, drawn at random when the page opens —
+ * doc/spec-app.md. `?level=clearing-proof` reaches the level that exists so the end-to-end suite can
+ * watch a level be cleared: playing a real room to its last brick is not something a test can do in
+ * reasonable time, and clearing that nothing asserts is clearing nobody notices break.
  *
  * The seam substitutes a level and can do nothing else: no rule, no constant, no behaviour is
- * reachable through it, and any value but the one name gives the authored level. `doc/spec-tech.md`
- * records it.
+ * reachable through it, and any value but the one name draws a room. It is not room selection — the
+ * parameter names no room and cannot. `doc/spec-tech.md`'s **A-2** records it.
  */
-function chosenLevel(): readonly string[] {
+function chosenLevel(seed: number): Level {
   const asked = new URLSearchParams(window.location.search).get('level');
-  return asked === 'clearing-proof' ? CLEARING_PROOF_LEVEL : FIRST_LEVEL;
+  return asked === 'clearing-proof' ? clearingProofLevel() : roomDrawnFrom(seed);
 }
 
-// The seed comes from outside the level — one that authored its own would draw the same bat every
-// time, which is not a draw (doc/spec-domain.md).
-let state = createGameState(levelFromRows(chosenLevel()), Date.now());
+/**
+ * One seed, read once, for both draws a game makes: which room the player gets, and the heading the
+ * ball launches on. The clock is the edge's to read — the domain never asks what time it is.
+ */
+const seed = Date.now();
+let state = createGameState(chosenLevel(seed), seed);
+
+/**
+ * Which bat group the position readout follows — doc/spec-app.md. A level may author only one of
+ * the two, so a readout fixed to the horizontal group reads zero for ever in every level without
+ * one. Horizontal wherever a level has it, so a level holding both reads as it always did.
+ *
+ * The *orientation* is what is kept, never a bat: a step replaces every bat, so a bat held from
+ * before the first step would report the position it started at for the rest of the game. A group
+ * moves as one thing — **DS-3.1** — so any bat of that orientation reports it.
+ */
+const reportedGroup =
+  state.bats.find((bat) => bat.orientation === 'horizontal')?.orientation ??
+  state.bats[0]?.orientation;
+
+batGroupReadout.textContent = reportedGroup ?? 'none';
+roomReadout.textContent =
+  state.level.origin === undefined ? '—' : String(state.level.origin.room);
 
 // The level decides how big the play area is, so the canvas takes its size from the level.
 const extent = boundaryOf(state);
@@ -174,8 +196,8 @@ function frame(now: number): void {
   }
 
   collisionReadout.textContent = String(state.collisions);
-  const horizontal = state.bats.find((bat) => bat.orientation === 'horizontal');
-  batReadout.textContent = (horizontal?.position ?? 0).toFixed(0);
+  const reported = state.bats.find((bat) => bat.orientation === reportedGroup);
+  batReadout.textContent = (reported?.position ?? 0).toFixed(0);
   bricksReadout.textContent = String(destructibleRemaining(state.level, state.destroyed));
   draw(context, state);
 

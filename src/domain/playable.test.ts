@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { CELL_PIXELS, levelFrom, levelFromRows, ONE_CELL, type PlacedElement } from './level';
 import { isPlayable, unplayableReasons } from './playable';
 import { FIRST_LEVEL } from '../levels/first';
-import { CLEARING_PROOF_LEVEL } from '../levels/clearing-proof';
+import { clearingProofLevel } from '../levels/clearing-proof';
 
 const brick = (column: number, row: number): PlacedElement => ({
   kind: 'destructible',
@@ -19,6 +19,7 @@ const playableParts = {
   rows: 6,
   elements: [brick(1, 1)],
   bats: [{ orientation: 'horizontal', line: 5, position: 0 }],
+  ballStart: { column: 3, row: 3 },
 } as const;
 
 describe('a level says whether it can be played', () => {
@@ -28,7 +29,7 @@ describe('a level says whether it can be played', () => {
   });
 
   it('says nothing is wrong with the level the clearing proof plays', () => {
-    expect(unplayableReasons(levelFromRows(CLEARING_PROOF_LEVEL))).toEqual([]);
+    expect(unplayableReasons(clearingProofLevel())).toEqual([]);
   });
 
   it('refuses a level that places a kind no rule gives behaviour to (DS-7.1)', () => {
@@ -57,19 +58,19 @@ describe('a level says whether it can be played', () => {
     expect(unplayableReasons(level)).toContain('DS-4.4 two elements share a cell');
   });
 
-  it('refuses a level that authors where the ball starts (DS-7.4)', () => {
-    const level = levelFrom({ ...playableParts, ballStart: { column: 2, row: 2 } });
-    expect(unplayableReasons(level)).toContain('DS-7.4 the level authors where the ball starts');
+  it('refuses a level authoring no ball start, which DS-1.4 requires of every level', () => {
+    const level = levelFrom({ ...playableParts, ballStart: undefined });
+    expect(unplayableReasons(level)).toContain('DS-1.4 the level authors no ball start');
   });
 
-  it('refuses a bat standing free of both its perpendicular sides (DS-7.5)', () => {
+  it('plays a level whose bat stands free of both its perpendicular sides', () => {
+    // DS-1.6 required one blocked side and was withdrawn: nothing reads a bat's sides now, so a bat
+    // in open ground is an ordinary bat. Not one bat in the original's 64 rooms sits against an edge.
     const level = levelFrom({
       ...playableParts,
       bats: [{ orientation: 'horizontal', line: 3, position: 0 }],
     });
-    expect(unplayableReasons(level)).toContain(
-      'DS-7.5 a bat has nothing on either of its perpendicular sides',
-    );
+    expect(unplayableReasons(level)).toEqual([]);
   });
 
   it('refuses a level with no destructible element (DS-1.8)', () => {
@@ -117,14 +118,13 @@ describe('a level says whether it can be played', () => {
         { ...brick(2, 2), kind: 'bumper' },
       ],
       bats: [{ orientation: 'horizontal', line: 3, position: 0 }],
-      ballStart: { column: 2, row: 2 },
+      ballStart: undefined,
     });
     expect(unplayableReasons(level)).toEqual([
+      'DS-1.4 the level authors no ball start',
       'DS-1.8 the level authors no destructible element',
       'DS-4.4 two elements share a cell',
       'DS-7.1 the level places an element of a kind no rule gives behaviour to',
-      'DS-7.4 the level authors where the ball starts',
-      'DS-7.5 a bat has nothing on either of its perpendicular sides',
     ]);
   });
 });

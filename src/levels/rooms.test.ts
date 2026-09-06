@@ -31,15 +31,17 @@ describe('the original\'s rooms, in the tree', () => {
     }
   });
 
-  it('says of every room whether it can be played, and no room can be yet', () => {
+  it('says of every room whether it can be played, and no room as imported can be', () => {
+    // Asked of the room *as imported*, which still places the kinds DS-7.1 gives no behaviour to.
+    // What a room is played as is the ported level, and src/levels/porting.test.ts asks it there.
     const playable = ROOMS.filter((room) => unplayableReasons(levelOf(room)).length === 0);
     expect(playable).toEqual([]);
   });
 
-  it('names, for every room, the rules that stand between it and being played', () => {
+  it('names, for every room, the rule that stands between it and being played as imported', () => {
     for (const room of ROOMS) {
       expect(unplayableReasons(levelOf(room))).toContain(
-        'DS-7.4 the level authors where the ball starts',
+        'DS-7.1 the level places an element of a kind no rule gives behaviour to',
       );
     }
   });

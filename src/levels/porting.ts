@@ -9,10 +9,10 @@
  * `doc/spec-domain-porting-todo.md`** with what would end it. A concession with no entry there is a
  * rule being decided in code, which is the thing the import is not allowed to do.
  *
- * What it does not touch: a bat standing free of both its perpendicular sides (**DS-7.5**) and two
- * elements sharing a cell (**DS-4.4**). Those rooms stay unplayable, because there is nothing to
- * substitute — a bat with no side to rest against has no *away* for the ball to launch towards, and
- * a cell holding two elements has no answer for which one was met.
+ * What it does not touch: two elements sharing a cell (**DS-4.4**), which leaves room 29 unplayable
+ * because a cell holding two elements has no answer for which one was met. A bat standing free of
+ * both its perpendicular sides was the other, and is not a problem any more — **DS-7.5** and the
+ * **DS-1.6** that gave it force are both withdrawn.
  */
 
 import { levelFrom, type ElementKind, type Level, type PlacedElement } from '../domain/level';
@@ -50,8 +50,9 @@ function ported(element: PlacedElement): PlacedElement | undefined {
 /**
  * The level a room is played as, which is not the room as imported.
  *
- * The ball start the room authors is left behind — **DS-7.4** — so **DS-1.4** draws the bat that
- * holds the ball from the seed, as it does for every other level.
+ * **The ball start is kept.** It used to be dropped, which was **P-1** — the concession that stood
+ * in for a rule that would read it. **DS-1.4** is that rule, so there is nothing left to concede and
+ * the room's own start is where the ball waits.
  */
 export function portedLevel(room: ImportedRoom): Level {
   const elements = room.elements.flatMap((element) => {
@@ -59,5 +60,5 @@ export function portedLevel(room: ImportedRoom): Level {
     return kept === undefined ? [] : [kept];
   });
 
-  return levelFrom({ ...room, elements, ballStart: undefined });
+  return levelFrom({ ...room, elements });
 }

@@ -39,7 +39,8 @@ The player moves bats. The ball moves itself.
 | **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
 | **Ball** | The moving thing the player never controls directly. | `Ball` |
-| **Held** | The ball before it travels: resting on a bat, and moving with it. | `held` |
+| **Ball start** | Where a level authors the ball to wait before it travels. | `ballStart` |
+| **Held** | The ball before it travels: waiting at the ball start, moved by nothing. | `held` |
 | **Launch** | The player setting the held ball travelling. | `launch` |
 | **Cleared** | What a level becomes when every destructible element has been destroyed. | `cleared` |
 | **Step** | The simulation advancing once. It is the domain's unit of time, and the only one it has. | `step` |
@@ -54,9 +55,9 @@ Every event, what causes it, and what it leaves changed. Nothing else happens.
 
 | Event | Caused by | Leaves changed |
 |---|---|---|
-| **Level started** | The game begins | The level exists. One of its bats, drawn from the seed, holds the ball. |
-| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary, at an element or at another bat. A held ball moves with its bat; a travelling ball a bat moved into collides with it. |
-| **Ball launched** | The player launches it | The ball travels, perpendicular to the bat that held it and away from it. |
+| **Level started** | The game begins | The level exists. The ball is held, at the ball start the level authors. |
+| **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary, at an element or at another bat. A travelling ball a bat moved into collides with it; a held ball is not on a bat and does not move with one. |
+| **Ball launched** | The player launches it | The ball travels, in a direction drawn from the seed. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
 | **Collision** | The ball and a boundary, a bat or a brick met — either of them may have been the one moving | The ball's direction changes, obeying the law of reflection. |
 | **Element destroyed** | A collision with the ball | One fewer destructible element. |
@@ -81,28 +82,35 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-1.1** A level is closed. Nothing leaves it.
 - **DS-1.2** A level authors where every element and every bat sits.
 - **DS-1.3** A level has at least one bat.
-- **DS-1.4** A level starts with the ball held by one of its bats, drawn from the seed.
+- **DS-1.4** A level starts with the ball held at the ball start it authors. Every level authors one.
 - **DS-1.5** A level is in exactly one of three states: the ball is held, the ball is travelling, or
   the level is cleared.
-- **DS-1.6** A bat has something the ball cannot pass on one of its two perpendicular sides — the
-  level's edge today, and whatever else is placed against it later. The other side is open.
+- **DS-1.6** *Withdrawn.* A bat used to be required to have something the ball could not pass on one
+  of its two perpendicular sides, so that the side the ball rested and launched from was decided.
+  Nothing needs it: **DS-1.4** places the ball and **DS-2.2** aims it, and neither asks what a bat
+  has beside it. The number stays so that a citation of it resolves to this rather than to a
+  different rule.
+
+  **It was withdrawn because it described this project's own level and not the game being remade.**
+  Not one bat in any of the original's sixty-four rooms sits against the level's edge, and reading
+  an element beside a bat instead answers no better: most of its bats have either nothing on both
+  sides or something on both.
 - **DS-1.7** A level authors no bat in the same place as another, and none with less room to slide
   than its own length. Neither is a position play could reach, and neither is one play could undo.
 - **DS-1.8** A level authors at least one destructible element. One that authors none satisfies
   **DS-5.1** before it is played, so it is cleared before the player touches it.
 
-**A level may still author an element where a bat's held ball would rest, and nothing here refuses
-it.** Launching would drive the ball straight into that element on the first step — a brick
-lost to the level's own layout rather than to the player — which is the same family of mistake as
-**DS-1.7** and **DS-1.8**: a position play could not produce. Left unrefused because there is
-exactly one authored level and it does not do this; a second level's author should meet this sentence
-before meeting the bug.
+**A level may still author its ball start inside an element, and nothing here refuses it.** The ball
+would begin held inside a brick and meet it on the first step it travelled — a brick lost to the
+level's own layout rather than to the player — which is the same family of mistake as **DS-1.7** and
+**DS-1.8**: a position play could not produce. Left unrefused because no level does it; a level
+author who reaches this should meet the sentence before meeting the bug.
 
 ### DS-2 · The ball
 
-- **DS-2.1** A held ball rests on its bat and moves with it, on the side **DS-1.6** leaves open.
-- **DS-2.2** Launching sets the ball travelling perpendicular to the bat that held it, away from it —
-  which is that same open side.
+- **DS-2.1** A held ball waits at the ball start, and nothing moves it. It is not on a bat, and a bat
+  that moves does not carry it.
+- **DS-2.2** Launching sets the ball travelling in a direction drawn from the seed.
 - **DS-2.3** A travelling ball advances every step.
 - **DS-2.4** A ball that collides changes direction obeying the law of reflection.
 - **DS-2.5** The ball's speed never changes. A collision changes where it is going, never how fast.
@@ -113,10 +121,11 @@ before meeting the bug.
   bat that moves into the ball puts the ball outside itself — a bat meeting the ball is the same
   collision as the ball meeting the bat, because which of them moved does not change what happened.
 
-**Without DS-2.6 the game cannot be played.** A ball launched perpendicular to its bat travels along
-one axis, and reflection off an axis-aligned surface only ever reverses one component — so the other
-stays zero for ever and the ball retraces one line. A bat is the only thing that can put the ball on
-a new heading, which is what makes reaching it the point of moving one.
+**Without DS-2.6 the ball never changes heading.** Reflection off an axis-aligned surface only ever
+reverses one component, and **DS-4.4** leaves no other kind of surface to meet — so a ball keeps the
+heading it was launched on for as long as it travels, and one launched along an axis retraces a
+single line for ever. A bat is the only thing that can put it on a new heading, which is what makes
+reaching one the point of moving them.
 
 ### DS-3 · Bats
 
@@ -191,11 +200,13 @@ dropped**, because a level whose author's intent is thrown away at the door cann
 what it came from, and nothing would say how much of it went. Each rule below names the datum and the
 rule that ignores it.
 
-**A level carrying any of DS-7.1, DS-7.4 or DS-7.5 cannot be played**, because the rule it
-needs does not exist. Carrying it is what makes that answerable rather than invisible.
+**A level carrying DS-7.1 cannot be played**, because the rule it needs does not exist. Carrying it
+is what makes that answerable rather than invisible.
 
-**This list is meant to shrink.** A datum leaves it the day a rule reads it, and its number stays
-here pointing at the rule that took it over — **DS-7.2** is the first to go that way.
+**This list is meant to shrink, and it has.** A datum leaves it the day a rule reads it, and its
+number stays here pointing at the rule that took it over — **DS-7.2** went that way, then
+**DS-7.4**. **DS-7.5** left differently and is worth telling apart: nothing came to read it, the rule
+that made it matter was withdrawn instead.
 
 - **DS-7.1** A level may place an element of a kind no rule gives behaviour to. It occupies its cells
   and nothing else about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say
@@ -214,10 +225,13 @@ here pointing at the rule that took it over — **DS-7.2** is the first to go th
   stays so that a citation of it resolves to where it went.
 - **DS-7.3** Every element carries a color id, and so does the level. No rule reads either, and
   neither changes anything that happens.
-- **DS-7.4** A level may author where the ball starts. **DS-1.4** draws the bat that holds it from the
-  seed and does not read this.
-- **DS-7.5** A level may author a bat with nothing on either of its perpendicular sides. **DS-1.6**
-  stands: such a bat is carried, and it is why the level holding it cannot be played.
+- **DS-7.4** *Moved.* Where the ball starts is no longer carried and unread: **DS-1.4** places the
+  held ball there, and every level authors one. The number stays so that a citation of it resolves to
+  where it went.
+- **DS-7.5** *Withdrawn.* A bat standing free of both its perpendicular sides used to make a level
+  unplayable, because **DS-1.6** needed one side blocked to decide where the ball rested and which
+  way it left. **DS-1.6** is withdrawn, so a bat's sides decide nothing and there is nothing here to
+  carry.
 - **DS-7.6** A level carries its origin. Nothing reads it, and it is what a later map would link a
   level back to.
 
@@ -256,10 +270,11 @@ nothing about the surfaces it presents.
 
 | Authored | Not authored |
 |---|---|
-| The grid's width and height | Which bat holds the ball — **DS-1.4** draws it from the seed |
+| The grid's width and height | Which way the ball leaves when it is launched — **DS-2.2** draws it from the seed |
 | Which cells hold a destructible brick, and which hold a permanent one | The ball's size, and every bat's length: the same in every level |
-| Where each bat sits, and on which row or column | The seed. A level that authored it would draw the same bat every time, which is not a draw |
-| Everything **DS-7** carries: an element's kind and footprint, every color id, the level's own color id, where the ball starts, and the level's origin | |
+| Where each bat sits, and on which row or column | The seed. A level that authored it would launch the ball the same way every time, which is not a draw |
+| Where the ball starts — **DS-1.4** | |
+| Everything **DS-7** carries: an element's kind and footprint, every color id, the level's own color id, and the level's origin | |
 
 ## What a game holds while it runs
 
@@ -269,7 +284,7 @@ A level is what was authored and never changes. The game state is everything tha
 - **Where the ball is, which way it is going, and how fast.**
 - **Which destructible elements are still there.**
 - **Where each bat group is along its axis.**
-- **Whether the ball is held — and by which bat — or travelling.**
+- **Whether the ball is held or travelling.**
 - **Whether the level is cleared.**
 
 **Events are not held.** A step's events say what changed; the state says what is. Keeping them here
