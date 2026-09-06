@@ -78,7 +78,16 @@ export type PlacedElement = {
  * What a cell holds: a brick, and only ever one that occupies exactly that cell. Everything else a
  * level places is in `elements` and reaches no rule.
  */
-export type Element = { readonly kind: BrickKind; readonly colorId: ColorId };
+export type Element = {
+  readonly kind: BrickKind;
+  readonly colorId: ColorId;
+  /**
+   * Which of the level's elements this cell holds — **DS-4.5**, an element is one thing wherever it
+   * is met. Every cell of one footprint carries the same index, so meeting either half of a
+   * two-cell brick meets one brick, and destroying it is one thing being destroyed.
+   */
+  readonly element: number;
+};
 
 /** A cell is either empty or holds one element. */
 export type Cell = Element | undefined;
@@ -129,18 +138,46 @@ export function elementAt(level: Level, column: number, row: number): Cell {
   return level.cells[row * level.columns + column];
 }
 
-/** Every destructible element a level authors. */
+/**
+ * Every destructible element a level authors — elements, not cells. A brick two cells wide is one
+ * element (**DS-4.5**), so it counts once and one hit is what clears it.
+ *
+ * Only the elements that reached the grid are counted. An element of a kind no rule reads is not a
+ * destructible one, and one placed outside the level is not there to destroy.
+ */
 export function destructibleCount(level: Level): number {
-  return level.cells.filter((cell) => cell?.kind === 'destructible').length;
+  return placedDestructibles(level).size;
 }
 
 /** Every destructible element still standing. **DS-5.1** is asked of this. */
 export function destructibleRemaining(level: Level, destroyed: ReadonlySet<number>): number {
   let standing = 0;
-  for (const [index, cell] of level.cells.entries()) {
-    if (cell?.kind === 'destructible' && !destroyed.has(index)) standing += 1;
-  }
+  for (const index of placedDestructibles(level)) if (!destroyed.has(index)) standing += 1;
   return standing;
+}
+
+/** Which elements are both destructible and on the grid, by their index in `elements`. */
+function placedDestructibles(level: Level): ReadonlySet<number> {
+  const found = new Set<number>();
+  for (const cell of level.cells) {
+    if (cell?.kind === 'destructible') found.add(cell.element);
+  }
+  return found;
+}
+
+/** The cells one element covers, in the order they are laid out — **DS-4.4**. */
+export function cellsOf(level: Level, index: number): readonly { column: number; row: number }[] {
+  const element = level.elements[index];
+  if (element === undefined) return [];
+
+  const cells: { column: number; row: number }[] = [];
+  for (let row = element.row; row < element.row + element.footprint.rows; row += 1) {
+    for (let column = element.column; column < element.column + element.footprint.columns; column += 1) {
+      if (column < 0 || column >= level.columns || row < 0 || row >= level.rows) continue;
+      cells.push({ column, row });
+    }
+  }
+  return cells;
 }
 
 /**
@@ -177,14 +214,15 @@ export type LevelParts = {
 /**
  * Builds a level from what it places, deriving the grid the rules read.
  *
- * **A cell holds an element only where a rule can read it**: a brick, one cell, inside the grid.
- * A kind with no behaviour (**DS-7.1**) and a footprint larger than one cell (**DS-7.2**) stay in
- * `elements` and reach nothing — which is what carrying them means. `unplayableReasons` is what
- * makes that answerable rather than invisible.
+ * **A cell holds an element only where a rule can read it**: a brick, on the grid. Every cell of its
+ * footprint holds it — **DS-4.4** — and each of them names the same element, which is **DS-4.5**.
+ * A kind with no behaviour (**DS-7.1**) stays in `elements` and reaches nothing, which is what
+ * carrying it means.
  *
- * It refuses none of it. A level assembled here may break **DS-1.3**, **DS-1.7** or **DS-1.8**;
- * those are questions about whether it can be played, and a level that cannot be played is still
- * imported rather than dropped.
+ * It refuses none of it. A level assembled here may break **DS-1.3**, **DS-1.7**, **DS-1.8** or
+ * **DS-4.4**'s *no two elements share a cell* — where two do, the last one placed is what the grid
+ * holds. Those are questions about whether it can be played, which `unplayableReasons` answers, and
+ * a level that cannot be played is still imported rather than dropped.
  */
 export function levelFrom(parts: LevelParts): Level {
   const { columns, rows, elements, bats } = parts;
@@ -192,15 +230,18 @@ export function levelFrom(parts: LevelParts): Level {
   if (columns <= 0) throw new Error('a level needs at least one column');
 
   const cells: Cell[] = Array.from({ length: columns * rows }, () => undefined);
-  for (const element of elements) {
+  for (const [index, element] of elements.entries()) {
     if (!isBrickKind(element.kind)) continue;
-    if (element.footprint.columns !== 1 || element.footprint.rows !== 1) continue;
-    if (element.column < 0 || element.column >= columns) continue;
-    if (element.row < 0 || element.row >= rows) continue;
-    cells[element.row * columns + element.column] = {
-      kind: element.kind,
-      colorId: element.colorId,
-    };
+    for (let row = element.row; row < element.row + element.footprint.rows; row += 1) {
+      for (
+        let column = element.column;
+        column < element.column + element.footprint.columns;
+        column += 1
+      ) {
+        if (column < 0 || column >= columns || row < 0 || row >= rows) continue;
+        cells[row * columns + column] = { kind: element.kind, colorId: element.colorId, element: index };
+      }
+    }
   }
 
   return {

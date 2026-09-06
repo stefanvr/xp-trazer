@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { batRect, obstacleAt, overlaps } from './collision';
-import { BAT_LENGTH_PIXELS, CELL_PIXELS, levelFromRows } from './level';
+import { BAT_LENGTH_PIXELS, CELL_PIXELS, elementAt, levelFromRows } from './level';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -10,6 +10,10 @@ const RADIUS = 9;
 // Four columns, four rows. A destructible brick at (1,1) and a permanent one at (2,1).
 const LEVEL = levelFromRows(['-...', '.dp.', '....', '....']);
 const NO_BATS = LEVEL.bats.map((bat) => ({ ...bat, position: -1000 }));
+
+// An element is named by its index in the level, not by the cell it sits in — DS-4.5.
+const DESTRUCTIBLE = elementAt(LEVEL, 1, 1)?.element ?? -1;
+const PERMANENT = elementAt(LEVEL, 2, 1)?.element ?? -1;
 
 const at = (x: number, y: number, bats = NO_BATS) =>
   obstacleAt(LEVEL, NOTHING_DESTROYED, bats, x, y, RADIUS);
@@ -46,17 +50,17 @@ describe('what the ball is inside', () => {
   it('finds a destructible brick, and says it is one', () => {
     const hit = at(CELL_PIXELS + 16, CELL_PIXELS + 16);
 
-    expect(hit).toEqual({ kind: 'element', index: 4 + 1, destructible: true });
+    expect(hit).toEqual({ kind: 'element', index: DESTRUCTIBLE, destructible: true });
   });
 
   it('finds a permanent brick, and says it is not destructible', () => {
     const hit = at(2 * CELL_PIXELS + 16, CELL_PIXELS + 16);
 
-    expect(hit).toEqual({ kind: 'element', index: 4 + 2, destructible: false });
+    expect(hit).toEqual({ kind: 'element', index: PERMANENT, destructible: false });
   });
 
   it('finds nothing where a brick has already been destroyed', () => {
-    const gone = new Set([4 + 1]);
+    const gone = new Set([DESTRUCTIBLE]);
 
     expect(
       obstacleAt(LEVEL, gone, NO_BATS, CELL_PIXELS + 16, CELL_PIXELS + 16, RADIUS),

@@ -20,8 +20,8 @@ describe('a level authored from rows', () => {
   it('puts each element in the cell its glyph sat in', () => {
     const level = levelFromRows(['.d-', 'p..']);
 
-    expect(elementAt(level, 1, 0)).toEqual({ kind: 'destructible' });
-    expect(elementAt(level, 0, 1)).toEqual({ kind: 'permanent' });
+    expect(elementAt(level, 1, 0)?.kind).toBe('destructible');
+    expect(elementAt(level, 0, 1)?.kind).toBe('permanent');
   });
 
   it('leaves a cell empty where nothing was written', () => {

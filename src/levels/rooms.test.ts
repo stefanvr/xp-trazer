@@ -39,11 +39,21 @@ describe('the original\'s rooms, in the tree', () => {
   it('names, for every room, the rules that stand between it and being played', () => {
     for (const room of ROOMS) {
       expect(unplayableReasons(levelOf(room))).toContain(
-        'DS-7.2 the level places an element occupying more than one cell',
-      );
-      expect(unplayableReasons(levelOf(room))).toContain(
         'DS-7.4 the level authors where the ball starts',
       );
     }
+  });
+
+  it('no longer refuses a room for the size of what it places', () => {
+    for (const room of ROOMS) {
+      expect(unplayableReasons(levelOf(room)).join(' ')).not.toContain('DS-7.2');
+    }
+  });
+
+  it('refuses only the one room that places two elements on one cell (DS-4.4)', () => {
+    const sharing = ROOMS.filter((room) =>
+      unplayableReasons(levelOf(room)).includes('DS-4.4 two elements share a cell'),
+    );
+    expect(sharing.map((room) => room.origin.room)).toEqual([29]);
   });
 });

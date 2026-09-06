@@ -70,7 +70,7 @@ const EVENTS: readonly { readonly what: string; readonly event: Event }[] = [
   { what: 'a collision with a bat', event: { kind: 'collision', met: 'bat', destroyed: false } },
   { what: 'a collision with a permanent brick', event: { kind: 'collision', met: 'brick', destroyed: false } },
   { what: 'a collision that destroyed the brick it met', event: { kind: 'collision', met: 'brick', destroyed: true } },
-  { what: 'an element destroyed', event: { kind: 'element-destroyed', cell: { column: 2, row: 2 } } },
+  { what: 'an element destroyed', event: { kind: 'element-destroyed', cells: [{ column: 2, row: 2 }] } },
 ];
 
 function eventPanel(what: string, event: Event): HTMLElement {

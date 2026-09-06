@@ -41,14 +41,20 @@ describe('a level says whether it can be played', () => {
     );
   });
 
-  it('refuses a level that places an element occupying more than one cell (DS-7.2)', () => {
+  it('plays a level whose element occupies more than one cell, which DS-4.4 now answers', () => {
     const level = levelFrom({
       ...playableParts,
       elements: [{ ...brick(1, 1), footprint: { columns: 2, rows: 1 } }],
     });
-    expect(unplayableReasons(level)).toContain(
-      'DS-7.2 the level places an element occupying more than one cell',
-    );
+    expect(unplayableReasons(level)).toEqual([]);
+  });
+
+  it('refuses a level where two elements share a cell (DS-4.4)', () => {
+    const level = levelFrom({
+      ...playableParts,
+      elements: [{ ...brick(1, 1), footprint: { columns: 2, rows: 1 } }, brick(2, 1)],
+    });
+    expect(unplayableReasons(level)).toContain('DS-4.4 two elements share a cell');
   });
 
   it('refuses a level that authors where the ball starts (DS-7.4)', () => {
@@ -106,14 +112,17 @@ describe('a level says whether it can be played', () => {
     const level = levelFrom({
       columns: 6,
       rows: 6,
-      elements: [{ ...brick(1, 1), kind: 'bumper', footprint: { columns: 2, rows: 2 } }],
+      elements: [
+        { ...brick(1, 1), kind: 'bumper', footprint: { columns: 2, rows: 2 } },
+        { ...brick(2, 2), kind: 'bumper' },
+      ],
       bats: [{ orientation: 'horizontal', line: 3, position: 0 }],
       ballStart: { column: 2, row: 2 },
     });
     expect(unplayableReasons(level)).toEqual([
       'DS-1.8 the level authors no destructible element',
+      'DS-4.4 two elements share a cell',
       'DS-7.1 the level places an element of a kind no rule gives behaviour to',
-      'DS-7.2 the level places an element occupying more than one cell',
       'DS-7.4 the level authors where the ball starts',
       'DS-7.5 a bat has nothing on either of its perpendicular sides',
     ]);
