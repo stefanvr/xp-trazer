@@ -18,19 +18,21 @@ exactly this list and nothing else.
 
 | # | The rule | What is done instead | Ends when |
 |---|---|---|---|
-| P-1 | **DS-7.4** a level may author where the ball starts | The authored start is left behind, and **DS-1.4** draws the bat that holds the ball from the seed | A rule reads an authored ball start |
+| P-1 | *Ended.* **DS-1.4** now places the held ball at the start the room authors, which is the rule this concession was waiting for. The number stays so a citation of it resolves | | |
 | P-2 | **DS-7.1** glass refractor | Left out of the played level | The refractor has behaviour |
 | P-3 | **DS-7.1** horizontal and vertical trap | Left out of the played level | A trap has behaviour |
 | P-4 | **DS-7.1** monster generator | Stands as a permanent brick, keeping its footprint and its place | The generator has behaviour |
 | P-5 | **DS-7.1** bumper | Stands as a permanent brick, keeping its footprint and its place | The bumper has behaviour |
 
-**Two things are not conceded, and the rooms holding them stay unplayable.**
+**One thing is not conceded, and the room holding it stays unplayable.**
 
-- **DS-7.5** — a bat standing free of both its perpendicular sides. There is nothing to substitute:
-  the side the ball rests and launches from is what the blocked side decides, so a bat with neither
-  has no *away*. **35 of the 64 rooms.**
 - **DS-4.4** — two elements on one cell. Which of the two the ball met has no answer, and inventing
   one would be deciding a rule here. **Room 29, the only room that does it.**
+
+**A bat standing free of both its perpendicular sides used to be the second, and it was the larger by
+far — 35 of the 64 rooms.** It is not conceded now; it is simply not a problem. **DS-7.5** and the
+**DS-1.6** that gave it force are both withdrawn, because the rule was this project's answer for its
+own authored level and no room of the original ever satisfied it.
 
 **Nothing is lost by conceding.** The rooms in the tree hold what the original actually places; the
 concessions are applied on the way to being played, so withdrawing one is deleting a line rather than

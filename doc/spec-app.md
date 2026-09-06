@@ -31,11 +31,12 @@ rather than a fault.
 
 | Step | Details |
 |---|---|
-| **Launch the ball** | The ball starts held by a bat. Left and right move the horizontal bat group, up and down the vertical one, and both are live at once — so a player may aim before committing, because the held ball travels with the bat holding it. **Space** launches it. |
+| **Launch the ball** | The ball starts held, where the level puts it. Left and right move the horizontal bat group, up and down the vertical one, and both are live at once — so a player may place the bats before committing, though not aim, because the ball leaves on a heading it is given rather than one the player chooses. **Space** launches it. |
 | **Play until the level is cleared** | The same four keys keep moving both groups while the ball travels. The ball destroys the destructible bricks it collides with. When the last one is gone the level is cleared, stops, and shows the player that it is. |
 
-**Aiming is a detail and not a step.** A player can press Space immediately and the activity still
-completes, so aiming is something the launch step allows rather than something it requires.
+**Placing the bats before launching is a detail and not a step.** A player can press Space
+immediately and the activity still completes, so it is something the launch step allows rather than
+something it requires.
 
 **That the cleared level says so is a step's detail; what it says and how it looks is
 [spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from a ball
