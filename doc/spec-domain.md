@@ -186,14 +186,17 @@ meets all of it, and it goes as a whole. Nothing else in this document distingui
 
 - **DS-6.1** A step yields the events that happened during it, in the order they happened. A step in
   which none happened yields none.
-- **DS-6.2** Two events are announced: **Collision** and **Element destroyed**. No other event this
-  document names is.
+- **DS-6.2** Three events are announced: **Collision**, **Element destroyed** and **Ball destroyed**.
+  No other event this document names is.
 - **DS-6.3** A collision names what the ball met — a boundary, a bat or a brick.
 - **DS-6.4** A collision says whether it destroyed what it met.
 - **DS-6.5** An element destroyed names the element that went.
 - **DS-6.6** A collision that destroys an element announces both. The ball turned and the element
   went, and **DS-2.4** and **DS-4.2** are each true of it.
 - **DS-6.7** A step may announce several collisions.
+- **DS-6.8** A ball destroyed announces alone, never alongside a collision. A trap is not one of the
+  things **DS-6.3** lists, and the ball does not turn away from meeting it the way **DS-6.6**'s
+  brick-and-collision pair turns away from a brick — it starts over instead.
 
 **DS-6.4 is not derivable from DS-6.3, and that is the point.** *Which brick was met* answers *was it
 destroyed* only while **DS-4.2** destroys one in a single collision. A brick that has to be hit more
@@ -222,7 +225,9 @@ is what makes that answerable rather than invisible.
 **This list is meant to shrink, and it has.** A datum leaves it the day a rule reads it, and its
 number stays here pointing at the rule that took it over — **DS-7.2** went that way, then
 **DS-7.4**. **DS-7.5** left differently and is worth telling apart: nothing came to read it, the rule
-that made it matter was withdrawn instead.
+that made it matter was withdrawn instead. **DS-7.1's own table shrinks the same way, a kind at a
+time rather than a datum**: horizontal trap and vertical trap are the first to leave it, now that
+**DS-8** gives them a rule.
 
 - **DS-7.1** A level may place an element of a kind no rule gives behaviour to. It occupies its cells
   and nothing else about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say
@@ -232,9 +237,11 @@ that made it matter was withdrawn instead.
   |---|---|
   | Glass refractor | `GlassRefractor` |
   | Monster generator | `MonsterGenerator` |
-  | Horizontal trap | `HorizontalTrap` |
-  | Vertical trap | `VerticalTrap` |
   | Bumper | `Bumper` |
+
+  **Horizontal trap and vertical trap left this table for DS-8.** A kind carries no number of its own
+  the way a datum does, so there is nothing here for a citation to resolve to — **DS-8** is simply
+  where the two went.
 
 - **DS-7.2** *Moved.* A footprint larger than one cell is no longer carried and unread: **DS-4.4**
   says which cells an element occupies and **DS-4.5** what meeting one of them means. The number
@@ -263,6 +270,22 @@ background, and the other two are dropped. A second id would have to be named, d
 from the first, and nothing draws the first yet; the day something does, this is the sentence to come
 back to.
 
+### DS-8 · Traps
+
+- **DS-8.1** A trap destroys the ball on collision. Unlike a destructible brick, it is never
+  destroyed itself, whatever meets it.
+- **DS-8.2** A ball a trap destroys returns held, exactly where **DS-1.4** puts a level's own ball.
+  Nothing else about the game changes: an element already destroyed stays destroyed, and the level
+  goes on being played.
+
+**A trap is still an element, so DS-4.4 and DS-4.5 still hold**: it occupies whole cells and is one
+thing wherever it is met. What DS-4.2, DS-4.3 and DS-5.1 say about a brick, **DS-8.1** says instead
+for a trap — a trap is not a brick, and clearing has never counted it either way.
+
+**DS-8.2 is why this step needs no life to spend yet.** A destroyed ball has somewhere to go back to
+without anything else existing to pay for the trip — the level simply plays on, the way it does after
+any other collision. A cost is a later step's, not this rule's.
+
 ## What a level is, as data
 
 **A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
@@ -287,10 +310,10 @@ nothing about the surfaces it presents.
 | Authored | Not authored |
 |---|---|
 | The grid's width and height | Which way the ball leaves when it is launched — **DS-2.2** draws it from the seed |
-| Which cells hold a destructible brick, and which hold a permanent one | The ball's size, and every bat's length: the same in every level |
+| Which cells hold a destructible brick, a permanent one, or a trap | The ball's size, and every bat's length: the same in every level |
 | Where each bat sits, and on which row or column | The seed. A level that authored it would launch the ball the same way every time, which is not a draw |
 | Where the ball starts — **DS-1.4** | |
-| Everything **DS-7** carries: an element's kind and footprint, every color id, the level's own color id, and the level's origin | |
+| Everything **DS-7** still carries unread: an element's kind where no rule reads one, every color id, and the level's origin | |
 
 ## What a game holds while it runs
 
@@ -314,12 +337,13 @@ nothing now and means such a rule adds a rule rather than a re-modelling.
 
 ## What an event is, as data
 
-**An event is a value, and there are two kinds.**
+**An event is a value, and there are three kinds.**
 
 | Event | Carries |
 |---|---|
 | **Collision** | What the ball met — a boundary, a bat or a brick — and whether the collision destroyed it |
 | **Element destroyed** | The cells the element occupied |
+| **Ball destroyed** | Nothing. **DS-6.8** says it announces alone, and there is nothing else about it yet worth naming |
 
 **A collision does not say which bat or which brick.** Nothing reads it, and where a brick goes,
 **DS-6.5** already names the cells.
@@ -342,9 +366,11 @@ produced by play, so there is no reference data here.
 
 ## Not named, because nothing here needs them
 
-Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
-**journey**, **map**, **unlocked**, **selection**. None of them is specified.
+Named as absent rather than left to be rediscovered: **run**, **life**, **arcade**, **journey**,
+**map**, **unlocked**, **selection**. None of them is specified.
 
-**DS-7 names five element kinds and does not break this.** A kind with no rule is a word for
-something a level places, not a mechanic — nothing above says what a trap traps or what a generator
-generates, and **map** is named there only as what an origin would one day be read by.
+**DS-7 still names three element kinds and does not break this.** A kind with no rule is a word for
+something a level places, not a mechanic — nothing above says what a glass refractor refracts or what
+a generator generates, and **map** is named there only as what an origin would one day be read by.
+**Hazard and trap left this list the way trap left DS-7.1's table**: **DS-8** says what one does, so
+neither is a word withheld any more.
