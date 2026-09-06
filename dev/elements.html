@@ -11,7 +11,9 @@
       <h1>doc/spec-domain.md's elements, played</h1>
       <p class="lede">
         One real, playable level per element kind — the two bricks, and the five DS-7.1 names but
-        gives no rule to. Every level runs through the real simulation loop: the same
+        gives no rule to. A DS-7.1 kind is shown as a real played room shows it, not as the raw
+        carried state: <code>src/levels/porting.ts</code>'s own concession decides it, left out or
+        standing in as a permanent brick. Every level runs through the real simulation loop: the same
         <code>createGameState</code>, <code>step</code>, <code>draw</code> and sounds
         <code>src/main.ts</code> calls, never a second copy of any of them. Pick a panel, then drive
         it with the arrow keys and Space, same as the game. Dev-only — this page is never built.
@@ -21,8 +23,7 @@
       <p class="readout">
         collisions <span data-testid="collision-count">0</span>
         &middot; bricks left <span data-testid="bricks-left">0</span>
-        &middot; playable <span data-testid="playable">—</span>
-        &middot; unplayable because <span data-testid="unplayable-reasons">—</span>
+        &middot; concession <span data-testid="concession">—</span>
       </p>
       <p><a href="./index.html">&larr; dev pages</a></p>
     </main>

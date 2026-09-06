@@ -17,7 +17,7 @@ import {
   type Level,
   type PlacedElement,
 } from '../src/domain/level';
-import { unplayableReasons } from '../src/domain/playable';
+import { portedKind } from '../src/levels/porting';
 import { draw } from '../src/render/draw';
 import { BACKGROUND, BOUNDARY } from '../src/render/palette';
 import { soundFor } from '../src/audio/sounds';
@@ -31,17 +31,22 @@ import { play } from '../src/audio/play';
  * same loop `src/main.ts` runs — real `createGameState`, `step`, `draw`, `soundFor` and `play`, never
  * a second copy of any of them.
  *
+ * **A DS-7.1 kind is shown as a real played room would show it, not as the raw carried state.** A
+ * level placing one of the five directly is unplayable — nothing here disputes that — but nothing a
+ * player meets is that raw level either: `src/levels/porting.ts`'s concession runs first. Glass
+ * refractor and both traps are left out entirely; monster generator and bumper stand in as a real,
+ * collidable permanent brick. This page calls that same `portedKind`, so a panel is exactly what the
+ * concession produces rather than a second guess at it — drawing a shape nothing here would actually
+ * collide with was rejected for the same reason **guide-design.md** rejects a silent wrong answer.
+ *
  * **The `?level=clearing-proof` seam is untouched.** doc/spec-tech.md's **A-2** is a seam that
  * substitutes a level and reaches nothing else; this page does not go through it; it is a second, dev-
  * only route, gated the way `dev/style.html` is — left out of `vite build`.
- *
- * **A level here is real, not a mockup.** Every one carries a bat and a destructible brick, so every
- * panel but the one under test is exactly what makes the others playable — a level demonstrating a
- * kind DS-7.1 gives no rule to is unplayable for that reason alone, which `unplayableReasons` says
- * without this page inventing a second way to say it.
  */
 
-const COLUMNS = 7;
+// Wide enough for CLEARED_WORD at CLEARED_TEXT_CELLS to fit without clipping — narrower than this,
+// "CLEARED" reads as "LEARE" once every brick under test clears on Space alone.
+const COLUMNS = 10;
 const ROWS = 5;
 // The bat's low end sits at column 0 and spans three cells, so column 1 is under its middle —
 // where a held ball rests. Pressing Space with no steering meets this brick, the same way
@@ -50,7 +55,7 @@ const DESTRUCTIBLE_COLUMN = 1;
 const DESTRUCTIBLE_ROW = 2;
 // Away from the bat's resting column, so reaching the kind under test takes steering right first —
 // exercising the bats as well as the ball, rather than everything happening on one keypress.
-const UNDER_TEST_COLUMN = 5;
+const UNDER_TEST_COLUMN = 8;
 const UNDER_TEST_ROW = 2;
 
 type Panel = { readonly kind: ElementKind; readonly label: string };
@@ -66,11 +71,27 @@ const PANELS: readonly Panel[] = [
 ];
 
 /**
+ * What a panel's caption says happened to the kind under test. `undefined` for the two bricks —
+ * `portedKind` only ever concedes a **DS-7.1** kind, and a brick passes through it unchanged, so
+ * asking would say nothing a reader does not already see on the canvas.
+ */
+function concessionNote(kind: ElementKind): string | undefined {
+  if (kind === 'destructible' || kind === 'permanent') return undefined;
+  const after = portedKind(kind);
+  return after === undefined
+    ? 'left out of the played level — doc/spec-domain-porting-todo.md'
+    : `stands in as a ${after} brick — doc/spec-domain-porting-todo.md`;
+}
+
+/**
  * One level per panel, always with a bat on the last row (its low end at column 0, so **DS-1.6**'s
  * blocked side is the boundary) and always with a destructible brick — **DS-1.8** — under the bat's
- * resting column, so Space alone clears it with nothing steered. The kind under test sits away from
- * that column, reachable by steering the bat there first; for the `destructible` panel itself the
- * kind under test *is* that one brick, so nothing is added twice.
+ * resting column, so Space alone clears it with nothing steered.
+ *
+ * The kind under test sits away from that column, reachable by steering the bat there first — as
+ * whatever `portedKind` turns it into. For the two bricks that is the kind itself; for the five
+ * **DS-7.1** kinds it is what `src/levels/porting.ts` actually does with them, so a level here is
+ * never one this page invented a behaviour for.
  */
 function levelFor(kind: ElementKind): Level {
   const elements: PlacedElement[] = [
@@ -83,13 +104,16 @@ function levelFor(kind: ElementKind): Level {
     },
   ];
   if (kind !== 'destructible') {
-    elements.push({
-      kind,
-      column: UNDER_TEST_COLUMN,
-      row: UNDER_TEST_ROW,
-      footprint: ONE_CELL,
-      colorId: undefined,
-    });
+    const after = portedKind(kind);
+    if (after !== undefined) {
+      elements.push({
+        kind: after,
+        column: UNDER_TEST_COLUMN,
+        row: UNDER_TEST_ROW,
+        footprint: ONE_CELL,
+        colorId: undefined,
+      });
+    }
   }
 
   const bats: Bat[] = [{ orientation: 'horizontal', line: ROWS - 1, position: 0 }];
@@ -125,8 +149,7 @@ const context = context2dOf(canvas);
 const picker = required<HTMLElement>('#picker');
 const collisionReadout = required('[data-testid="collision-count"]');
 const bricksReadout = required('[data-testid="bricks-left"]');
-const playableReadout = required('[data-testid="playable"]');
-const reasonsReadout = required('[data-testid="unplayable-reasons"]');
+const concessionReadout = required('[data-testid="concession"]');
 
 const held = new Set<string>();
 const ARROWS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
@@ -145,9 +168,7 @@ function loadPanel(kind: ElementKind): void {
   canvas.width = extent.width;
   canvas.height = extent.height;
 
-  const reasons = unplayableReasons(level);
-  playableReadout.textContent = reasons.length === 0 ? 'yes' : 'no';
-  reasonsReadout.textContent = reasons.length === 0 ? '—' : reasons.join('; ');
+  concessionReadout.textContent = concessionNote(kind) ?? '—';
 
   for (const button of picker.querySelectorAll<HTMLButtonElement>('button')) {
     button.setAttribute('aria-pressed', String(button.dataset['kind'] === kind));
