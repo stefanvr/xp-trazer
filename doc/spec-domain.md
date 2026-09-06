@@ -28,10 +28,14 @@ The player moves bats. The ball moves itself.
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
 | **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
-| **Element** | A fixed thing a level places. Every element is a brick. | `Element` |
+| **Element** | A fixed thing a level places. | `Element` |
+| **Element kind** | Which kind of thing an element is. Two kinds have rules — the bricks below; **DS-7.1** carries five that have none. | `ElementKind` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
 | **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
 | **Permanent brick** | A brick that is never destroyed, and that clearing ignores. | `PermanentBrick` |
+| **Footprint** | The cells one element occupies. | `footprint` |
+| **Color id** | What an element or a level is authored to be colored. An id and not a color — [spec-style.md](spec-style.md) says what an id is drawn in. | `colorId` |
+| **Origin** | Which room of the original a level was imported from. | `origin` |
 | **Bat** | A thing the player moves, lying along one axis. | `Bat` |
 | **Bat group** | Every bat of one orientation. A group moves as one thing. | `BatGroup` |
 | **Ball** | The moving thing the player never controls directly. | `Ball` |
@@ -161,15 +165,54 @@ without diffing the state it arrived with is not an announcement, and not having
 **DS-2.7**, and then one on each axis. A reader who assumed one collision per step would be wrong on
 the first bat that moves into a travelling ball.
 
+### DS-7 · What a level carries that no rule reads
+
+A level authored elsewhere carries more than the rules above use. **It is carried rather than
+dropped**, because a level whose author's intent is thrown away at the door cannot be checked against
+what it came from, and nothing would say how much of it went. Each rule below names the datum and the
+rule that ignores it.
+
+**A level carrying any of DS-7.1, DS-7.2, DS-7.4 or DS-7.5 cannot be played**, because the rule it
+needs does not exist. Carrying it is what makes that answerable rather than invisible.
+
+- **DS-7.1** A level may place an element of a kind no rule gives behaviour to. It occupies its cells
+  and nothing else about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say
+  nothing about it.
+
+  | Kind | In code |
+  |---|---|
+  | Glass refractor | `GlassRefractor` |
+  | Monster generator | `MonsterGenerator` |
+  | Horizontal trap | `HorizontalTrap` |
+  | Vertical trap | `VerticalTrap` |
+  | Bumper | `Bumper` |
+
+- **DS-7.2** An element may occupy more than one cell. Its footprint is carried; what surfaces a
+  larger element presents is undecided, so nothing reads a footprint that is not one cell.
+- **DS-7.3** Every element carries a color id, and so does the level. No rule reads either, and
+  neither changes anything that happens.
+- **DS-7.4** A level may author where the ball starts. **DS-1.4** draws the bat that holds it from the
+  seed and does not read this.
+- **DS-7.5** A level may author a bat with nothing on either of its perpendicular sides. **DS-1.6**
+  stands: such a bat is carried, and it is why the level holding it cannot be played.
+- **DS-7.6** A level carries its origin. Nothing reads it, and it is what a later map would link a
+  level back to.
+
+**What is not carried, and is dropped deliberately:** the original's background pattern · its room
+topology, which exits lead where and which rooms a game may start in — **DS-7.6**'s origin is what
+survives of it · and the bookkeeping of whatever decoded the original, which describes that
+decoding rather than the level.
+
 ## What a level is, as data
 
 **A level is a grid of cells.** Its width and height are counted in cells, and a cell is either empty
 or holds one element.
 
-**Cells are the only thing elements know about.** An element occupies exactly one cell, so every
-surface in a level is a cell face — horizontal or vertical, never anything else. That is what makes
-**DS-2.4** exact rather than approximate: a collision reflects across one axis, and there is no other
-kind of surface to meet.
+**Cells are the only thing elements know about.** An element the rules read occupies exactly one cell,
+so every surface in a level is a cell face — horizontal or vertical, never anything else. That is what
+makes **DS-2.4** exact rather than approximate: a collision reflects across one axis, and there is no
+other kind of surface to meet. **DS-7.2** carries larger footprints and nothing reads them, so this
+sentence holds of everything that is played.
 
 **The ball and the bats are continuous; elements are not.**
 
@@ -183,9 +226,10 @@ kind of surface to meet.
 
 | Authored | Not authored |
 |---|---|
-| The grid's width and height | Where the ball starts — **DS-1.4** draws its bat from the seed |
+| The grid's width and height | Which bat holds the ball — **DS-1.4** draws it from the seed |
 | Which cells hold a destructible brick, and which hold a permanent one | The ball's size, and every bat's length: the same in every level |
 | Where each bat sits, and on which row or column | The seed. A level that authored it would draw the same bat every time, which is not a draw |
+| Everything **DS-7** carries: an element's kind and footprint, every color id, the level's own color id, where the ball starts, and the level's origin | |
 
 ## What a game holds while it runs
 
@@ -237,3 +281,7 @@ produced by play, so there is no reference data here.
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
 **journey**, **map**, **unlocked**, **selection**. None of them is specified.
+
+**DS-7 names five element kinds and does not break this.** A kind with no rule is a word for
+something a level places, not a mechanic — nothing above says what a trap traps or what a generator
+generates, and **map** is named there only as what an origin would one day be read by.

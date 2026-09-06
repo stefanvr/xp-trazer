@@ -1,9 +1,10 @@
 /**
  * A level — doc/spec-domain.md. Pure functions over plain types, importing nothing.
  *
- * A level is a grid of cells, and a cell is either empty or holds one element. Every element
- * occupies exactly one cell, so every surface in a level is a cell face — which is what makes
- * **DS-2.4**'s reflection exact rather than approximate.
+ * A level is a grid of cells, and a cell is either empty or holds one element. An element the rules
+ * read occupies exactly one cell, so every surface in a level is a cell face — which is what makes
+ * **DS-2.4**'s reflection exact rather than approximate. **DS-7.2** allows a level to author a
+ * larger footprint and has nothing read it, so no type here carries one.
  *
  * A level also authors its bats: **DS-1.2**, and **DS-1.3** — a level has at least one, or the ball
  * has nothing to be held by.
@@ -18,7 +19,10 @@ export const BAT_LENGTH_PIXELS = BAT_LENGTH_CELLS * CELL_PIXELS;
 
 export type BrickKind = 'destructible' | 'permanent';
 
-/** A fixed thing a level places. Every element is a brick. */
+/**
+ * A fixed thing a level places. Every element here is a brick: **DS-7.1**'s five kinds have no
+ * behaviour, so nothing in this module can hold one.
+ */
 export type Element = { readonly kind: BrickKind };
 
 /** A cell is either empty or holds one element. */
