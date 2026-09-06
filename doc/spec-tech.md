@@ -123,3 +123,24 @@ more than it buys.
 **What the departure costs, and what contains it.** A visitor who guesses the parameter reaches a
 five-cell level with one brick. That is the whole exposure: the seam substitutes a level, and the
 paragraph above is what keeps it that way.
+
+### A-3 · The original's rooms are converted once and committed, and the export stays outside the tree
+
+The rooms of the game being remade are converted by a script run by hand, and what is committed is
+the result: 64 rooms in this project's own format, in one generated module. The export they are
+decoded from is not in this repository, and no conversion happens at build time.
+
+**What that buys.** The levels that ship are the levels in the tree, reviewable in a diff, with no
+build step between the two and no megabyte of another program's decoder bookkeeping carried for ever
+in a repository that is public.
+
+**What it costs, and what pays for it.** The import is not reproducible from this repository alone,
+and a converted room could drift from what it was converted from with nothing to notice. **One room's
+source record is committed beside the converter** as the fixture the suite asserts a converted room
+against — the room that places every object kind the export uses, since a fixture asserts only what
+it contains. That is the smallest thing that keeps the claim checkable on a machine that does not
+hold the export.
+
+**The generator is run by Node directly, which is why two modules spell out their `.ts` extensions**
+and `allowImportingTsExtensions` is set. Node resolves a relative import only with its extension; the
+two modules the script loads are the whole of it, and nothing the application imports is affected.
