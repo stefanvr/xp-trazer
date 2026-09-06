@@ -70,7 +70,9 @@ export default defineConfig({
     __BUILD_IDENTIFIER__: JSON.stringify(identifier),
   },
   test: {
-    // Domain tests only. e2e/ is Playwright's, and vitest's default glob would otherwise claim it.
-    include: ['src/**/*.test.ts'],
+    // The application and the dev pages. e2e/ is Playwright's, and vitest's default glob would
+    // otherwise claim it. `dev/` is here because a dev page's level building is plain state like
+    // any other — the page is excluded from the build, not from the suite.
+    include: ['{src,dev}/**/*.test.ts'],
   },
 });

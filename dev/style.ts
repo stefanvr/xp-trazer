@@ -48,7 +48,12 @@ function everyDestructible(level: Level): ReadonlySet<number> {
 }
 
 // Seven cells by five, which is the smallest that leaves a bat room to move and a brick room to sit.
-const PLAIN = ['-......', '.......', '...d...', '.......', '.......'];
+//
+// **Every panel authors its ball start — DS-1.4 — one row under the bat's middle**, which is where a
+// held ball rests and so where the eye expects it. A row without a `*` is not a panel with the ball
+// somewhere else; it is one `levelFromRows` refuses, and every panel here was written before the
+// rule existed.
+const PLAIN = ['-......', '.*.....', '...d...', '.......', '.......'];
 
 const panels: readonly Panel[] = [
   {
@@ -72,14 +77,14 @@ const panels: readonly Panel[] = [
   {
     name: 'Destructible brick',
     role: 'The objective — what clearing removes',
-    // Row 1 is left clear: a brick directly under the bat would be where the held ball rests.
-    rows: ['-......', '.......', '.ddddd.', '.ddddd.', '.......'],
+    // Row 1 holds the ball start and no brick: a brick there would be where the held ball rests.
+    rows: ['-......', '.*.....', '.ddddd.', '.ddddd.', '.......'],
   },
   {
     name: 'Permanent brick',
     role: 'Reads as structure, not as a target',
     note: 'The single green brick is the one DS-1.8 requires — and it is the comparison the spec asks for',
-    rows: ['-......', '.......', '.ppppp.', '.ppppp.', '......d'],
+    rows: ['-......', '.*.....', '.ppppp.', '.ppppp.', '......d'],
   },
   {
     name: 'Horizontal bats',
@@ -92,14 +97,14 @@ const panels: readonly Panel[] = [
     name: 'Vertical bats',
     role: 'The other control group — told apart from horizontal by hue alone',
     note: 'Driven down by real steps',
-    rows: ['|......', '.......', '...d...', '.......', '.......'],
+    rows: ['|......', '.*.....', '...d...', '.......', '.......'],
     arrange: (state) => after(state, 23, { down: true }),
   },
   {
     name: 'CLEARED',
     role: 'What a cleared level says — spec-style.md’s typography section',
     note: 'Shown at its own size, because the whole decision is how the type reads',
-    rows: ['-...........', '............', '....dddd....', '............', '............'],
+    rows: ['-...........', '.*..........', '....dddd....', '............', '............'],
     arrange: (state) => ({ ...state, destroyed: everyDestructible(state.level) }),
     wide: true,
   },

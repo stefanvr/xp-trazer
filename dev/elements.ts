@@ -7,18 +7,9 @@ import {
   type Event,
   type Input,
 } from '../src/domain/simulation';
-import {
-  levelFrom,
-  destructibleRemaining,
-  UNBEHAVED_KINDS,
-  type Bat,
-  type ElementKind,
-  type Footprint,
-  type Level,
-  type PlacedElement,
-} from '../src/domain/level';
+import { destructibleRemaining, type ElementKind } from '../src/domain/level';
 import { portedKind } from '../src/levels/porting';
-import { OBJECT_KINDS } from '../src/import/convert';
+import { levelFor, PANELS, type Panel } from './panels';
 import { draw } from '../src/render/draw';
 import { BACKGROUND, BOUNDARY } from '../src/render/palette';
 import { soundFor } from '../src/audio/sounds';
@@ -45,50 +36,13 @@ import { play } from '../src/audio/play';
  * DS-7.1 kinds are larger still. The shapes are read from `src/import/convert.ts`'s own table
  * rather than restated here, so a footprint corrected at the border is corrected on this page too.
  *
+ * **What a panel is made of is `dev/panels.ts`'s**, and is asserted there over plain state. This
+ * file is the DOM half: the picker, the readouts, the loop and the canvas.
+ *
  * **The `?level=clearing-proof` seam is untouched.** doc/spec-tech.md's **A-2** is a seam that
  * substitutes a level and reaches nothing else; this page does not go through it; it is a second, dev-
  * only route, gated the way `dev/style.html` is — left out of `vite build`.
  */
-
-// Room for the widest kind the original has (the glass refractor's four columns) beside the anchor
-// brick, and wide enough that CLEARED_WORD is not clipped — at ten columns it read as "LEARE".
-const COLUMNS = 12;
-const ROWS = 6;
-// The bat's low end sits at column 0 and spans three cells, so column 1 is under its middle —
-// where a held ball rests. Pressing Space with no steering meets this brick, the same way
-// `src/levels/clearing-proof.ts` puts its one brick under the bat with nothing to steer.
-const ANCHOR_COLUMN = 1;
-const ANCHOR_ROW = 3;
-// Away from the bat's resting column, so reaching the kind under test takes steering right first —
-// exercising the bats as well as the ball, rather than everything happening on one keypress. Row 1
-// leaves the tallest kind (three rows) clear of the bat's own row.
-const UNDER_TEST_COLUMN = 6;
-const UNDER_TEST_ROW = 1;
-
-type Panel = {
-  readonly label: string;
-  readonly kind: ElementKind;
-  readonly footprint: Footprint;
-};
-
-/**
- * One panel per object the original has — the import's table is the list, so the two bricks appear
- * as the two shapes they are and nothing here decides what the inventory is.
- */
-const PANELS: readonly Panel[] = [...OBJECT_KINDS].map(([label, { kind, footprint }]) => ({
-  label,
-  kind,
-  footprint,
-}));
-
-/** What sits under the bat in every panel: the commonest shape the original has. */
-function named(label: string): { readonly kind: ElementKind; readonly footprint: Footprint } {
-  const found = OBJECT_KINDS.get(label);
-  if (found === undefined) throw new Error(`the import no longer names ${label}`);
-  return found;
-}
-
-const ANCHOR = named('Horizontal brick');
 
 /**
  * What a panel's caption says happened to the kind under test. `undefined` for the two bricks —
@@ -101,57 +55,6 @@ function concessionNote(kind: ElementKind): string | undefined {
   return after === undefined
     ? 'left out of the played level — doc/spec-domain-porting-todo.md'
     : `stands in as a ${after} brick, keeping its footprint — doc/spec-domain-porting-todo.md`;
-}
-
-/**
- * One level per panel, always with a bat on the last row (its low end at column 0, so **DS-1.6**'s
- * blocked side is the boundary) and always with a horizontal brick — **DS-1.8** — under the bat's
- * resting column, so Space alone clears it with nothing steered.
- *
- * The object under test sits away from that column, reachable by steering the bat there first — as
- * whatever `portedKind` turns it into, keeping the footprint the original gave it. For the two
- * bricks and the solid block that is the kind itself; for the five **DS-7.1** kinds it is what
- * `src/levels/porting.ts` actually does with them, so a level here is never one this page invented
- * a behaviour for. The horizontal brick's own panel adds nothing, because the anchor already is one.
- */
-function levelFor(panel: Panel): Level {
-  const elements: PlacedElement[] = [
-    {
-      kind: ANCHOR.kind,
-      column: ANCHOR_COLUMN,
-      row: ANCHOR_ROW,
-      footprint: ANCHOR.footprint,
-      colorId: undefined,
-    },
-  ];
-
-  const after = portedKind(panel.kind);
-  const isTheAnchorItself =
-    panel.kind === ANCHOR.kind &&
-    panel.footprint.columns === ANCHOR.footprint.columns &&
-    panel.footprint.rows === ANCHOR.footprint.rows;
-
-  if (after !== undefined && !isTheAnchorItself) {
-    elements.push({
-      kind: after,
-      column: UNDER_TEST_COLUMN,
-      row: UNDER_TEST_ROW,
-      footprint: panel.footprint,
-      colorId: undefined,
-    });
-  }
-
-  const bats: Bat[] = [{ orientation: 'horizontal', line: ROWS - 1, position: 0 }];
-
-  return levelFrom({ columns: COLUMNS, rows: ROWS, elements, bats });
-}
-
-// Sanity against DS-7.1's own list, so a sixth unbehaved kind added there is a panel missing here
-// rather than one silently never reached.
-for (const kind of UNBEHAVED_KINDS) {
-  if (!PANELS.some((panel) => panel.kind === kind)) {
-    throw new Error(`doc/spec-domain.md's DS-7.1 names ${kind}; the import places no such object`);
-  }
 }
 
 /** A stable handle for a panel, for the picker's markup — the labels are the import's own names. */
