@@ -33,5 +33,27 @@ which is what owning them means, and how a decision was reached is in the histor
 
 ---
 
-**No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
-have left open, then `scope-create` to set the next one.
+## A level you can lose
+
+**Done means** a level can be lost as well as cleared — a trap destroys the ball, the last of five
+lives ends the level, and the page draws a new room — and no bat can leave the ball on a path that
+repeats for ever.
+
+**The path is part of the edge rather than a goal beside it.** A ball keeps the heading it was
+launched on until something turns it, and today only the long face of a bat does: an end reverses one
+component and leaves the rest, so a ball can be put on a circuit it never leaves. Such a ball meets
+no trap and costs no life. A level that can be lost while still holding a state in which losing
+cannot happen is not the thing, so the two finish together or neither does.
+
+**Where it stops.** The glass refractor and the monster generator get no behaviour and stay conceded;
+they are a later scope's. Nothing is remembered between rooms — a lost level draws a new one the way
+opening the page does — and there is still no map and no selection.
+
+**It carries no unmade technology decision.** Nothing in it needs one.
+
+| ✓ | Step | What it delivers |
+|---|---|---|
+| ☐ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
+| ☐ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
+| ☐ | **A level has lives, and runs out of them** | A destroyed ball costs one of five, and the level goes on until the last is gone. This is the state the domain says today does not exist, and the count has to be readable from outside or nothing can assert it. |
+| ☐ | **Losing is shown, and the page draws a new room** | The player is told the level was lost, where they are already looking, and then meets another room as though the page had been opened again. |
