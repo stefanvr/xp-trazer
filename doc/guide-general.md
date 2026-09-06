@@ -10,7 +10,8 @@ kept separate on purpose: these are written to outlive the project, which is exa
 temporary is stored somewhere deletable. What the machine does is [setup-ai-env.md](setup-ai-env.md), and what it takes to
 have one is [setup-dev-env.md](setup-dev-env.md);
 which technologies are chosen is [spec-tech.md](spec-tech.md); how the code is shaped is
-[guide-design.md](guide-design.md).
+[guide-design.md](guide-design.md), **which outranks this document on that question** — its reason
+is its own to give, and routing was this sentence's whole job.
 
 **A principle earns its place by ruling something out.** That is the test for adding the next one:
 name the decision it would have changed. A principle that would never have changed a decision is a
@@ -32,8 +33,6 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
 - Don't build, and don't specify, further than the goal in front of you needs. A rule written three
   goals early is written from a worse understanding, and a specification is the expensive place to be
   wrong — its identifiers are cited from the code and from the tests.
-- Don't decide on the owner's behalf — not the product, not the scope. Options and a recommendation,
-  then wait. Confirm before it is recorded, not after.
 - Which document owns a decision is settled by the routing in [CLAUDE.md](../.claude/CLAUDE.md), not
   by judgement in the moment.
 
@@ -77,6 +76,9 @@ slogan, and one slogan teaches the reader that the whole list can be skimmed.
   reader that the whole document can be skimmed.
 - Elaborate only where a specific observation earns it. Where every entry is equally elaborated, the
   ones that deserved the length lose the emphasis length was supposed to give them.
+- **An observation earns its place only if it still reads once nobody remembers it.** Fresh evidence
+  always feels earned; a year on it is history in a document people open to find out what to do — and
+  history lives in the commit message.
 - When the same explanation reaches both a pointer and its target, delete the pointer's copy. Routing
   was its whole job.
 - **Do not write down what the tree already shows.** A note saying which documents do not exist yet

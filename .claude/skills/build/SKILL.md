@@ -16,7 +16,7 @@ own architectural rules are [spec-tech.md](../../../doc/spec-tech.md), and the g
 **This routine exists because it was once skipped.** A goal that read *choose the stack* produced a
 working program carrying wall reflection, a bounce count and an acceleration model, at a point where
 `spec-domain.md` did not exist to own any of them. Nothing was wrong with the code. What was wrong is
-that the game's physics got decided in a commit about a toolchain, by whoever was typing.
+that the product's own rules got decided in a commit about a toolchain, by whoever was typing.
 
 ---
 
@@ -35,11 +35,21 @@ specification in code.** Stop and say so. That is the moment this routine exists
 specification is the expensive place to be wrong, and code that quietly becomes one was never
 reviewed as one.
 
+**And the mirror of it: a specification's silence is not its permission.** Where existing code does
+something no rule covers, that is a gap to report as an open question — never behaviour defended by
+pointing at what the document does not say. Silence means the specification was never asked, and
+reading it as endorsement blesses whatever already exists, which is always the code already written.
+
+**The owner may know things the documents do not.** *Don't specify further than the goal in front of
+you needs* rests on nobody yet knowing what a later goal will require. Where the owner has used or
+built the thing being made, that is false — so *will this distinction still hold later* is a question
+to ask them, not a conclusion to reach from the documents alone.
+
 ## Break the goal into checkable tasks, in the scratchpad
 
 **Before the first line of code**, write the breakdown to a file in `doc/scratchpad/`: two columns,
 the task and **what makes it checkable**. Checkable means the observable thing the owner can look at
-and judge — *"bats answer the keyboard"*, not *"the bat module"*. A task that can only be checked by
+and judge — *"the controls answer the keyboard"*, not *"the input module"*. A task that can only be checked by
 reading the diff is a layer, and layers are not tasks.
 
 **Remove a task once it is implemented.** The file then always reads as what is left, which is what
@@ -51,14 +61,19 @@ it shrinks to nothing as that goal completes, and landing clears the scratchpad.
 its goal and accumulates; this one is deleted by being finished.
 
 Keep it in its own file, separate from the note that collects findings as the work goes. The two run
-opposite ways — the breakdown shrinks, and the findings accumulate until each is given a fate at
-landing.
+opposite ways — the breakdown shrinks, and the findings accumulate.
+
+**Findings a specification pass deferred here are this goal's to close, not the landing's.** A pass
+that writes documents correctly refuses to change code, so what it turns up that *is* code is written
+down instead — and it was turned up by specifying the very thing now being built, in files this work
+usually has to open anyway. Read `doc/scratchpad/` before starting and fold them in. The landing is
+the backstop for what genuinely belongs to a later goal, not the intended reader.
 
 ## A proof contains no product decisions
 
-**The test is mechanical: remove a rule, and ask whether any seam stopped being proven.** A ball that
-bounces off a wall proves nothing about a fixed-step loop that a dot moving in a straight line does
-not. If deleting a rule leaves every seam still exercised, that rule was product functionality
+**The test is mechanical: remove a rule, and ask whether any seam stopped being proven.** Something
+that reacts to what it meets proves nothing about a loop that something moving in a straight line
+does not. If deleting a rule leaves every seam still exercised, that rule was product functionality
 wearing a proof's clothes.
 
 So a proof **names its seams before it is written**, and every line afterwards is answerable to one

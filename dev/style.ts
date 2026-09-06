@@ -4,7 +4,7 @@ import { draw } from '../src/render/draw';
 import { BACKGROUND } from '../src/render/palette';
 
 /**
- * The `style` skill's page: one panel per row doc/spec-style.md names — its palette table, and the
+ * The `preview` skill's page: one panel per row doc/spec-style.md names — its palette table, and the
  * one word its typography section decides.
  *
  * **Everything the domain models is drawn by calling the real render function**, against a real

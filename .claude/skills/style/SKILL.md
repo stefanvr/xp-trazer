@@ -1,93 +1,82 @@
 ---
 name: style
-description: Build or refresh the dev-only page that demonstrates every visual currently named in doc/spec-style.md, drawn with the project's real render code and real color constants rather than a mockup. Use when spec-style.md changes, before adding a new element to it, or when asked to preview, demonstrate, or check the current visual spec.
+description: Write or extend doc/spec-style.md — the reference it is measured against, the rules for when something is seen or heard, and the values that decide what it is. Use when the goal is to write or change how the project looks, sounds or feels.
 ---
 
 # Style
 
-**Owns.** Keeping one page that shows, with real render code, every visual
-[spec-style.md](../../../doc/spec-style.md) currently names — so "does this still read as a Tron
-neon-on-black bat" does not depend on someone remembering what the last session decided.
+**Owns.** How `doc/spec-style.md` gets written and extended: which activities a pass runs, who
+proposes what, and what has to be true before the result is called a specification.
 
-**Not here.** What the palette and shapes *are* — [spec-style.md](../../../doc/spec-style.md) decides
-those; this skill only displays the decision. Whether a color or shape is right is that document's
-question, argued on its own terms, never this skill's.
+**Not here.** Showing what the document decides — that is [preview](../preview/SKILL.md), which keeps
+the pages that draw and play it. *When* a thing happens is [domain](../domain/SKILL.md)'s or
+[app](../app/SKILL.md)'s; *how* it is produced is [tech](../tech/SKILL.md)'s. This document says what
+should be seen and heard, and nothing about what causes it.
 
-**This is a dev-only affordance**, in [guide-design.md](../../../doc/guide-design.md)'s own sense —
-"preview pages rendering real output from real code" — gated so it never ships. It is not a proof or
-product functionality in [build](../build/SKILL.md)'s sense, and it does not wait on spec-domain.md or
-spec-app.md to exist.
+**A specification states the desired state**, with no marker saying who proposed something or how
+settled it is. The [domain](../domain/SKILL.md) skill carries the full argument; it holds here
+unchanged.
+
+**The document's remit is *look, sound and feel*** — the routing's words. A pass that touches only
+one of the three is normal; a pass that forgets the other two exist is how a whole sense goes
+unwritten for goals at a time.
 
 ---
 
-## What the page shows
+## The four activities
 
-One panel per row in spec-style.md's palette table — a shape or swatch in that color, glowing the way
-the spec says everything glows, labelled with the element's name and role. When the table gains a row,
-the page is missing a row until this routine runs again.
+**The first step is choosing which this pass runs, and saying why in one line.**
 
-## How it stays real, not a mockup
+| Activity | Produces | Skip it when |
+|---|---|---|
+| **Reference** | What this should be mistaken for, per sense | The pass adds nothing to a sense that has no reference yet |
+| **Rules** | When a thing is seen or heard, and when it is deliberately not | Nothing is conditional — a value that always applies is a value |
+| **Values** | The numbers and names that decide what it *is* — hues, sizes, waveforms, envelopes | The pass changes no value |
+| **What this leaves open** | What is named as undecided, so a later goal knows it is deciding rather than discovering | Nothing was left open and nothing that was is now closed |
 
-- **An element the domain already models is drawn by calling the project's actual render function**,
-  not a re-implementation of it. Right now that is the ball and the boundary, drawn by calling
-  `draw()` in [src/render/draw.ts](../../../src/render/draw.ts) against a real `World`.
-- **An element spec-style.md names ahead of the domain owning it — a brick, a bat — is drawn directly**,
-  shape and color taken straight from the spec, and labelled as not yet backed by a domain type. Never
-  invent a domain type to justify drawing it; that is [build](../build/SKILL.md)'s "a proof contains no
-  product decisions" showing up here too.
-- **Every color spec-style.md names lives in one module** — [src/render/palette.ts](../../../src/render/palette.ts)
-  — imported by the real renderer, by the application's own stylesheet, and by this page. Two copies
-  of a hex the specification decides is exactly the drift this routine exists to catch, so there must
-  never be a second copy. **Chrome is not one of those**: spec-style.md leaves UI chrome unowned, so
-  this page's own background and text stay in `dev/style.css`. The application's page is not chrome —
-  its background sits against the level, so it takes the specification's value.
+**A reference is per sense, and they may disagree.** One reference for the eye and a different one for
+the ear. That is a split rather than an inconsistency, and it was worth writing down as one — a
+reader meeting both without the sentence would take one for a mistake.
 
-## Where it lives
+**The Rules activity is the one that gets skipped and should not be.** A silence, an element that
+deliberately shares another's look, a thing shown only in one mode — all are rules, and all read as
+oversights if the document only lists values.
 
-`dev/style.html`, reachable from `npm run dev` at `/dev/style.html`. Vite serves any HTML file under
-the project root in development, while its default *build* entry is `index.html` alone — so this page
-is left out of `vite build` with no extra configuration. That omission *is* the gate, and adding
-`dev/style.html` to `build.rollupOptions.input` would remove it, so don't.
+## Name the mode before running an activity, not after
 
-## Looking at it
+- **The owner proposes the reference.** It is a feeling and a memory of something seen or heard, and
+  an agent proposing one is an agent choosing the product's character.
+- **The agent proposes the values, and the owner corrects.** These are craft, and the owner
+  correcting a proposal is cheaper for them than producing twenty numbers.
+- **Rules are put as options with a recommendation, and waited on.** They are the ones that change
+  what the user perceives.
 
-Run the dev server, load `/dev/style.html`, and screenshot it. Check the labelled panel count against
-spec-style.md's palette table by hand; nothing enforces that they match, because the routine that
-would enforce it is the one being run.
+**Observed:** writing spec-style's sound section, the agent asked about three decisions and then made
+three more inside the writing, reporting them only once they were in the document. Naming the mode
+out loud is what makes that visible while there is still time to *confirm before it is recorded*.
 
-**This is not the verification [guide-general.md](../../../doc/guide-general.md) rules out.** That
-rule says the suite verifies and the product is not driven by hand to settle a claim — and it is
-right, because a claim settled by looking proves one thing once. **Nothing is being claimed here.**
-This page has no purpose but to be looked at: it is a deliverable for the owner, and the looking is
-the product rather than the evidence. The distinction is worth keeping straight, because a page that
-*is* the answer and a page driven to *find* the answer look identical while you are on it.
+## Scrutiny
 
-## What it does not show
-
-**Sound.** [spec-style.md](../../../doc/spec-style.md) owns *look, sound and feel*, and since it
-gained a sound section this page demonstrates the visual half only.
-
-**That is a gap, not a boundary of principle.** The argument above — that this page *is* the answer,
-because *does this read as Tron* is a judgement no suite reaches — holds word for word for *does this
-sound like the C64*, and the sounds come from one module of real values
-([src/audio/sounds.ts](../../../src/audio/sounds.ts)) played by real code
-([src/audio/play.ts](../../../src/audio/play.ts)), exactly as the colors do. Everything this routine
-is built on applies.
-
-**Named rather than closed**, because building it is a goal and not something to slip into a landing.
-What matters until then is that anyone running this skill after changing spec-style's sound section
-knows the page cannot show what they changed.
-
-## When to run it
-
-- `spec-style.md` gains, loses, or changes an element.
-- Before adding a new element to `spec-style.md`, to see the existing set rather than guessing at it
-  from the table.
-- On request, to check the current visual spec against the eye rather than the document.
+1. **Every value has exactly one home in code, and the document points at it.** A hue or a waveform
+   the specification decides must live in one module — [palette.ts](../../../src/render/palette.ts)
+   for the eye, [sounds.ts](../../../src/audio/sounds.ts) for the ear — imported by everything that
+   uses it. *A value with no module, or a second copy of one, is the finding*, and it is the drift
+   the preview pages exist to catch.
+2. **Every decision in the document was put to the owner before it was written.** *A decision that
+   appears in the diff without appearing in the conversation is the finding.*
+3. **Nothing here decides what another specification owns.** *A rule about when something happens,
+   what causes it, or which technology produces it is the finding* — it belongs to spec-domain,
+   spec-app or spec-tech, and this document asks rather than answers.
+4. **Everything named can be demonstrated, or the gap is named.** Run [preview](../preview/SKILL.md)
+   after this pass. *Something the specification names that no page shows is the finding* — and if it
+   cannot be shown yet, the skill says so rather than the reader discovering it.
+5. **What this leaves open is still open.** *An entry that a later pass closed, and left listed, is
+   the finding.* Observed: a pass adding a whole sense had to correct both a bullet saying that sense
+   was absent and one saying the document committed to a single reference outright.
 
 ## When not to run it
 
-- **To decide what a color or shape should be.** That is `spec-style.md`'s decision, made and confirmed
-  there first; this skill only shows what was already decided.
-- **For anything spec-domain.md or spec-app.md would own.** This page draws looks, not behaviour,
-  input, or flow — a brick that breaks or a bat that moves is a different goal.
+- **To change what a page looks like without changing what is decided.** That is
+  [preview](../preview/SKILL.md).
+- **The goal is implementation.** [build](../build/SKILL.md) owns that, and will send you here if
+  what is being drawn or played has no specification to sit in.

@@ -1,6 +1,6 @@
 ---
 name: domain
-description: Write or extend doc/spec-domain.md — choose which activities this pass needs, run them, and scrutinise what they produce before it is called a specification. Use when the goal is to write or change the rules of the game world.
+description: Write or extend doc/spec-domain.md — choose which activities this pass needs, run them, and scrutinise what they produce before it is called a specification. Use when the goal is to write or change the rules of the world being modelled.
 ---
 
 # Domain
@@ -40,7 +40,7 @@ attention it did not need to.
 |---|---|---|
 | **Ubiquitous language** | The words the domain and the code both use | Nothing is being named or renamed |
 | **Event storming**, high level | What happens, in order, and what causes each | The change is inside one rule and moves nothing |
-| **Business rules** — the game's rules | The numbered rules the code and tests cite | The pass is only naming or modelling |
+| **Business rules** — the rules of the world being modelled | The numbered rules the code and tests cite | The pass is only naming or modelling |
 | **Data and reference data** | What a thing *is* as data, and what is authored rather than played | No rule this pass touches needs data that does not exist |
 
 ## Name the mode before running an activity, not after
@@ -72,9 +72,9 @@ addresses the second category they named. The last two are the agent's and are u
    Both of the sibling project's failures surface here: a prune activity taking a mandatory plant
    with unexamined logic for picking it, and a weed action taking free text where a weed wanted an
    identity.
-2. **The flow connects end to end.** State the sequence as steps — *pick a mode → play level →
-   navigate*. For each step name what starts it and what it leaves changed. *A step with no cause, or
-   one whose result nothing consumes, is the finding.*
+2. **The flow connects end to end.** State the sequence as steps — *choose → do → move on*. For each
+   step name what starts it and what it leaves changed. *A step with no cause, or one whose result
+   nothing consumes, is the finding.*
 3. **The vocabulary has no orphans.** Every term used by a rule appears in the vocabulary; every term
    in the vocabulary is used by a rule or by the data model. *An orphan either way is a term nobody
    needs or a rule nobody wrote.*
@@ -85,10 +85,10 @@ addresses the second category they named. The last two are the agent's and are u
    it as proposed — in the document and in conversation both. Keeping a tally of whose word each one
    was re-opens a question that this pass exists to close.
 5. **Every name is the thing that happened, not one of its results.** *A finding: the name describes
-   an effect.* The first run of this routine called an event `rebound`, which is one outcome of a
-   ball meeting something — a removed brick is another, and a name covering only the first hides the
-   second. It is `collision`. A term named for a result is also the term that quietly decides there
-   is only one.
+   an effect.* Observed: an event was first named after one outcome of two things meeting, when the
+   other outcome was that one of them ceased to exist — and a name covering only the first hides the
+   second. It was renamed for the meeting itself. A term named for a result is also the term that
+   quietly decides there is only one result.
 
 ## Revision here is the work; revision after implementation is the failure
 

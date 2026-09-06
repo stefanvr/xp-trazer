@@ -6,14 +6,6 @@ Read it **before running any command**: doc/setup-ai-env.md
 
 ## Workflow
 
-Start with asking the goal of the session.
-
-### Reporting
-
-* Structure it — a table wherever the content has repeating fields
-* Mark a question as a question. Never leave an ask implied inside an observation, and say plainly
-  when a note needs no answer
-
 ### Bootstrap
 
 A project is brought into being in this order:
@@ -23,8 +15,10 @@ A project is brought into being in this order:
 2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the `scope`
    skill in `create` mode.
 3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
-   `app` skill), `doc/spec-style.md`, `doc/spec-tech.md` — **in any order**. No dependency is implied
-   between them, so none of them blocks another.
+   `app` skill), `doc/spec-style.md` (the `style` skill), `doc/spec-tech.md` (the `tech` skill) —
+   **in any order**. No dependency is implied between them, so none of them blocks another.
+
+**Each of the four skills ends in a scrutiny pass.**
 
 A spec that does not exist yet means the sequence has not reached it. That is the plan working, not
 something missing.
@@ -41,11 +35,12 @@ before it is written.
   only make sense together, so the merge lands as one consistent unit
 * Always commit task size
 * Always push commits of the tasks performed, before going back to the user
-* **Experiment — the branch is rewritten before it lands, so its commits are the work and not the
-  corrections.** Commit freely while working; then fold each correction into the task it belongs to,
-  leaving commits that each build on their own, and force-push. Rewrite first, then run `land`, so
-  the landing commit sits on the history that is kept. **Ends when** the rewriting costs more than
-  the log is worth, or a second person is working on a branch.
+* **The branch is rewritten before it lands, so its commits are the work and not the corrections.**
+  Commit freely while working; then fold each correction into the task it belongs to, leaving commits
+  that each build on their own, and force-push. Rewrite first, then run `land`, so the landing commit
+  sits on the history that is kept. **A branch with nothing to fold is this rule succeeding rather
+  than being skipped** — say which it was, because the two are indistinguishable from the outside.
+  **Never on a branch a second person is working on**, where rewriting the history costs them theirs.
 * Always let the user approve a merge to main for release
 * On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and where the
   landing looks like it reaches the overarching goal it calls `scope check`, which clears the goal
@@ -70,6 +65,7 @@ is the routing — which document answers which question.
 | What has gone wrong with a particular technology before? | `doc/lessons/<technology>.md` |
 | What has to be installed and configured before anyone can develop here? | `doc/setup-dev-env.md` |
 | Where does it run, how does it get there, and how do we know it did? | `doc/setup-app-env.md` |
+| Who decides what, how is it reported, and where does a lesson go? | `doc/guide-collaboration.md` |
 | Which principle settles it when two reasonable approaches both fit? | `doc/guide-general.md` |
 | What outranks those principles for this project, and until when? | `doc/guide-override.md` |
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
@@ -77,6 +73,20 @@ is the routing — which document answers which question.
 | What are the rules of the game world? | `doc/spec-domain.md` |
 | What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
+
+**The guides and the skills carry no project.** `doc/guide-general.md`, `doc/guide-design.md`,
+`doc/guide-collaboration.md` and everything in `.claude/skills/` are written to be lifted onto a
+different project unchanged: no project state, and no domain vocabulary. What is about this project
+lives in `doc/spec-*.md`, `doc/setup-*.md` and `doc/scope.md`.
+
+**`doc/guide-override.md` is the exception, and it is the whole reason that file exists** — it holds
+what is true for this project only, which is why it is kept apart from the principles it outranks and
+why it is meant to be deleted rather than emptied.
+
+**A skill may point at an artefact; it may not describe one.** A routine that keeps a file honest has
+to name that file, and a path is configuration — the sentence around it still has to read on a
+project that has never heard of this one. The test: could this skill be copied to another project
+and made to work by changing paths alone?
 
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
@@ -104,5 +114,6 @@ lesson file, or a lesson file's technology gets chosen.**
 
 **Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
 above, then
-`doc/guide-general.md` with `doc/guide-override.md` beside it — never instead of it — then
-`doc/scope.md`, then whichever document above owns the decision in front of you.
+`doc/guide-collaboration.md` — it carries how the session opens — then `doc/guide-general.md` with
+`doc/guide-override.md` beside it, never instead of it, then `doc/scope.md`, then whichever document
+above owns the decision in front of you.

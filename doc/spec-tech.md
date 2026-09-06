@@ -71,6 +71,13 @@ choice about the surface. What else the page shows is [spec-app.md](spec-app.md)
 This project's application of [guide-design.md](guide-design.md) — rules that are true here and would
 not be true on a different project, which is why they are not in that document.
 
+**Expected to grow**, one rule at a time and late — an architecture is learned by building against
+it. What earns a rule is [guide-general.md](guide-general.md)'s test for any principle; what makes one
+this document's rather than [guide-design.md](guide-design.md)'s is that document's.
+
+**A number, once issued, is never reused**, like [spec-domain.md](spec-domain.md)'s. These are cited
+from the code.
+
 ### A-1 · The simulation advances by a fixed step
 
 The simulation advances by a fixed amount the program controls, never by the wall-clock time measured

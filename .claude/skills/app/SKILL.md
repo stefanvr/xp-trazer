@@ -1,6 +1,6 @@
 ---
 name: app
-description: Write or extend doc/spec-app.md — story-map what the player does, decide where each step surfaces, and lay out the screens it needs. Use when the goal is to write or change what the player meets: screens, input, flow.
+description: Write or extend doc/spec-app.md — story-map what the user does, decide where each step surfaces, and lay out the screens it needs. Use when the goal is to write or change what the user meets: screens, input, flow.
 ---
 
 # App
@@ -13,10 +13,10 @@ skill. How anything looks, a logo's placement included — `doc/spec-style.md`. 
 is technically produced, and every other technology choice — `doc/spec-tech.md`. Git mechanics —
 [CLAUDE.md](../../CLAUDE.md).
 
-**The player, not the developer.** A story map is about tasks a user does in the product, and a
+**The user, not the developer.** A story map is about tasks a user does in the product, and a
 developer is not one. What a developer meets is already owned: `doc/guide-design.md` says dev-only
-affordances are built, gated, and documented as they are built, and the [style](../style/SKILL.md)
-skill does exactly that for `dev/style.html`.
+affordances are built, gated, and documented as they are built, and the
+[preview](../preview/SKILL.md) skill does exactly that for `dev/style.html` and `dev/audio.html`.
 
 **A specification states the desired state**, with no marker saying who proposed something or how
 settled it is. The [domain](../domain/SKILL.md) skill carries the full argument; it holds here
@@ -31,14 +31,14 @@ all three.
 
 | Activity | Produces | Skip it when |
 |---|---|---|
-| **Story map** | What a player does, in three levels | Nothing new is being done, only moved or restyled |
+| **Story map** | What a user does, in three levels | Nothing new is being done, only moved or restyled |
 | **Interaction design** | Where and how each step surfaces, and what triggers sound or animation | The pass adds no step and moves none |
 | **Layout** | Which screens exist, their modes, and whether there is chrome | Nothing changes what surfaces exist |
 
 ### The story map has three levels
 
-1. **Activities** — high-level tasks a player can do in the product.
-2. **Steps** — what a player goes through to complete an activity.
+1. **Activities** — high-level tasks a user can do in the product.
+2. **Steps** — what a user goes through to complete an activity.
 3. **Details** — the granular, discrete interactions that complete a step.
 
 **Every level is the minimum that completes the level above.** Details are the smallest set that
