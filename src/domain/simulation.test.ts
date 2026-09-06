@@ -402,12 +402,13 @@ describe('a travelling ball meeting something', () => {
   });
 
   it("leaves a bat's end on a heading it did not arrive on, which is DS-2.8", () => {
-    // Straight left into the bat's right end, near half of its thickness. Without DS-2.8 this
+    // Straight left into the bat's right end, near half of its thickness — y=12 keeps the ball
+    // clear of the level's own boundary (radius 9), so this meets only the end. Without DS-2.8 it
     // would come straight back rightward and retrace the same line for ever.
-    const next = advance(travelling({ x: 106, y: 8 }, { x: -240, y: 0 }), NOTHING_HELD);
+    const next = advance(travelling({ x: 106, y: 12 }, { x: -240, y: 0 }), NOTHING_HELD);
 
     expect(next.ball.velocity.x).not.toBe(0);
-    expect(next.ball.velocity.y).not.toBe(0);
+    expect(next.ball.velocity.y).toBeLessThan(0);
   });
 
   it('comes straight back off the middle of a bat', () => {
