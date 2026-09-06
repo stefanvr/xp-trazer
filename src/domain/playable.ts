@@ -3,8 +3,12 @@
  * plain types, importing nothing outside the domain.
  *
  * **DS-7** carries what a level authored elsewhere holds and no rule reads, and says that a level
- * carrying **DS-7.1**, **DS-7.2**, **DS-7.4** or **DS-7.5** cannot be played, because the rule it
- * needs does not exist. This module is where that becomes an answer instead of a paragraph.
+ * carrying **DS-7.1** cannot be played, because the rule it needs does not exist. This module is
+ * where that becomes an answer instead of a paragraph.
+ *
+ * **DS-7.2, DS-7.4 and DS-7.5 were once answered here and are not any more**, which is this module
+ * shrinking as intended: the first two gained rules that read them, and the third lost the rule that
+ * gave it force when **DS-1.6** was withdrawn.
  *
  * **It is derived, never stored.** A level says what it places; whether that can be played follows
  * from the rules, so a level cannot carry a marker that has gone stale against them. When a rule
@@ -20,7 +24,6 @@ import {
   BAT_LENGTH_CELLS,
   CELL_PIXELS,
   destructibleCount,
-  elementAt,
   isBrickKind,
   type Bat,
   type Level,
@@ -29,46 +32,11 @@ import {
 /** Each reason names the rule that is not satisfied, so a citation resolves to spec-domain. */
 export type UnplayableReason =
   | 'DS-1.3 the level authors no bat'
+  | 'DS-1.4 the level authors no ball start'
   | 'DS-1.7 two bats share a place, or one has less room to slide than its own length'
   | 'DS-1.8 the level authors no destructible element'
   | 'DS-4.4 two elements share a cell'
-  | 'DS-7.1 the level places an element of a kind no rule gives behaviour to'
-  | 'DS-7.4 the level authors where the ball starts'
-  | 'DS-7.5 a bat has nothing on either of its perpendicular sides';
-
-/** The line one cell to each perpendicular side of a bat, low side first. */
-function perpendicularSides(bat: Bat): readonly number[] {
-  return [bat.line - 1, bat.line + 1];
-}
-
-/**
- * How many of a bat's two perpendicular sides the ball cannot pass — **DS-1.6**. The level's edge is
- * what blocks a side today, and an element sitting on that line does the same; a bat standing free
- * of both is **DS-7.5**, carried and unplayable.
- */
-function sidesBlocked(level: Level, bat: Bat): number {
-  const acrossLimit = bat.orientation === 'horizontal' ? level.rows : level.columns;
-  const along = bat.orientation === 'horizontal' ? level.columns : level.rows;
-
-  let blocked = 0;
-  for (const side of perpendicularSides(bat)) {
-    if (side < 0 || side >= acrossLimit) {
-      blocked += 1;
-      continue;
-    }
-    for (let index = 0; index < along; index += 1) {
-      const cell =
-        bat.orientation === 'horizontal'
-          ? elementAt(level, index, side)
-          : elementAt(level, side, index);
-      if (cell !== undefined) {
-        blocked += 1;
-        break;
-      }
-    }
-  }
-  return blocked;
-}
+  | 'DS-7.1 the level places an element of a kind no rule gives behaviour to';
 
 /** Where a bat's low end sits along its own axis, counted in cells rather than pixels. */
 function lowEndCell(bat: Bat): number {
@@ -129,6 +97,7 @@ export function unplayableReasons(level: Level): readonly UnplayableReason[] {
   const reasons: UnplayableReason[] = [];
 
   if (level.bats.length === 0) reasons.push('DS-1.3 the level authors no bat');
+  if (level.ballStart === undefined) reasons.push('DS-1.4 the level authors no ball start');
   if (batsShareAPlace(level) || batHasNoRoom(level)) {
     reasons.push('DS-1.7 two bats share a place, or one has less room to slide than its own length');
   }
@@ -138,12 +107,6 @@ export function unplayableReasons(level: Level): readonly UnplayableReason[] {
   if (elementsShareACell(level)) reasons.push('DS-4.4 two elements share a cell');
   if (level.elements.some((element) => !isBrickKind(element.kind))) {
     reasons.push('DS-7.1 the level places an element of a kind no rule gives behaviour to');
-  }
-  if (level.ballStart !== undefined) {
-    reasons.push('DS-7.4 the level authors where the ball starts');
-  }
-  if (level.bats.some((bat) => sidesBlocked(level, bat) === 0)) {
-    reasons.push('DS-7.5 a bat has nothing on either of its perpendicular sides');
   }
 
   return reasons;

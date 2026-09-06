@@ -1,4 +1,4 @@
-import { awayFrom, batHoldingTheBall, deflectedByBat, launchVelocity, restingOn } from './ball';
+import { deflectedByBat, heldAt, launchVelocity } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { batRect, meets, obstacleAt, overlaps } from './collision';
 import {
@@ -66,15 +66,24 @@ export type Ball = {
   readonly velocity: Vector;
   readonly radius: number;
   /**
-   * The bat holding it, or undefined once launched. DS-1.5's first two states: the ball is held,
+   * Whether it is still waiting at the ball start. **DS-1.5**'s first two states: the ball is held,
    * or the ball is travelling.
+   *
+   * A flag and no longer a bat, because **DS-2.1** puts the held ball at the level's own ball start
+   * rather than on a bat — there is nothing for it to be held *by*.
    */
-  readonly heldBy: number | undefined;
+  readonly held: boolean;
 };
 
 /** Everything that changes while a level is played. The level itself does not. */
 export type GameState = {
   readonly level: Level;
+  /**
+   * The seed the level started from — doc/spec-domain.md holds it among what a game keeps. **DS-2.2**
+   * draws the launch heading from it, and a launch happens long after the start, so it has to be
+   * here rather than consumed and discarded when the state was made.
+   */
+  readonly seed: number;
   readonly bats: readonly Bat[];
   readonly ball: Ball;
   readonly collisions: number;
@@ -126,7 +135,7 @@ export type Stepped = { readonly state: GameState; readonly events: readonly Eve
 
 /** DS-1.5 — the ball is held, or it is travelling. */
 export function isHeld(state: GameState): boolean {
-  return state.ball.heldBy !== undefined;
+  return state.ball.held;
 }
 
 /**
@@ -172,9 +181,6 @@ export function createGameState(level: Level, seed: number): GameState {
   }
 
   for (const bat of level.bats) {
-    // DS-1.6 — throws where a bat has nothing, or something on both sides, to rest against.
-    awayFrom(level, bat);
-
     // DS-1.7 — a bat that cannot slide its own length is authored into a place play cannot use.
     const span = spanFor(level, level.bats, bat);
     if (span.high < span.low) {
@@ -193,18 +199,16 @@ export function createGameState(level: Level, seed: number): GameState {
     throw new Error('a level authors no destructible element, so it is cleared before it is played');
   }
 
-  // DS-1.4 — a level starts with the ball held by one of its bats, drawn from the seed.
-  const heldBy = batHoldingTheBall(level, seed);
-  const bat = level.bats[heldBy]!;
-
+  // DS-1.4 — a level starts with the ball held at the ball start it authors.
   return {
     level,
+    seed,
     bats: level.bats,
     ball: {
-      position: restingOn(level, bat, radius),
+      position: heldAt(level),
       velocity: { x: 0, y: 0 },
       radius,
-      heldBy,
+      held: true,
     },
     collisions: 0,
     destroyed: new Set(),
@@ -286,25 +290,21 @@ export function step(state: GameState, input: Input): Stepped {
   let bats = moveGroup(level, state.bats, 'horizontal', ((input.right ? 1 : 0) - (input.left ? 1 : 0)) * reach);
   bats = moveGroup(level, bats, 'vertical', ((input.down ? 1 : 0) - (input.up ? 1 : 0)) * reach);
 
-  // DS-2.1 — a held ball rests on its bat and moves with it, so it has no motion of its own.
-  if (ball.heldBy !== undefined) {
-    const bat = bats[ball.heldBy]!;
-    const resting = restingOn(level, bat, ball.radius);
-
+  // DS-2.1 — a held ball waits at the ball start and nothing moves it, bats included.
+  if (ball.held) {
     if (!input.launch) {
-      return { state: { ...state, bats, ball: { ...ball, position: resting } }, events: [] };
+      return { state: { ...state, bats }, events: [] };
     }
 
-    // DS-2.2 — launching sets it travelling, perpendicular to the bat and away from it.
+    // DS-2.2 — launching sets it travelling, on a heading drawn from the seed.
     return {
       state: {
         ...state,
         bats,
         ball: {
           ...ball,
-          position: resting,
-          velocity: launchVelocity(level, bat),
-          heldBy: undefined,
+          velocity: launchVelocity(state.seed),
+          held: false,
         },
       },
       /**

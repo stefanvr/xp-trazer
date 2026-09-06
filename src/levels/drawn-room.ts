@@ -32,8 +32,8 @@ export const PLAYABLE_ROOMS: readonly Level[] = ROOMS.map(portedLevel).filter(
  * The room a given seed draws.
  *
  * Seeded rather than reaching for `Math.random`, which is guide-design.md's rule for anything
- * random: the edge supplies the seed, exactly as it does for **DS-1.4**'s draw of the bat that
- * holds the ball, and the same seed always gives the same room.
+ * random: the edge supplies the seed, exactly as it does for **DS-2.2**'s draw of the heading the
+ * ball launches on, and the same seed always gives the same room.
  */
 export function roomDrawnFrom(seed: number): Level {
   const room = PLAYABLE_ROOMS[Math.abs(Math.trunc(seed)) % PLAYABLE_ROOMS.length];

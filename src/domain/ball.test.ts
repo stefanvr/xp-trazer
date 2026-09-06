@@ -1,94 +1,75 @@
 import { describe, expect, it } from 'vitest';
-import {
-  awayFrom,
-  batHoldingTheBall,
-  deflectedByBat,
-  launchVelocity,
-  restingOn,
-  BALL_PIXELS_PER_SECOND,
-} from './ball';
-import { BAT_LENGTH_PIXELS, CELL_PIXELS, levelFromRows, type Bat } from './level';
+import { deflectedByBat, heldAt, launchVelocity, BALL_PIXELS_PER_SECOND } from './ball';
+import { CELL_PIXELS, levelFrom, levelFromRows } from './level';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
-// Bats against an edge, as DS-1.6 requires.
 const TALL = levelFromRows([
   '-....',
-  ...Array.from({ length: 8 }, () => '.....'),
+  '.*...',
+  ...Array.from({ length: 7 }, () => '.....'),
   '-....',
 ]);
-const WIDE = levelFromRows(['|...|', '.....', '.....']);
-
-const horizontal = (line: number, position = 0): Bat => ({ orientation: 'horizontal', line, position });
-const vertical = (line: number, position = 0): Bat => ({ orientation: 'vertical', line, position });
-
-describe('which way a bat throws', () => {
-  it('throws away from the edge above it', () => {
-    expect(awayFrom(TALL, horizontal(0))).toEqual({ x: 0, y: 1 });
-  });
-
-  it('throws away from the edge below it', () => {
-    expect(awayFrom(TALL, horizontal(9))).toEqual({ x: 0, y: -1 });
-  });
-
-  it('throws away from the edge to its left', () => {
-    expect(awayFrom(WIDE, vertical(0))).toEqual({ x: 1, y: 0 });
-  });
-
-  it('throws away from the edge to its right', () => {
-    expect(awayFrom(WIDE, vertical(4))).toEqual({ x: -1, y: 0 });
-  });
-
-  it('has no answer for a bat with nothing on either side, which DS-1.6 forbids', () => {
-    expect(() => awayFrom(TALL, horizontal(4))).toThrow(/nothing on either side/);
-  });
-
-  it('has no answer for a bat with both sides blocked', () => {
-    const oneRow = levelFromRows(['-....']);
-
-    expect(() => awayFrom(oneRow, horizontal(0))).toThrow(/both sides blocked/);
-  });
-});
 
 describe('a held ball', () => {
-  it('sits along the middle of the bat holding it', () => {
-    const resting = restingOn(TALL, horizontal(0, 64), 9);
-
-    expect(resting.x).toBe(64 + BAT_LENGTH_PIXELS / 2);
+  it('waits in the middle of the cell the level authors', () => {
+    expect(heldAt(TALL)).toEqual({ x: 1.5 * CELL_PIXELS, y: 1.5 * CELL_PIXELS });
   });
 
-  it('rests against the side the bat throws towards', () => {
-    const resting = restingOn(TALL, horizontal(0, 0), 9);
+  it('waits where the level says rather than anywhere near a bat', () => {
+    const elsewhere = levelFromRows(['-....', '.....', '...*d', '.....', '.....']);
 
-    expect(resting.y).toBe(CELL_PIXELS + 9);
+    expect(heldAt(elsewhere)).toEqual({ x: 3.5 * CELL_PIXELS, y: 2.5 * CELL_PIXELS });
   });
 
-  it('rests on the other side for a bat against the far edge', () => {
-    const resting = restingOn(TALL, horizontal(9, 0), 9);
+  it('has no place to wait in a level authoring no ball start, which DS-1.4 requires', () => {
+    const startless = levelFrom({
+      columns: 5,
+      rows: 5,
+      elements: [],
+      bats: [{ orientation: 'horizontal', line: 4, position: 0 }],
+    });
 
-    expect(resting.y).toBe(9 * CELL_PIXELS - 9);
-  });
-
-  it('rests beside a vertical bat rather than above it', () => {
-    const resting = restingOn(WIDE, vertical(0, 0), 9);
-
-    expect(resting).toEqual({ x: CELL_PIXELS + 9, y: BAT_LENGTH_PIXELS / 2 });
+    expect(() => heldAt(startless)).toThrow(/no ball start/);
   });
 });
 
 describe('launching', () => {
-  it('sends the ball perpendicular to its bat, away from it', () => {
-    expect(launchVelocity(TALL, horizontal(0))).toEqual({ x: 0, y: BALL_PIXELS_PER_SECOND });
+  it('leaves at the one speed the ball ever has, whatever the seed', () => {
+    for (const seed of [0, 1, 7, 12345, Date.now()]) {
+      expect(Math.hypot(launchVelocity(seed).x, launchVelocity(seed).y)).toBeCloseTo(
+        BALL_PIXELS_PER_SECOND,
+      );
+    }
   });
 
-  it('sends it along the other axis from a vertical bat', () => {
-    expect(launchVelocity(WIDE, vertical(0))).toEqual({ x: BALL_PIXELS_PER_SECOND, y: 0 });
+  it('sends the same seed the same way, so a start can be repeated exactly', () => {
+    expect(launchVelocity(99)).toEqual(launchVelocity(99));
   });
 
-  it('leaves at the one speed the ball ever has', () => {
-    const velocity = launchVelocity(TALL, horizontal(9));
+  it('sends neighbouring seeds different ways, so a clock is a draw and not a queue', () => {
+    // Two page loads a moment apart differ only in their last digits. Without spreading, every
+    // launch of a session would leave on nearly one heading.
+    const headings = [0, 1, 2, 3, 4, 5].map((step) => {
+      const velocity = launchVelocity(1_700_000_000_000 + step);
+      return Math.atan2(velocity.y, velocity.x);
+    });
 
-    expect(Math.hypot(velocity.x, velocity.y)).toBe(BALL_PIXELS_PER_SECOND);
+    for (const [index, heading] of headings.entries()) {
+      for (const other of headings.slice(index + 1)) {
+        expect(Math.abs(heading - other)).toBeGreaterThan(0.2);
+      }
+    }
+  });
+
+  it('reaches headings all around the circle across many seeds', () => {
+    const quadrants = new Set<number>();
+    for (let seed = 0; seed < 200; seed += 1) {
+      const velocity = launchVelocity(seed);
+      quadrants.add((velocity.x >= 0 ? 1 : 0) * 2 + (velocity.y >= 0 ? 1 : 0));
+    }
+
+    expect(quadrants.size).toBe(4);
   });
 });
 
@@ -128,23 +109,3 @@ describe('a bat turning the ball', () => {
   });
 });
 
-describe('choosing the bat that holds the ball', () => {
-  const four = levelFromRows(['-...|', '.....', '-...|']);
-
-  it('names a bat the level actually has', () => {
-    for (const seed of [0, 1, 7, 12345]) {
-      expect(batHoldingTheBall(four, seed)).toBeLessThan(four.bats.length);
-      expect(batHoldingTheBall(four, seed)).toBeGreaterThanOrEqual(0);
-    }
-  });
-
-  it('names the same bat every time for the same seed', () => {
-    expect(batHoldingTheBall(four, 12345)).toBe(batHoldingTheBall(four, 12345));
-  });
-
-  it('does not name the same bat for every seed', () => {
-    const chosen = new Set([0, 1, 2, 3].map((seed) => batHoldingTheBall(four, seed)));
-
-    expect(chosen.size).toBeGreaterThan(1);
-  });
-});

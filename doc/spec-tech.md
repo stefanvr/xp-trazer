@@ -100,13 +100,14 @@ only the tests stop being trustworthy, while staying green.
 ### A-2 · One query parameter substitutes the level, and reaches nothing else
 
 `?level=clearing-proof` loads a level built so the end-to-end suite can watch a level be cleared: one
-bat, so DS-1.4's draw from the seed has a single candidate, and one destructible element in the
-column the resting ball launches up. Any other value, and the absent case, load the authored level.
+destructible element, with the ball starting in its very cell, so that the first step the ball
+travels meets it whichever heading DS-2.2 drew. Any other value, and the absent case, draw a room.
 
 **Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing arriving on the page*
-is wiring, and wiring is only provable on the surface. The authored level cannot be cleared by a
-test — unattended it took 28 bricks to 20 in 150 seconds, and steering the bats made it worse — so
-without a level built for it, the sign that a level has ended is asserted nowhere.
+is wiring, and wiring is only provable on the surface. A room the page might draw cannot be cleared
+by a test — the rooms hold 22 to 170 destructible elements, and an earlier hand-authored level of 28
+went to 20 in 150 unattended seconds, steering making it worse — so without a level built for it, the
+sign that a level has ended is asserted nowhere.
 
 **What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
 behaviour is reachable through it, and it is not level selection — that is a product decision

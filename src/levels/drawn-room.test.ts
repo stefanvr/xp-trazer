@@ -14,7 +14,7 @@ describe('the room a player is dropped into', () => {
   it('offers every room that can be played, and no more', () => {
     // The count is the tree's answer, not a number kept by hand — doc/spec-domain-porting-todo.md
     // quotes it, and says the suite is what decides where the two disagree.
-    expect(PLAYABLE_ROOMS).toHaveLength(28);
+    expect(PLAYABLE_ROOMS).toHaveLength(63);
   });
 
   it('gives every drawable room the original screen, so what is drawn is a real room', () => {

@@ -47,7 +47,7 @@ function recordingContext(): {
 
 describe('the renderer', () => {
   // A bat on the top row, one destructible brick, and room for neither to be confused with the other.
-  const level = levelFromRows(['-....', '.....', '..d..', '.....']);
+  const level = levelFromRows(['-*...', '.....', '..d..', '.....']);
 
   // What is destroyed is an element, not a cell — DS-4.5.
   const brickAt = (column: number, row: number) => elementAt(level, column, row)?.element ?? -1;
@@ -107,6 +107,7 @@ describe('the renderer', () => {
           },
         ],
         bats: [{ orientation: 'horizontal', line: 0, position: 0 }],
+        ballStart: { column: 0, row: 4 },
       });
     const widthsDrawn = (columns: number) => {
       const { context, rects } = recordingContext();

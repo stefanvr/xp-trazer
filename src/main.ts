@@ -6,8 +6,8 @@ import {
   type Event,
   type Input,
 } from './domain/simulation';
-import { destructibleRemaining, levelFromRows, type Level } from './domain/level';
-import { CLEARING_PROOF_LEVEL } from './levels/clearing-proof';
+import { destructibleRemaining, type Level } from './domain/level';
+import { clearingProofLevel } from './levels/clearing-proof';
 import { roomDrawnFrom } from './levels/drawn-room';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
@@ -61,12 +61,12 @@ required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
  */
 function chosenLevel(seed: number): Level {
   const asked = new URLSearchParams(window.location.search).get('level');
-  return asked === 'clearing-proof' ? levelFromRows(CLEARING_PROOF_LEVEL) : roomDrawnFrom(seed);
+  return asked === 'clearing-proof' ? clearingProofLevel() : roomDrawnFrom(seed);
 }
 
 /**
- * One seed, read once, for both draws the start makes: which room the player gets, and which of its
- * bats holds the ball. The clock is the edge's to read — the domain never asks what time it is.
+ * One seed, read once, for both draws a game makes: which room the player gets, and the heading the
+ * ball launches on. The clock is the edge's to read — the domain never asks what time it is.
  */
 const seed = Date.now();
 let state = createGameState(chosenLevel(seed), seed);

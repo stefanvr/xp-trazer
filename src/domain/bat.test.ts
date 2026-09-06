@@ -12,7 +12,7 @@ const horizontalAt = (position: number, line = 0): Bat => ({
 
 describe('where a bat may slide', () => {
   it('runs the whole row when nothing is in the way', () => {
-    const level = levelFromRows(['-.......']);
+    const level = levelFromRows(['-*......']);
 
     expect(spanFor(level, level.bats, level.bats[0]!)).toEqual({
       low: 0,
@@ -21,19 +21,19 @@ describe('where a bat may slide', () => {
   });
 
   it('stops at the boundary, which is where the row ends', () => {
-    const level = levelFromRows(['-...']);
+    const level = levelFromRows(['-*..']);
 
     expect(spanFor(level, level.bats, level.bats[0]!).high).toBe(4 * CELL_PIXELS - BAT_LENGTH_PIXELS);
   });
 
   it('stops at an element, wherever in the row it sits', () => {
-    const level = levelFromRows(['-....d..']);
+    const level = levelFromRows(['-*...d..']);
 
     expect(spanFor(level, level.bats, level.bats[0]!).high).toBe(5 * CELL_PIXELS - BAT_LENGTH_PIXELS);
   });
 
   it('is bounded on both sides by whatever it meets first', () => {
-    const level = levelFromRows(['p.-...d.']);
+    const level = levelFromRows(['p*-...d.']);
 
     expect(spanFor(level, level.bats, level.bats[0]!)).toEqual({
       low: 1 * CELL_PIXELS,
@@ -42,7 +42,7 @@ describe('where a bat may slide', () => {
   });
 
   it('answers for a vertical bat down its column', () => {
-    const level = levelFromRows(['|.', '..', '..', 'd.']);
+    const level = levelFromRows(['|*', '..', '..', 'd.']);
 
     expect(spanFor(level, level.bats, level.bats[0]!)).toEqual({
       low: 0,
@@ -53,7 +53,7 @@ describe('where a bat may slide', () => {
 
 describe('a bat group moving', () => {
   it('moves along its own axis by the distance asked for', () => {
-    const level = levelFromRows(['-.......']);
+    const level = levelFromRows(['-*......']);
 
     const moved = moveGroup(level, level.bats, 'horizontal', 10);
 
@@ -61,7 +61,7 @@ describe('a bat group moving', () => {
   });
 
   it('goes no further than the boundary allows', () => {
-    const level = levelFromRows(['-...']);
+    const level = levelFromRows(['-*..']);
 
     const moved = moveGroup(level, level.bats, 'horizontal', 9999);
 
@@ -69,7 +69,7 @@ describe('a bat group moving', () => {
   });
 
   it('goes no further than an element allows', () => {
-    const level = levelFromRows(['-....d..']);
+    const level = levelFromRows(['-*...d..']);
 
     const moved = moveGroup(level, level.bats, 'horizontal', 9999);
 
@@ -77,7 +77,7 @@ describe('a bat group moving', () => {
   });
 
   it('leaves the other orientation where it was', () => {
-    const level = levelFromRows(['-...', '|...', '....', '....']);
+    const level = levelFromRows(['-*..', '|...', '....', '....']);
 
     const moved = moveGroup(level, level.bats, 'horizontal', 16);
 
@@ -86,7 +86,7 @@ describe('a bat group moving', () => {
   });
 
   it('changes nothing when asked for no distance', () => {
-    const level = levelFromRows(['-.......']);
+    const level = levelFromRows(['-*......']);
 
     expect(moveGroup(level, level.bats, 'horizontal', 0)).toBe(level.bats);
   });
@@ -95,7 +95,7 @@ describe('a bat group moving', () => {
 describe('a bat group whose members disagree about how far they can go', () => {
   // The constrained bat must have *some* room, or the group never moves and the rule that every
   // member takes the same distance is never exercised.
-  const blockedAndFree = levelFromRows(['-...d...', '-.......']);
+  const blockedAndFree = levelFromRows(['-*..d...', '-.......']);
 
   it('moves every member by what the most constrained one allows', () => {
     const moved = moveGroup(blockedAndFree, blockedAndFree.bats, 'horizontal', 9999);
@@ -106,7 +106,7 @@ describe('a bat group whose members disagree about how far they can go', () => {
   });
 
   it('does not move at all when one member is already against something', () => {
-    const level = levelFromRows(['d-..', '.-..']);
+    const level = levelFromRows(['d-*.', '.-..']);
     const stuck = level.bats.map((bat) => ({ ...bat, position: CELL_PIXELS }));
 
     expect(moveGroup(level, stuck, 'horizontal', -9999)).toEqual(
@@ -117,7 +117,7 @@ describe('a bat group whose members disagree about how far they can go', () => {
 
 describe('a bat with less room than its own length', () => {
   it('cannot move, rather than sliding through what blocks it', () => {
-    const level = levelFromRows(['d-d.....']);
+    const level = levelFromRows(['d-d*....']);
 
     expect(moveGroup(level, [horizontalAt(CELL_PIXELS)], 'horizontal', 9999)).toEqual([
       horizontalAt(CELL_PIXELS),
@@ -130,11 +130,11 @@ describe('a bat meeting a bat of the other orientation', () => {
     bats.find((bat) => bat.orientation === orientation)!;
 
   // A vertical bat down column 5, long enough to lie across the horizontal bat's row.
-  const acrossTheRow = levelFromRows(['-....|..', '........', '........', '........']);
+  const acrossTheRow = levelFromRows(['-*...|..', '........', '........', '........']);
 
   // A horizontal bat along row 4, long enough to lie across the vertical bat's column.
   const acrossTheColumn = levelFromRows([
-    '.....|..',
+    '*....|..',
     '........',
     '........',
     '........',
@@ -176,7 +176,7 @@ describe('a bat meeting a bat of the other orientation', () => {
   it('stops the whole group, the way an element does', () => {
     // The vertical bat lies across row 0 and not row 3, so one member of the group is blocked and
     // the other is not — DS-3.1 makes the blocked one speak for both.
-    const paired = levelFromRows(['-....|..', '........', '........', '-.......']);
+    const paired = levelFromRows(['-*...|..', '........', '........', '-.......']);
 
     const moved = moveGroup(paired, paired.bats, 'horizontal', 9999);
 

@@ -38,7 +38,9 @@ own authored level and no room of the original ever satisfied it.
 concessions are applied on the way to being played, so withdrawing one is deleting a line rather than
 importing again.
 
-**28 of the 64 rooms are playable under this list.**
+**63 of the 64 rooms are playable under this list.** It was 28 while **DS-1.6** stood, and the 35 it
+held back were not held back by anything conceded here — which is why withdrawing one rule moved the
+number further than every concession in the table put together.
 
 **Every count above is asserted by the suite, which is the authority.** They are copied here because
 the point of the list is what it buys, and that is not readable from the rules alone — where a count
