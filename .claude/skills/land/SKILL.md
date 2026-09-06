@@ -1,25 +1,58 @@
 ---
 name: land
-description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope-check skill, which marks what this landing finished and asks whether the overarching goal is reached. Use when the owner approves a merge to main, before merging.
+description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope-check skill, which marks what this landing finished and asks whether the overarching goal is reached. Takes quick (the default), which defers the deployment check to the next session start, or full, which stays until the published artefact reports the merge commit. Use when the owner approves a merge to main, before merging.
 ---
 
 # Land
 
 **Owns.** What happens at the moment a goal lands: the point where the owner approves a merge to
-main. One task — clearing `doc/scratchpad/`, on every landing. Further landing tasks go here as they
-earn their place.
+main. Clearing `doc/scratchpad/`, on every landing, and how far the landing goes — whether it stays
+to watch what it published. Further landing tasks go here as they earn their place.
 
 **Not here.** `doc/scope.md`. Marking which of its steps this landing finished and whether the
 overarching goal is reached belongs to [scope-check](../scope-check/SKILL.md), and what the next goal
 is to [scope-create](../scope-create/SKILL.md); this skill calls the first on every landing, never the
 second, and writes nothing to that document itself.
 Nor the git mechanics — branch before a goal, commit task-sized, push before returning, approval
-before merging, delete the branch after — all in [CLAUDE.md](../../CLAUDE.md), which is also where the
-hook that calls this skill lives.
+before merging, delete the branch after — all in [CLAUDE.md](../../CLAUDE.md), which is also where
+the workflow that calls this skill lives.
 
 **Run it before the merge, not after.** Everything it does is a change to the goal's own branch, so
 it belongs in the goal's history. A goal that lands with its working notes still in the tree has not
 finished landing.
+
+---
+
+## Quick or full
+
+**Quick is the default**, and the difference is one thing: whether the landing stays to watch what it
+published. Everything else this skill does happens before the merge either way; the mode decides only
+what happens after it.
+
+| | Quick | Full |
+|---|---|---|
+| Clear the working notes, mark the scope, merge, push, delete the branch | ✅ | ✅ |
+| Stay until the published artefact reports the merge commit | deferred | ✅ |
+
+**Quick defers that check; it does not drop it.** Deploying is not the same as having deployed — a
+green pipeline means the upload succeeded, not that the right thing is being served, and that is true
+whichever mode ran. What makes quick safe is that the check has a named next moment: opening a session
+runs it against whatever the default branch points at by then, and finds exactly what waiting would
+have found, one session later. **A quick landing says out loud that it deferred it**, or a deferred
+check is indistinguishable from a passed one.
+
+**Run full when the deferral has nowhere to land.** It is the same question every time — will anyone
+be looking before it matters?
+
+- **The publishing path itself changed** — the pipeline, the build, the host's settings. Quick assumes
+  that path is the one that worked last time, and that assumption is exactly what changed.
+- **Nobody will open a session soon**, or something else depends on this being live now.
+- **The previous landing's deferred check has not been run.** Two unverified landings in a row means a
+  failure can no longer be attributed to either of them.
+
+**What the check actually is, is not this skill's to say.** It belongs to the document that owns how
+anyone knows the thing is running — `doc/setup-app-env.md` — along with what its answers mean while a
+run is still in flight.
 
 ---
 
