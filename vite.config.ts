@@ -34,12 +34,38 @@ function stampIdentifierIntoHtml(identifier: string): Plugin {
   };
 }
 
+/**
+ * `/dev` alone 404s: Vite's dev server resolves a directory request by its trailing slash, and
+ * `/dev/style.html`'s own links already write the slash. This is the one place typing it by hand
+ * still happens, so the shortest fix is a redirect rather than asking every dev page to spell out
+ * `/dev/index.html`.
+ *
+ * **Dev-server only.** `configureServer` never runs for `vite build` or `vite preview`, and `dev/`
+ * is not in the built output regardless — so this reaches nothing the deployed page serves.
+ */
+function redirectBareDevRoute(): Plugin {
+  return {
+    name: 'trazer:dev-index-route',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === '/dev') {
+          res.statusCode = 302;
+          res.setHeader('Location', '/dev/');
+          res.end();
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
+
 // Asked once, so the meta tag and the bundle can never disagree about what was built.
 const identifier = buildIdentifier();
 
 export default defineConfig({
   base: './',
-  plugins: [stampIdentifierIntoHtml(identifier)],
+  plugins: [stampIdentifierIntoHtml(identifier), redirectBareDevRoute()],
   define: {
     __BUILD_IDENTIFIER__: JSON.stringify(identifier),
   },

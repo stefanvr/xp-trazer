@@ -107,3 +107,50 @@ button.play:disabled {
   opacity: 0.4;
   border-style: dashed;
 }
+
+/*
+ * The elements test bed's panel picker and readout — same button look as `button.play` above,
+ * pressed rather than disabled to say which one is loaded.
+ */
+#picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+#picker button {
+  font: inherit;
+  letter-spacing: 0.04em;
+  padding: 0.6rem 1rem;
+  border-radius: 2px;
+  border: 1px solid #2a5d6d;
+  background: #08161c;
+  color: inherit;
+  cursor: pointer;
+}
+
+#picker button:hover {
+  background: #0f2833;
+}
+
+#picker button[aria-pressed='true'] {
+  border-color: #33ff99;
+  color: #33ff99;
+}
+
+#stage {
+  display: block;
+  margin-top: 1rem;
+  border-radius: 2px;
+}
+
+/* The dev index's list of pages — no bullets, one link per line, same width as the lede above it. */
+#pages {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 60ch;
+}

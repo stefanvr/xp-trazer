@@ -33,10 +33,17 @@ const PORTED_KIND: Partial<Record<ElementKind, ElementKind | undefined>> = {
   bumper: 'permanent',
 };
 
-function ported(element: PlacedElement): PlacedElement | undefined {
-  if (!(element.kind in PORTED_KIND)) return element;
+/**
+ * The one place this concession is decided — exported so a second caller (`dev/elements.ts`'s test
+ * bed) can show what it does without holding a second copy of the table. A kind not in it is not a
+ * concession at all, and passes through unchanged.
+ */
+export function portedKind(kind: ElementKind): ElementKind | undefined {
+  return kind in PORTED_KIND ? PORTED_KIND[kind] : kind;
+}
 
-  const kind = PORTED_KIND[element.kind];
+function ported(element: PlacedElement): PlacedElement | undefined {
+  const kind = portedKind(element.kind);
   return kind === undefined ? undefined : { ...element, kind };
 }
 
