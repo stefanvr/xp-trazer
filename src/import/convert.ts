@@ -22,9 +22,24 @@ import type { ColorId, ElementKind, Footprint } from '../domain/level';
 export const ROOM_COLUMNS = 40;
 export const ROOM_ROWS = 25;
 
-/** One object of the export, as the decode wrote it down. */
+/**
+ * One object of the export, as the decode wrote it down.
+ *
+ * **An object is identified by its raw `layer`, and never by the name written beside it.**
+ * `OBJECT_KINDS` says why. `element_name` is carried for the error message alone, so that a layer
+ * this module has no kind for can be reported as the export described it — nothing reads it to
+ * decide what an object is.
+ *
+ * Every field the export also carries and this type does not — `element_id`,
+ * `semantic_confidence`, `color`, `screen_address`, `footprint_cells`, `char_codes` — is read by
+ * nobody here. `footprint_cells` in particular is not trusted over `OBJECT_KINDS`: the shape a kind
+ * occupies is this module's own table, asserted against the export rather than read from it, so a
+ * decode that gets one room's footprint wrong is a fixture failure and not a silent difference
+ * between rooms.
+ */
 export type SourceObject = {
-  readonly type: string;
+  readonly layer: number;
+  readonly element_name: string;
   readonly color_index: number;
   readonly row: number;
   readonly col: number;
@@ -37,11 +52,11 @@ export type SourceBat = {
 };
 
 export type SourceRoom = {
-  readonly room: number;
+  readonly room_index: number;
   readonly objects: readonly SourceObject[];
   readonly bats: readonly SourceBat[];
   readonly ball_start: { readonly x_col: number; readonly y_row: number } | null;
-  readonly background_color: number;
+  readonly colors: { readonly background: { readonly index: number } };
 };
 
 /**
@@ -56,19 +71,32 @@ export type SourceRoom = {
  * `dev/elements.ts`'s test bed — shows them rather than holding a copy that could drift. It stays
  * this module's knowledge: the domain models a footprint and never learns what the original's
  * inventory is.
+ *
+ * **Keyed on the export's raw layer, because its names have been wrong three times.** Two decodes
+ * and a supplied legend name layers 3, 4 and 7 three different ways, and none of the three matches
+ * the original: layer 7 is the monster generator, layer 4 the glass refractor, and layer 3 the
+ * bumper, which the stock 64 rooms place nowhere at all. A layer is the field the export promises
+ * to keep still — *raw layer and character information is preserved so a later semantic refinement
+ * does not invalidate the room data* — and a name is the field it has already moved twice, so the
+ * label below is this project's own and nothing here reads the export's.
+ *
+ * **A shape follows from the layer's character range, and no decode has ever disagreed about one.**
+ * Nine characters (`$5A–$62`) occupy 3×3, four (`$52–$55`) occupy 2×2, twelve (`$46–$51`) occupy
+ * 3×4. Only which name went with which layer ever moved, which is why getting the names from
+ * elsewhere costs nothing here: the geometry was never in question.
  */
 export const OBJECT_KINDS = new Map<
-  string,
-  { readonly kind: ElementKind; readonly footprint: Footprint }
+  number,
+  { readonly label: string; readonly kind: ElementKind; readonly footprint: Footprint }
 >([
-  ['Horizontal brick', { kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
-  ['Vertical brick', { kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
-  ['Dimpled solid block', { kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
-  ['Glass refractor', { kind: 'glassRefractor', footprint: { columns: 4, rows: 3 } }],
-  ['Monster generator', { kind: 'monsterGenerator', footprint: { columns: 2, rows: 2 } }],
-  ['Horizontal trap', { kind: 'horizontalTrap', footprint: { columns: 2, rows: 1 } }],
-  ['Vertical trap', { kind: 'verticalTrap', footprint: { columns: 1, rows: 2 } }],
-  ['Bumper', { kind: 'bumper', footprint: { columns: 3, rows: 3 } }],
+  [0, { label: 'Horizontal brick', kind: 'destructible', footprint: { columns: 2, rows: 1 } }],
+  [1, { label: 'Vertical brick', kind: 'destructible', footprint: { columns: 1, rows: 2 } }],
+  [2, { label: 'Dimpled solid block', kind: 'permanent', footprint: { columns: 2, rows: 1 } }],
+  [3, { label: 'Bumper', kind: 'bumper', footprint: { columns: 3, rows: 4 } }],
+  [4, { label: 'Glass refractor', kind: 'glassRefractor', footprint: { columns: 2, rows: 2 } }],
+  [5, { label: 'Horizontal trap', kind: 'horizontalTrap', footprint: { columns: 2, rows: 1 } }],
+  [6, { label: 'Vertical trap', kind: 'verticalTrap', footprint: { columns: 1, rows: 2 } }],
+  [7, { label: 'Monster generator', kind: 'monsterGenerator', footprint: { columns: 3, rows: 3 } }],
 ]);
 
 /**
@@ -79,14 +107,17 @@ export const OBJECT_KINDS = new Map<
  * dropped.
  */
 function levelColorId(room: SourceRoom): ColorId {
-  return room.background_color;
+  return room.colors.background.index;
 }
 
 export function convertRoom(room: SourceRoom): ImportedRoom {
   const elements = room.objects.map((object) => {
-    const known = OBJECT_KINDS.get(object.type);
+    const known = OBJECT_KINDS.get(object.layer);
     if (known === undefined) {
-      throw new Error(`room ${room.room} places an object the import has no kind for: ${object.type}`);
+      throw new Error(
+        `room ${room.room_index} places an object the import has no kind for: ` +
+          `layer ${object.layer}, which the export calls ${object.element_name}`,
+      );
     }
     return element(
       known.kind,
@@ -100,13 +131,15 @@ export function convertRoom(room: SourceRoom): ImportedRoom {
 
   const bats = room.bats.map((source) => {
     if (source.orientation !== 'horizontal' && source.orientation !== 'vertical') {
-      throw new Error(`room ${room.room} places a bat lying along no axis: ${source.orientation}`);
+      throw new Error(
+        `room ${room.room_index} places a bat lying along no axis: ${source.orientation}`,
+      );
     }
     return bat(source.orientation, source.x_col, source.y_row);
   });
 
   return {
-    origin: { room: room.room },
+    origin: { room: room.room_index },
     columns: ROOM_COLUMNS,
     rows: ROOM_ROWS,
     colorId: levelColorId(room),

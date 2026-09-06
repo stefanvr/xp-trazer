@@ -52,6 +52,37 @@ describe('the original\'s rooms, in the tree', () => {
     }
   });
 
+  /**
+   * **The only assertion here that the table which generated these rooms cannot satisfy by itself.**
+   * Every other one compares the rooms against that table, so swapping two names in it and
+   * regenerating passes all of them — tried, and it did. These numbers come from the original
+   * instead, which is the only place the answer exists: three separate decodes of the export name
+   * these layers three different ways, and all three are wrong.
+   *
+   * So a renamed layer fails here and nowhere else. The shapes are in the same assertion because a
+   * name and a footprint move together when a layer is misread — nine characters occupy 3×3, four
+   * occupy 2×2 — and the bumper's absence is asserted by there being no line for it.
+   */
+  it('places what the original places — each kind, its shape, and how many', () => {
+    const counted = new Map<string, number>();
+    for (const room of ROOMS) {
+      for (const element of room.elements) {
+        const kind = `${element.kind} ${element.footprint.columns}×${element.footprint.rows}`;
+        counted.set(kind, (counted.get(kind) ?? 0) + 1);
+      }
+    }
+
+    expect(Object.fromEntries([...counted].sort())).toEqual({
+      'destructible 1×2': 774,
+      'destructible 2×1': 5236,
+      'glassRefractor 2×2': 375,
+      'horizontalTrap 2×1': 586,
+      'monsterGenerator 3×3': 141,
+      'permanent 2×1': 817,
+      'verticalTrap 1×2': 363,
+    });
+  });
+
   it('refuses only the one room that places two elements on one cell (DS-4.4)', () => {
     const sharing = ROOMS.filter((room) =>
       unplayableReasons(levelOf(room)).includes('DS-4.4 two elements share a cell'),
