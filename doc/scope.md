@@ -28,5 +28,33 @@ which is what owning them means, and how a decision was reached is in the histor
 
 ---
 
-**No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
-have left open, then `scope create` to set the next one.
+## Version three — the real levels
+
+**Done means.** A player who opens the page is dropped into one of the original game's rooms,
+imported from the prepared export, picked at random and played at its real dimensions.
+
+**What a person can do that they could not before.** Play the original's own levels rather than one
+hand-authored proof — sixty-four rooms in place of one.
+
+**The unmade decision this scope carries.** Whether the export's room data enters the tree as data
+and is converted when the application is built, or is converted once and committed in this project's
+own level format. A goal may not carry an unmade technology choice, so this one is settled inside
+goal 3 before anything else in that goal is written.
+
+### The goals, in order
+
+| | Goal | Done when |
+|---|---|---|
+| 1 | **Stub rules for everything the export carries that is not implemented** — the unsupported element kinds, elements occupying more than one cell, per-object and per-room colors, an authored ball start, and a bat that stands free of every edge | Each one is named in the specification that owns it and marked as carried but not yet honoured. No datum the export holds is silently dropped |
+| 2 | **Generalise the clearing proof into a test bed for elements**, reached from a dev-only page that also links the existing style and audio pages | Every element the domain names is reachable and exercisable from that page, and the seam that substitutes a level into the played game is unchanged — the page is a separate dev route rather than a widening of it |
+| 3 | **Import the rooms, every one of them, each carrying whether it can be played** | The export's rooms are in the tree in this project's format; a room that depends on a rule goal 1 only stubbed is marked unplayable rather than omitted; the suite asserts a converted room against its source |
+| 4 | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
+
+**Every room is imported, including the ones that cannot yet be played.** Importing only what the
+current rules support would make the import a second place where those rules are decided, and would
+hide how much of the original is still out of reach. A marker on the room says it, and the random
+draw reads the marker.
+
+**Colors are the aspect most easily lost.** They are metadata on every object and on the room's
+background, they change nothing about play, and nothing fails when they are dropped — which is
+exactly why goal 1 names them and goal 3 is checked against them.
