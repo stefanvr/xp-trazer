@@ -75,6 +75,7 @@ is the routing — which document answers which question.
 | How is the code shaped — modules, seams, what stays testable? | `doc/guide-design.md` |
 | Which technologies, and this project's own architecture rules? | `doc/spec-tech.md` |
 | What are the rules of the game world? | `doc/spec-domain.md` |
+| What does imported content give up until a rule exists, and what would end that? | `doc/spec-domain-porting-todo.md` |
 | What does the player meet — screens, input, flow, layout? | `doc/spec-app.md` |
 | How does it look, sound and feel? | `doc/spec-style.md` |
 
@@ -95,6 +96,11 @@ and made to work by changing paths alone?
 **Drafts and working notes own no decision, and are never cited as authority** — `doc/brainstorm/`
 holds interview drafts, and `doc/scratchpad/` holds working notes, including discovery snapshots,
 cleared when the goal lands.
+
+**A concession that outlives its goal is a decision, and belongs in a document that owns one.**
+`doc/spec-domain-porting-todo.md` is that document for content imported from elsewhere: each entry is
+in force now, names the rule it stands in for, and says what would end it. It is not cleared by a
+landing, and it is not a backlog — it shrinks when a rule arrives, not when someone works through it.
 
 **`doc/scope.md` holds one overarching goal, and is replaced when that goal is reached.** A
 specification outranks it the moment it exists.

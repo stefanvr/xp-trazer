@@ -1,0 +1,56 @@
+/**
+ * The concessions that let an imported room be played before every rule it needs exists.
+ *
+ * **The import stays faithful and this is where fidelity is given up**, deliberately and in one
+ * place. `rooms.generated.ts` holds what the original actually places; nothing is dropped there, so
+ * every concession below can be withdrawn by deleting a line rather than by importing again.
+ *
+ * **Every concession here is temporary, and each one is listed in
+ * `doc/spec-domain-porting-todo.md`** with what would end it. A concession with no entry there is a
+ * rule being decided in code, which is the thing the import is not allowed to do.
+ *
+ * What it does not touch: a bat standing free of both its perpendicular sides (**DS-7.5**) and two
+ * elements sharing a cell (**DS-4.4**). Those rooms stay unplayable, because there is nothing to
+ * substitute — a bat with no side to rest against has no *away* for the ball to launch towards, and
+ * a cell holding two elements has no answer for which one was met.
+ */
+
+import { levelFrom, type ElementKind, type Level, type PlacedElement } from '../domain/level';
+import type { ImportedRoom } from './room-notation';
+
+/**
+ * What becomes of an element of a kind no rule gives behaviour to — **DS-7.1**.
+ *
+ * `undefined` is a kind left out of the played level altogether: the room is played with a hole
+ * where it stood. The others stand in the level as the kind named, keeping their footprint, their
+ * place and their color id.
+ */
+const PORTED_KIND: Partial<Record<ElementKind, ElementKind | undefined>> = {
+  glassRefractor: undefined,
+  horizontalTrap: undefined,
+  verticalTrap: undefined,
+  monsterGenerator: 'permanent',
+  bumper: 'permanent',
+};
+
+function ported(element: PlacedElement): PlacedElement | undefined {
+  if (!(element.kind in PORTED_KIND)) return element;
+
+  const kind = PORTED_KIND[element.kind];
+  return kind === undefined ? undefined : { ...element, kind };
+}
+
+/**
+ * The level a room is played as, which is not the room as imported.
+ *
+ * The ball start the room authors is left behind — **DS-7.4** — so **DS-1.4** draws the bat that
+ * holds the ball from the seed, as it does for every other level.
+ */
+export function portedLevel(room: ImportedRoom): Level {
+  const elements = room.elements.flatMap((element) => {
+    const kept = ported(element);
+    return kept === undefined ? [] : [kept];
+  });
+
+  return levelFrom({ ...room, elements, ballStart: undefined });
+}
