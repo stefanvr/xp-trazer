@@ -49,6 +49,25 @@ orchestral, which is not what a sixty-millisecond tick wants to be.
 No two elements the player must tell apart at a glance share a hue. Brightness is reserved for the
 ball because it is the one thing always in motion and never optional to see.
 
+### Color ids
+
+**A level authors a color id on every element and one on itself, and this document is where an id
+becomes a color** — [spec-domain.md](spec-domain.md)'s **DS-7.3** carries the id and reads nothing
+from it. **No id is assigned a color here yet**, so the table above decides everything drawn: an
+element is colored by what kind of thing it is, not by what it was authored to be.
+
+**An id is not a color, and that is the whole reason the domain may carry it.** Two elements sharing
+an id are the same color as each other and nothing more; which color that is, is this document's,
+and assigning them is what would let an authored look reach the screen.
+
+**Assigning them would put this document's two rules in conflict**, which is why it is not done in
+passing: color above is how the eye tells one *kind* of thing from another, and an authored id colors
+one element differently from another of the same kind. Whichever wins, it is a decision with a
+reason, and the ids are carried so that it stays available to make.
+
+**The five element kinds no rule gives behaviour to have no color either** — **DS-7.1** names them,
+nothing draws them, and a level holding one is not played.
+
 ## Line and glow
 
 Everything in the level is either a thin glowing line or a filled shape with a glow at its edge.
