@@ -38,9 +38,13 @@ before it is written.
 * **The branch is rewritten before it lands, so its commits are the work and not the corrections.**
   Commit freely while working; then fold each correction into the task it belongs to, leaving commits
   that each build on their own, and force-push. Rewrite first, then run `land`, so the landing commit
-  sits on the history that is kept. **A branch with nothing to fold is this rule succeeding rather
-  than being skipped** — say which it was, because the two are indistinguishable from the outside.
-  **Never on a branch a second person is working on**, where rewriting the history costs them theirs.
+  sits on the history that is kept. **A correction of your own error folds; work answering an
+  instruction that arrived mid-branch does not** — squashing that hides that the requirement moved,
+  which is the one thing the log is there to show. **Folding into a commit rewrites its message
+  too**, or the message goes on describing what the fold removed. **A branch with nothing to fold is
+  this rule succeeding rather than being skipped** — say which it was, because the two are
+  indistinguishable from the outside. **Never on a branch a second person is working on**, where
+  rewriting the history costs them theirs.
 * Always let the user approve a merge to main for release
 * On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/`, and where the
   landing looks like it reaches the overarching goal it calls `scope check`, which clears the goal
