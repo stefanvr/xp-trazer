@@ -1,7 +1,7 @@
 # Style specification
 
-**Owns.** How version one looks and sounds. *"Look, sound and feel"* is the routing's full remit
-([CLAUDE.md](../.claude/CLAUDE.md)); nothing in version one is felt rather than seen or heard — see
+**Owns.** How the game looks and sounds. *"Look, sound and feel"* is the routing's full remit
+([CLAUDE.md](../.claude/CLAUDE.md)); nothing specified here is felt rather than seen or heard — see
 *What this leaves open*.
 
 **Not here.** The rules of the world — [spec-domain.md](spec-domain.md); what the player and
@@ -9,15 +9,15 @@ developer meet — screens, input, flow — [spec-app.md](spec-app.md); which re
 any of this — [spec-tech.md](spec-tech.md). This document says what should appear on screen and what
 should be heard, not what code produces either.
 
-**Scoped to what version one needs**, not to the whole game brainstormed in
-`doc/brainstorm/2026-09-02.md`. A hazard, a map, a HUD — none of them are in version one, so none of
-them gets a look or a sound here yet.
+**Scoped to what the game already has**, not to the whole of it as brainstormed in
+`doc/brainstorm/2026-09-02.md`. A hazard, a map, a HUD — none of them exists, so none of them gets a
+look or a sound here yet.
 
 ---
 
 ## The reference — Tron, neon on black
 
-Version one looks like Tron, and carries it from
+The game looks like Tron, and carries it from
 [the brainstorm](brainstorm/2026-09-02.md): Tron was the owner's screenshot answer, given "without
 hesitation". The C64 heritage of Traz and Arkanoid is a flavour on this project, not a visual
 constraint — *"just feels like it"* is the entire argument for it — and it yields to Tron wherever the
@@ -59,7 +59,7 @@ add a rule here.
 
 ## Typography
 
-Version one puts exactly one piece of text on the level: the word a cleared level shows.
+Exactly one piece of text goes on the level: the word a cleared level shows.
 [spec-app.md](spec-app.md) asks for it — *"a ball that has merely stopped is indistinguishable from a
 ball that has stopped working"* — and leaves what it says and looks like here.
 
@@ -133,21 +133,21 @@ nothing was decided:
 
 - **Music.** There is none, and nothing above says whether there ever is any. The two sounds mark
   events; a score is a different decision and nothing has forced it.
-- **Anything the player adjusts.** No volume, no mute. Version one has no place to put a control and
+- **Anything the player adjusts.** No volume, no mute. There is no place to put a control and
   no screen to put it on.
 - **What happens when several sounds land at once.** **DS-6.7** allows a step to announce several
   collisions, and nothing above says whether they all sound, or how loud that is. Left open because
   it needs a running game to answer, and guessing at it now would be guessing.
-- **Every sound belonging to a mechanic version one does not have.** The recovered material carries
+- **Every sound belonging to a mechanic the game does not have.** The recovered material carries
   eight more — a bat firing, a bumper, a trap, aliens, a pickup, a lost ball. Each arrives with the
   mechanic that causes it, and none of them is a decision this document has deferred.
-- **HUD / UI chrome.** Version one has no score, no lives, no menu, no map — nothing in it needs a
-  look for any of them yet.
-- **Typography beyond the one word above.** Version one's level carries `CLEARED` and nothing else,
+- **HUD / UI chrome.** There is no score, no lives, no menu, no map — nothing needs a look for any of
+  them yet.
+- **Typography beyond the one word above.** The level carries `CLEARED` and nothing else,
   so the face is chosen and nothing else about type is — no scale, no second weight, no body text.
 - **What would make it visually wrong.** Asked in brainstorm, answered "no idea" — free rather than
   missing, and the cheapest kind of decision to leave for when something forces an answer.
-- **The Tron/C64 tension for anything beyond version one.** Brainstorm left it standing rather than
-  resolved. The reference section above settles it for version one by splitting it — Tron in the eye,
+- **The Tron/C64 tension for anything beyond the two senses below.** Brainstorm left it standing
+  rather than resolved. The reference section above settles it by splitting it — Tron in the eye,
   C64 in the ear — which is an answer for these two senses and not a principle to apply to a third. A
   future level that wants C64 chunkiness on screen reopens it.

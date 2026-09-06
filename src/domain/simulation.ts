@@ -90,7 +90,7 @@ export type GameState = {
  *
  * **`met` says brick and the other event says element, and that is the specification's own wording**
  * rather than a slip here. A collision names what the ball met, and what it met is a brick; the
- * destruction names an element, which in version one is the same thing.
+ * destruction names an element, which is currently the same thing.
  */
 export type Event =
   | {

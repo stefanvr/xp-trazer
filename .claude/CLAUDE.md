@@ -99,6 +99,18 @@ cleared when the goal lands.
 **`doc/scope.md` holds one overarching goal, and is replaced when that goal is reached.** A
 specification outranks it the moment it exists.
 
+**Each overarching scope is a new version of the product**, counted in the order the scopes were set.
+So what a specification excludes is the boundary of the scope that wrote it, not a decision about the
+product for ever — a new scope is entitled to move it, and the specification is rewritten as part of
+that work rather than treated as a rule standing in the way.
+
+**Which is why no specification names a version.** A scope is cleared the moment its goal is reached,
+so *"version one has no menu"* is stale the day the next scope is set, and stale silently — nothing
+fails, and the sentence goes on reading as authority. **Write every boundary in the present tense, as
+the document's own decision**, so that it still stands after the scope is gone: *there is no menu*.
+This is the same trap as a specification citing the scope, wearing one word instead of a paragraph.
+It reaches code comments too, which cite the specifications and go stale the same way.
+
 **`doc/lessons/` is a library, not a plan.** One file per technology. A file for a technology this
 project does not use is a lesson held for the project that does — never a choice, and never a
 backlog.

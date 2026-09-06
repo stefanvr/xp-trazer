@@ -7,8 +7,8 @@ screens take.
 [spec-style.md](spec-style.md); which technologies produce any of it is
 [spec-tech.md](spec-tech.md).
 
-**Scoped to version one.** Level selection on a map, returning to selection after dying, and progress
-kept between sessions are not part of it, and none of them is here.
+**Not specified yet.** Level selection on a map, returning to selection after dying, and progress
+kept between sessions. None of them is here, and nothing below assumes them.
 
 **This document states the desired state.** Where the code disagrees, the code is wrong.
 
@@ -80,7 +80,7 @@ does not need to be — it already asked for four directions and a launch, never
 
 ## Layout
 
-**One screen, and nothing to navigate.** No header, no footer, no menu, no dialog. Version one has
+**One screen, and nothing to navigate.** No header, no footer, no menu, no dialog. There is
 nothing to put in any of them, and adding one would be a surface with no step behind it.
 
 The screen holds the level, and a line of readouts beside it: the build identifier that

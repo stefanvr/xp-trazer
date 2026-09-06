@@ -45,7 +45,7 @@ Three of the rejections are worth a line, because each was close:
   tests and the application read the same imports.
 
 **Sound is generated, not fetched.** The reference material supplies both — ten effects in four
-formats, and the parameter model they were rendered from. Version one uses two of them, so shipping
+formats, and the parameter model they were rendered from. Two of them are used, so shipping
 files would mean sending every visitor four formats of two sounds to produce something the browser
 can already make. Generating them also keeps them tunable: [spec-style.md](spec-style.md) carries the
 parameters, and changing one is an edit to a number rather than a re-render.
