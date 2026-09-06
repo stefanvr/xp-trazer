@@ -54,6 +54,8 @@ goal 3 before anything else in that goal is written.
 | 3 | ✅ | **Import the rooms, every one of them, each carrying whether it can be played** | The export's rooms are in the tree in this project's format; a room that depends on a rule goal 1 only stubbed is marked unplayable rather than omitted; the suite asserts a converted room against its source |
 | 3b | ✅ | **Support an element that occupies more than one cell**, so that what the rooms are made of reaches the rules rather than only being carried | The domain gives a footprint larger than one cell surfaces the ball collides with, and a room whose only obstacle was that footprint is no longer unplayable for it |
 | 4 |   | **Play them** — the level's dimensions and the sizing it is drawn at follow the real rooms, and one is drawn at random when the page opens | The end-to-end suite opens the page twice, gets a playable imported room both times, at its real dimensions, and never gets one marked unplayable |
+| 5 |   | **Add a level preview page**, reachable from the dev index alongside the existing style, audio and elements pages | The dev index links the page; opening it shows one imported room at its real dimensions; pressing keyup or keydown steps to the next or previous room, cycling across all of them, including the ones marked unplayable |
+| 6 |   | **Re-import the rooms from the corrected export**, `TRAZ_pass2_updated_importable`, which fixes a range of characters the previous export misclassified and is now identified as the glass refractor | The tree's rooms come from the corrected export; the converter's fixture and every room count the suite asserts are re-checked against it; a room whose only unplayable reason was the misclassified range is playable, or unplayable for a reason that still holds |
 
 **Goal 3b was added once the import had been done, which is what a scope changing mid-flight is
 for.** Every object the original places is larger than one cell, so a rule reading only one-cell
@@ -70,6 +72,19 @@ out.
 current rules support would make the import a second place where those rules are decided, and would
 hide how much of the original is still out of reach. A marker on the room says it, and the random
 draw reads the marker.
+
+**Goals 5 and 6 were added once goal 4 was underway, which is the same mid-flight change goal 3b
+was.** Neither depends on the other, and neither is a step of goal 4 — a preview page for browsing
+the rooms is a dev-only tool, not a rule the played game needs, and a corrected export is a better
+source for the same converter, not a new capability. They are named as their own goals rather than
+folded into goal 4 or into each other.
+
+**Goal 6 exists because the export itself was wrong, not because a rule was missing.** The
+concessions in `spec-domain-porting-todo.md` still stand — glass has no behaviour yet, and P-2 still
+leaves it out of the played level — but the previous export misidentified the character range that
+draws it, and whatever it was misidentified as may have stood in the ball's way when the original
+never put anything there. Correcting the source is separate from giving glass a rule, and only the
+second ends the concession.
 
 **Colors are the aspect most easily lost.** They are metadata on every object and on the room's
 background, they change nothing about play, and nothing fails when they are dropped — which is
