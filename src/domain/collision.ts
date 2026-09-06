@@ -27,8 +27,18 @@ export type Rect = { readonly x: number; readonly y: number; readonly w: number;
 
 export type Obstacle =
   | { readonly kind: 'boundary' }
-  /** `along` is where the ball met the bat, 0 at its low end and 1 at its high one — **DS-2.6**. */
-  | { readonly kind: 'bat'; readonly orientation: Orientation; readonly along: number }
+  /**
+   * `along` is where the ball met the bat along its length, 0 at its low end and 1 at its high one
+   * — **DS-2.6**, read at a long face. `across` is where it met it across the bat's own thickness,
+   * 0 to 1 — **DS-2.8**, read only at an end. Both are always given; which one applies is decided
+   * by which face was actually met, not by which of the two this type carries.
+   */
+  | {
+      readonly kind: 'bat';
+      readonly orientation: Orientation;
+      readonly along: number;
+      readonly across: number;
+    }
   | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean };
 
 export function batRect(bat: Bat): Rect {
@@ -97,11 +107,18 @@ export function obstacleAt(
   }
 
   for (const bat of bats) {
-    if (!overlaps(batRect(bat), x, y, radius)) continue;
+    const rect = batRect(bat);
+    if (!overlaps(rect, x, y, radius)) continue;
 
-    const reached = bat.orientation === 'horizontal' ? x : y;
-    const along = (reached - bat.position) / BAT_LENGTH_PIXELS;
-    return { kind: 'bat', orientation: bat.orientation, along: Math.min(Math.max(along, 0), 1) };
+    const horizontal = bat.orientation === 'horizontal';
+    const along = ((horizontal ? x : y) - bat.position) / BAT_LENGTH_PIXELS;
+    const across = ((horizontal ? y : x) - (horizontal ? rect.y : rect.x)) / CELL_PIXELS;
+    return {
+      kind: 'bat',
+      orientation: bat.orientation,
+      along: Math.min(Math.max(along, 0), 1),
+      across: Math.min(Math.max(across, 0), 1),
+    };
   }
 
   return undefined;

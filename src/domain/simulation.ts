@@ -1,8 +1,8 @@
-import { deflectedByBat, heldAt, launchVelocity } from './ball';
+import { deflectedByBat, deflectedByEnd, heldAt, launchVelocity } from './ball';
 import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { batRect, meets, obstacleAt, overlaps } from './collision';
 import {
-  BAT_LENGTH_PIXELS,
+  CELL_PIXELS,
   cellsOf,
   destructibleCount,
   destructibleRemaining,
@@ -10,6 +10,7 @@ import {
   type Bat,
   type Extent,
   type Level,
+  type Orientation,
 } from './level';
 
 /**
@@ -225,8 +226,8 @@ export function createGameState(level: Level, seed: number): GameState {
  *
  * **A bat moves along its own axis (DS-3.2), so it can only ever meet the ball end-on**, and the way
  * out is along that same axis. The ball leaves by the end it is nearer to, travelling away from the
- * bat; **DS-2.6** then turns it exactly as it turns a ball that arrived under its own power, and at
- * an end that is the outer third, which sends it away from the bat rather than back along it.
+ * bat; **DS-2.8** then turns it exactly as it turns a ball that arrived under its own power at an
+ * end, sending it away on the axis the bat's own movement never touches.
  *
  * The far end is tried where the near one is occupied — a bat driving the ball into the corner has
  * nowhere to put it on the side it is going. Where neither end is free there is no place outside to
@@ -259,9 +260,12 @@ function pushedOutOfBats(
       const departing = horizontal
         ? { x: leaving * Math.abs(ball.velocity.x), y: ball.velocity.y }
         : { x: ball.velocity.x, y: leaving * Math.abs(ball.velocity.y) };
-      const met = Math.min(Math.max((escaped - bat.position) / BAT_LENGTH_PIXELS, 0), 1);
+      // DS-2.8 — this meeting is always with an end (DS-3.2), so `across` is the fraction of the
+      // bat's own thickness, not the fraction of its length `deflectedByBat` would want.
+      const acrossStart = horizontal ? rect.y : rect.x;
+      const met = Math.min(Math.max((across - acrossStart) / CELL_PIXELS, 0), 1);
 
-      return { position, velocity: deflectedByBat(departing, bat.orientation, met) };
+      return { position, velocity: deflectedByEnd(departing, bat.orientation, met) };
     }
   }
 
@@ -344,8 +348,13 @@ export function step(state: GameState, input: Input): Stepped {
    * it turns at the surface rather than wherever the step happened to leave it. The largest part of
    * the move that stays clear is found by halving, since the ball starts the step outside everything
    * and the offered end of the move is inside something.
+   *
+   * **`ownAxis` is which bat orientation this call can only ever meet end-on.** A bat lies along one
+   * axis (DS-3.1), so its end is the face normal to that same axis: a horizontal bat's end is met by
+   * the x-only call, a vertical bat's by the y-only one. Met the other way, the same bat is offering
+   * its long face instead — **DS-2.6**'s to turn, not **DS-2.8**'s.
    */
-  const advance = (dx: number, dy: number, reverse: () => void): void => {
+  const advance = (dx: number, dy: number, ownAxis: Orientation, reverse: () => void): void => {
     const asFarAs = (part: number) =>
       obstacleAt(level, destroyed, bats, x + dx * part, y + dy * part, ball.radius);
 
@@ -369,9 +378,12 @@ export function step(state: GameState, input: Input): Stepped {
     reverse();
     collisions += 1;
 
-    // DS-2.6 — a bat also turns the ball, by where along it the ball arrived.
+    // DS-2.6 at a long face, DS-2.8 at an end — never both for the same collision.
     if (hit.kind === 'bat') {
-      const turned = deflectedByBat({ x: velocityX, y: velocityY }, hit.orientation, hit.along);
+      const turned =
+        hit.orientation === ownAxis
+          ? deflectedByEnd({ x: velocityX, y: velocityY }, hit.orientation, hit.across)
+          : deflectedByBat({ x: velocityX, y: velocityY }, hit.orientation, hit.along);
       velocityX = turned.x;
       velocityY = turned.y;
     }
@@ -399,10 +411,10 @@ export function step(state: GameState, input: Input): Stepped {
     }
   };
 
-  advance(velocityX * STEP_SECONDS, 0, () => {
+  advance(velocityX * STEP_SECONDS, 0, 'horizontal', () => {
     velocityX = -velocityX;
   });
-  advance(0, velocityY * STEP_SECONDS, () => {
+  advance(0, velocityY * STEP_SECONDS, 'vertical', () => {
     velocityY = -velocityY;
   });
 

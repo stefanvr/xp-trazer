@@ -74,7 +74,18 @@ describe('what the ball is inside', () => {
       kind: 'bat',
       orientation: 'horizontal',
       along: 16 / BAT_LENGTH_PIXELS,
+      across: 0.5,
     });
+  });
+
+  it('says where across a bat is met, for DS-2.8 to read at an end', () => {
+    const bat = { orientation: 'horizontal', line: 3, position: 0 } as const;
+
+    const near = at(16, 3 * CELL_PIXELS + 4, [bat]);
+    const far = at(16, 3 * CELL_PIXELS + 20, [bat]);
+
+    expect(near?.kind === 'bat' && near.across).toBeCloseTo(4 / CELL_PIXELS);
+    expect(far?.kind === 'bat' && far.across).toBeCloseTo(20 / CELL_PIXELS);
   });
 
   it('reports the far end of a bat as one, not beyond it', () => {

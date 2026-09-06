@@ -66,6 +66,20 @@ export function launchVelocity(seed: number): Vector {
 }
 
 /**
+ * **DS-2.5** — scaled back to the one speed the ball ever has, so a deflection turns it rather than
+ * pushing it. Shared by both of a bat's ways of turning the ball, which differ only in which axis
+ * they add `sideways` to before this runs.
+ */
+function atBallSpeed(turned: Vector, ifZero: Vector): Vector {
+  const speed = Math.hypot(turned.x, turned.y);
+  if (speed === 0) return ifZero;
+  return {
+    x: (turned.x / speed) * BALL_PIXELS_PER_SECOND,
+    y: (turned.y / speed) * BALL_PIXELS_PER_SECOND,
+  };
+}
+
+/**
  * **DS-2.6** — a bat turns the ball by where along it the ball was met. The outer thirds send it
  * away from the middle; the middle third leaves the angle reflection gave it.
  *
@@ -87,12 +101,31 @@ export function deflectedByBat(
       ? { x: velocity.x + sideways, y: velocity.y }
       : { x: velocity.x, y: velocity.y + sideways };
 
-  // DS-2.5 — scaled back to the one speed, so this turns the ball rather than pushing it.
-  const speed = Math.hypot(turned.x, turned.y);
-  if (speed === 0) return velocity;
-  return {
-    x: (turned.x / speed) * BALL_PIXELS_PER_SECOND,
-    y: (turned.y / speed) * BALL_PIXELS_PER_SECOND,
-  };
+  return atBallSpeed(turned, velocity);
+}
+
+/**
+ * **DS-2.8** — a bat's end turns the ball too, by where across the bat's own thickness it was met.
+ * Two zones and not three: **DS-2.4** has already reversed the axis along the bat's own length when
+ * an end is met, so there is no axis left for a middle zone to leave alone. This turns the *other*
+ * axis instead — the one **DS-2.6** turns on the long face — the near half one way and the far half
+ * the other.
+ *
+ * Without this, an end only ever reversed the axis it was met on and left the other exactly as it
+ * found it, which is what let a ball meeting only ends, or only the boundary, retrace a line for
+ * ever.
+ */
+export function deflectedByEnd(
+  velocity: Vector,
+  orientation: 'horizontal' | 'vertical',
+  across: number,
+): Vector {
+  const sideways = across < 0.5 ? -BAT_DEFLECTION_PIXELS_PER_SECOND : BAT_DEFLECTION_PIXELS_PER_SECOND;
+  const turned =
+    orientation === 'horizontal'
+      ? { x: velocity.x, y: velocity.y + sideways }
+      : { x: velocity.x + sideways, y: velocity.y };
+
+  return atBallSpeed(turned, velocity);
 }
 

@@ -179,6 +179,12 @@ describe('a bat moving into a travelling ball', () => {
     expect(next.ball.velocity.x).toBeGreaterThan(0);
   });
 
+  it('leaves it on a heading it did not arrive on, which is DS-2.8: this meeting is always an end', () => {
+    const next = advance(beside(), { ...NOTHING_HELD, right: true });
+
+    expect(next.ball.velocity.y).not.toBe(0);
+  });
+
   it('counts it as the collision it is', () => {
     expect(advance(beside(), { ...NOTHING_HELD, right: true }).collisions).toBe(1);
   });
@@ -390,6 +396,15 @@ describe('a travelling ball meeting something', () => {
     // Straight up into the bat's near third. Without DS-2.6 it would come straight back down and
     // retrace the same line for ever, and no amount of playing could change that.
     const next = advance(travelling({ x: 8, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
+
+    expect(next.ball.velocity.x).not.toBe(0);
+    expect(next.ball.velocity.y).not.toBe(0);
+  });
+
+  it("leaves a bat's end on a heading it did not arrive on, which is DS-2.8", () => {
+    // Straight left into the bat's right end, near half of its thickness. Without DS-2.8 this
+    // would come straight back rightward and retrace the same line for ever.
+    const next = advance(travelling({ x: 106, y: 8 }, { x: -240, y: 0 }), NOTHING_HELD);
 
     expect(next.ball.velocity.x).not.toBe(0);
     expect(next.ball.velocity.y).not.toBe(0);
