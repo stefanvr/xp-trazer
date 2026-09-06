@@ -7,12 +7,11 @@ const DEV_PORT = 4174;
  * Surface tests run against the *built* page, not the dev server, because one of the three things
  * they prove is that the build stamped a real commit (SF-7). A dev server would never exercise it.
  *
- * **The one exception is the dev pages, and it is forced rather than chosen.** They are kept out of
- * `vite build` so they cannot ship, which also puts them out of reach of the built page — so the
- * only way to assert one loads at all is a second server running the dev one. The split is by
- * project below: everything about the product runs against the build, and `dev-pages.spec.ts` alone
- * runs against the dev server. Putting a dev page into the build to make it testable would trade the
- * gate that keeps it from shipping for a test, which is the wrong way round.
+ * **The one exception is the dev pages, and it is forced rather than chosen** — doc/spec-tech.md's
+ * **A-4**. They are kept out of `vite build` so they cannot ship, which also puts them out of reach
+ * of the built page, so the only way to assert one loads at all is a second server running the dev
+ * one. The split is by project below: everything about the product runs against the build, and
+ * `dev-pages.spec.ts` alone runs against the dev server.
  */
 export default defineConfig({
   testDir: './e2e',

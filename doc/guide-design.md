@@ -90,6 +90,13 @@ a per-project decision: amend it when a convention proves itself, do not empty i
 - **Surface tests are smoke tests: they prove wiring, not behaviour** — that a control reaches the
   command it claims to, that something was drawn. Anything they *could* assert belongs in a test that
   needs no surface.
+- **Data checked against the generator that produced it proves consistency, not correctness.** Where
+  code writes data into the tree and the suite asserts that data against the code that wrote it, the
+  two agree for *any* generator, including a wrong one: change it, regenerate, and every such
+  assertion passes again. Only an expected value from outside the generator can catch it. *Not when*
+  nothing outside can supply one — then say so where the data is written, because a suite that cannot
+  tell is at its most dangerous while being read as one that can. Observed here: two labels swapped
+  in a conversion table and the data regenerated from it, and the whole suite passed.
 - **Anything random is seeded**, and ties between equally valid options break deterministically —
   lowest id, a fixed order — never by iteration order, which may change. *Equally valid* and
   *arbitrary* are different things.
@@ -100,6 +107,12 @@ a per-project decision: amend it when a convention proves itself, do not empty i
   situation without building it by hand every time; preview pages rendering real output from real
   code; and a gate — a flag, an environment check — so they never ship enabled. Document them as they
   are built: they are forgotten within a month otherwise, and rediscovered by accident much later.
+- **A gate that keeps an affordance out of the build keeps it out of any suite that runs against the
+  build.** So a gated affordance needs its own way in — a second server, a second entry point — and
+  it is covered *through* the gate rather than by removing the gate to make it reachable. Trading the
+  thing that stops it shipping for the thing that tests it is the wrong way round. *Not when* nothing
+  about it can break without being seen. Observed here: two preview pages, broken by a rule they
+  predated, across two landings, with a full green suite that could not open either one.
 
 ---
 

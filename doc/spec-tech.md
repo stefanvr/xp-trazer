@@ -59,8 +59,9 @@ of the original hardware — which the material says of itself.
 simulation announces what happened and never asks when.
 
 **A spec-domain rule number found in `src/` does not mean the rule behind it is implemented.** A
-citation says which rule the code means to satisfy, not that it succeeds. **DS-6** is the live
-example: announced by [spec-domain.md](spec-domain.md), and not in the code at all.
+citation says which rule the code means to satisfy, not that it succeeds. **DS-6** was the example
+until it was built, and the caution outlived it: nothing about a citation says which of the two kinds
+it is, so reading one as evidence is the mistake whether or not an example is currently to hand.
 
 **The built page carries the commit it was built from.** A deployment is verified by fetching the
 artefact and reading that identifier (**SF-8**), so it is a requirement of the stack rather than a
@@ -116,10 +117,10 @@ behaviour is reachable through it, and it is not level selection — that is a p
 **It departs from [guide-design.md](guide-design.md), which wants a dev-only affordance gated so it
 never ships enabled.** This one ships enabled: the parameter works on the deployed page. The gate
 that document has in mind is the one `dev/style.html` uses — being left out of the build — and it
-cannot be used here, because the end-to-end suite runs against the built page on purpose, so a gate
-that excludes the seam from the build excludes it from the only place it is needed. Gating on a
-build-time flag instead would mean the suite tests a build that is not the one deployed, which costs
-more than it buys.
+cannot be used here, because what this seam has to be provable *on* is the artefact that deploys.
+**A-4** is the one thing the suite reaches through a dev server, and it does not help here: a seam
+proven on the dev server is proven about a build nobody is served. Gating on a build-time flag
+instead has the same fault, and costs more than it buys.
 
 **What the departure costs, and what contains it.** A visitor who guesses the parameter reaches a
 five-cell level with one brick. That is the whole exposure: the seam substitutes a level, and the
@@ -142,6 +143,29 @@ against — the room that places every object kind the export uses, since a fixt
 it contains. That is the smallest thing that keeps the claim checkable on a machine that does not
 hold the export.
 
-**The generator is run by Node directly, which is why two modules spell out their `.ts` extensions**
-and `allowImportingTsExtensions` is set. Node resolves a relative import only with its extension; the
-two modules the script loads are the whole of it, and nothing the application imports is affected.
+**The generator is run by Node directly, which is why the modules on its import path spell out their
+`.ts` extensions** and `allowImportingTsExtensions` is set. Node resolves a relative import only with
+its extension, and what the script loads is the whole of the requirement — nothing the application
+imports is affected.
+
+### A-4 · The suite runs against the built page, and the dev pages get their own server
+
+Everything in `e2e/` runs against the built page, because part of what it proves is that the build
+stamped a real commit (**SF-7**). The dev pages are the exception, and a forced one: they are kept
+out of `vite build` so they cannot ship, which also puts them out of reach of anything running
+against it. So the suite starts two servers — the preview server for the product, the dev server for
+the dev pages — and splits them by Playwright project, with `e2e/dev-pages.spec.ts` alone on the
+second.
+
+**What it rules out.** Putting a dev page into the build's entry so that a test can reach it. That
+trades away the gate that stops it shipping in exchange for the test that watches it, and publishes
+pages whose entire justification is that they are not published.
+
+**Why it is worth a second server.** Without it, a dev page is broken by any rule it predates and
+nothing says so. Observed: **DS-1.4** made a ball start compulsory, and the two pages that authored
+none threw before drawing anything — through two landings, under a green suite that could not open
+either of them.
+
+**What it does not license.** Reaching the product through that server. A dev-server run says nothing
+about the artefact that deploys, which is the whole of **A-2**'s argument for a seam that ships
+enabled.

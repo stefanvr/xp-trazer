@@ -4,7 +4,8 @@
  *
  * **The export is not in this tree**, so this script is run by hand, pointed at wherever the export
  * is kept, and what it produces is committed. Nothing in the application or the suite runs it, and
- * nothing at build time does — the rooms in the tree are the rooms that ship.
+ * nothing at build time does — the rooms in the tree are the rooms that ship. That is
+ * doc/spec-tech.md's **A-3**, and this script is the whole of what it asks for.
  *
  *   node scripts/import-rooms.ts <path to traz_rooms_all.json>
  *
