@@ -8,7 +8,7 @@ import {
   type GameState,
   type Input,
 } from './simulation';
-import { CELL_PIXELS, levelFromRows } from './level';
+import { CELL_PIXELS, elementAt, levelFromRows } from './level';
 import { obstacleAt } from './collision';
 
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
@@ -198,7 +198,8 @@ describe('clearing a level', () => {
   // One destructible brick at column 2 of row 2, one permanent one at column 4, and a bat with
   // room to move so that a step that changed anything would show.
   const level = levelFromRows(['-.....', '......', '..d.p.', '......', '......', '......']);
-  const brick = 2 * 6 + 2;
+  // What is destroyed is an element, not a cell — DS-4.5.
+  const brick = elementAt(level, 2, 2)?.element ?? -1;
 
   const withDestroyed = (destroyed: readonly number[]): GameState => {
     const state = createGameState(level, 0);
@@ -215,7 +216,7 @@ describe('clearing a level', () => {
 
   it('counts no permanent brick towards it, which is DS-4.3', () => {
     // The permanent brick is still standing, and the level is cleared regardless.
-    expect(withDestroyed([brick]).level.cells[2 * 6 + 4]?.kind).toBe('permanent');
+    expect(elementAt(level, 4, 2)?.kind).toBe('permanent');
     expect(isCleared(withDestroyed([brick]))).toBe(true);
   });
 
@@ -469,7 +470,7 @@ describe('what a step announces', () => {
 
     expect(events).toEqual([
       { kind: 'collision', met: 'brick', destroyed: true },
-      { kind: 'element-destroyed', cell: { column: 2, row: 2 } },
+      { kind: 'element-destroyed', cells: [{ column: 2, row: 2 }] },
     ]);
   });
 
@@ -492,7 +493,7 @@ describe('what a step announces', () => {
   it('says nothing once the level is cleared, because nothing advances', () => {
     const onlyBrick = levelFromRows(['-....', '..d..', '.....', '.....', '.....']);
     const state = createGameState(onlyBrick, 0);
-    const cleared = { ...state, destroyed: new Set([1 * 5 + 2]) };
+    const cleared = { ...state, destroyed: new Set([elementAt(onlyBrick, 2, 1)?.element ?? -1]) };
 
     expect(step(cleared, { ...NOTHING_HELD, right: true, launch: true }).events).toEqual([]);
   });

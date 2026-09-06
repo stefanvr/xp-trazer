@@ -16,10 +16,11 @@ import {
  * already owns — so this type stays a code-internal helper and **DS-6.3** is written in those words
  * rather than in this one.
  *
- * Every surface here is axis-aligned, because an element the rules read occupies exactly one cell —
- * **DS-7.2** — and a bat lies
- * along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one component
- * and leaves the other alone, and there is no other kind of surface to meet.
+ * Every surface here is axis-aligned, because an element occupies whole cells — **DS-4.4** — and a
+ * bat lies along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one
+ * component and leaves the other alone, and there is no other kind of surface to meet. A larger
+ * footprint is met one cell at a time, and each of those cells names the same element, so the ball
+ * turns at the face it actually reached while **DS-4.5** keeps it one thing that was met.
  */
 
 export type Rect = { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
@@ -80,9 +81,8 @@ export function obstacleAt(
 
   for (let row = firstRow; row <= lastRow; row += 1) {
     for (let column = firstColumn; column <= lastColumn; column += 1) {
-      const index = row * level.columns + column;
-      const cell = level.cells[index];
-      if (cell === undefined || destroyed.has(index)) continue;
+      const cell = level.cells[row * level.columns + column];
+      if (cell === undefined || destroyed.has(cell.element)) continue;
 
       const rect = {
         x: column * CELL_PIXELS,
@@ -91,7 +91,7 @@ export function obstacleAt(
         h: CELL_PIXELS,
       };
       if (overlaps(rect, x, y, radius)) {
-        return { kind: 'element', index, destructible: cell.kind === 'destructible' };
+        return { kind: 'element', index: cell.element, destructible: cell.kind === 'destructible' };
       }
     }
   }

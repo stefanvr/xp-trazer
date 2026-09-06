@@ -1,6 +1,6 @@
 import { boundaryOf, isCleared, type GameState } from '../domain/simulation';
 import { batRect } from '../domain/collision';
-import { CELL_PIXELS, type Bat, type Level } from '../domain/level';
+import { CELL_PIXELS, cellsOf, elementAt, type Bat, type Level } from '../domain/level';
 import {
   BACKGROUND,
   BALL,
@@ -31,20 +31,26 @@ function drawElements(
   level: Level,
   destroyed: ReadonlySet<number>,
 ): void {
-  for (const [index, cell] of level.cells.entries()) {
-    if (cell === undefined || destroyed.has(index)) continue;
+  // One element is one shape, whatever its footprint — DS-4.5. Only what the rules read is drawn,
+  // which is what reaches the grid: a brick, and the cells of it that are inside the level.
+  for (const [index, element] of level.elements.entries()) {
+    if (destroyed.has(index)) continue;
 
-    const color = cell.kind === 'destructible' ? DESTRUCTIBLE_BRICK : PERMANENT_BRICK;
-    const column = index % level.columns;
-    const row = Math.floor(index / level.columns);
+    const cells = cellsOf(level, index);
+    const first = cells[0];
+    const last = cells[cells.length - 1];
+    if (first === undefined || last === undefined) continue;
+    if (elementAt(level, first.column, first.row)?.element !== index) continue;
+
+    const color = element.kind === 'destructible' ? DESTRUCTIBLE_BRICK : PERMANENT_BRICK;
 
     context.shadowColor = color;
     context.fillStyle = color;
     context.fillRect(
-      column * CELL_PIXELS + BRICK_INSET,
-      row * CELL_PIXELS + BRICK_INSET,
-      CELL_PIXELS - BRICK_INSET * 2,
-      CELL_PIXELS - BRICK_INSET * 2,
+      first.column * CELL_PIXELS + BRICK_INSET,
+      first.row * CELL_PIXELS + BRICK_INSET,
+      (last.column - first.column + 1) * CELL_PIXELS - BRICK_INSET * 2,
+      (last.row - first.row + 1) * CELL_PIXELS - BRICK_INSET * 2,
     );
   }
 }

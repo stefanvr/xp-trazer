@@ -9,7 +9,7 @@ const collision = (met: 'boundary' | 'bat' | 'brick', destroyed: boolean): Event
   met,
   destroyed,
 });
-const destruction: Event = { kind: 'element-destroyed', cell: { column: 2, row: 2 } };
+const destruction: Event = { kind: 'element-destroyed', cells: [{ column: 2, row: 2 }] };
 
 describe('what an event sounds like', () => {
   it('gives a boundary the collision sound', () => {

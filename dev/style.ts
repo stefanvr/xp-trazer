@@ -41,8 +41,9 @@ function after(state: GameState, times: number, input: Partial<Input>): GameStat
 }
 
 function everyDestructible(level: Level): ReadonlySet<number> {
+  // Elements, not cells — DS-4.5, and what a game holds destroyed.
   return new Set(
-    level.cells.flatMap((cell, index) => (cell?.kind === 'destructible' ? [index] : [])),
+    level.cells.flatMap((cell) => (cell?.kind === 'destructible' ? [cell.element] : [])),
   );
 }
 

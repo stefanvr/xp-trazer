@@ -3,6 +3,7 @@ import { BAT_PIXELS_PER_SECOND, moveGroup, spanFor } from './bat';
 import { batRect, meets, obstacleAt, overlaps } from './collision';
 import {
   BAT_LENGTH_PIXELS,
+  cellsOf,
   destructibleCount,
   destructibleRemaining,
   extentOf,
@@ -78,8 +79,12 @@ export type GameState = {
   readonly ball: Ball;
   readonly collisions: number;
   /**
-   * Which destructible elements have gone. The level itself never changes while a game runs —
-   * doc/spec-domain.md puts it among the things that do not — so what is left is held beside it.
+   * Which destructible elements have gone, by their index in the level's `elements`. The level
+   * itself never changes while a game runs — doc/spec-domain.md puts it among the things that do
+   * not — so what is left is held beside it.
+   *
+   * **An element and not a cell**, which is **DS-4.5**: one entry here removes the whole footprint,
+   * however many cells that is.
    */
   readonly destroyed: ReadonlySet<number>;
 };
@@ -102,8 +107,12 @@ export type Event =
     }
   | {
       readonly kind: 'element-destroyed';
-      /** **DS-6.5** — the cell the element occupied. A cell, not the index the level stores. */
-      readonly cell: { readonly column: number; readonly row: number };
+      /**
+       * **DS-6.5** — the cells the element occupied. Cells, not the indices the level stores, and
+       * all of them rather than one: **DS-4.5** frees the whole footprint, and a reader given one
+       * cell of a four-cell brick would leave three behind.
+       */
+      readonly cells: readonly { readonly column: number; readonly row: number }[];
     };
 
 /**
@@ -385,10 +394,8 @@ export function step(state: GameState, input: Input): Stepped {
       destroyed: destroying,
     });
     if (destroying && hit.kind === 'element') {
-      events.push({
-        kind: 'element-destroyed',
-        cell: { column: hit.index % level.columns, row: Math.floor(hit.index / level.columns) },
-      });
+      // DS-6.5 with DS-4.5 — the element went as a whole, so every cell it held is named.
+      events.push({ kind: 'element-destroyed', cells: cellsOf(level, hit.index) });
     }
   };
 

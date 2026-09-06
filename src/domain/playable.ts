@@ -31,8 +31,8 @@ export type UnplayableReason =
   | 'DS-1.3 the level authors no bat'
   | 'DS-1.7 two bats share a place, or one has less room to slide than its own length'
   | 'DS-1.8 the level authors no destructible element'
+  | 'DS-4.4 two elements share a cell'
   | 'DS-7.1 the level places an element of a kind no rule gives behaviour to'
-  | 'DS-7.2 the level places an element occupying more than one cell'
   | 'DS-7.4 the level authors where the ball starts'
   | 'DS-7.5 a bat has nothing on either of its perpendicular sides';
 
@@ -96,6 +96,31 @@ function batHasNoRoom(level: Level): boolean {
 }
 
 /**
+ * Two elements placed on one cell — **DS-4.4**. Asked of what the level places rather than of the
+ * grid, because the grid keeps only the last one placed and so cannot show the collision.
+ *
+ * Every kind counts, not only the ones the rules read: a brick sharing its cell with a bumper is as
+ * unanswerable as two bricks sharing one.
+ */
+function elementsShareACell(level: Level): boolean {
+  const taken = new Set<number>();
+  for (const element of level.elements) {
+    for (let row = element.row; row < element.row + element.footprint.rows; row += 1) {
+      for (
+        let column = element.column;
+        column < element.column + element.footprint.columns;
+        column += 1
+      ) {
+        const cell = row * level.columns + column;
+        if (taken.has(cell)) return true;
+        taken.add(cell);
+      }
+    }
+  }
+  return false;
+}
+
+/**
  * Every rule the level does not satisfy. Empty is a level that can be played — nothing else is.
  *
  * The order is the order the rules are numbered in, so two levels' reasons read the same way.
@@ -110,13 +135,9 @@ export function unplayableReasons(level: Level): readonly UnplayableReason[] {
   if (destructibleCount(level) === 0) {
     reasons.push('DS-1.8 the level authors no destructible element');
   }
+  if (elementsShareACell(level)) reasons.push('DS-4.4 two elements share a cell');
   if (level.elements.some((element) => !isBrickKind(element.kind))) {
     reasons.push('DS-7.1 the level places an element of a kind no rule gives behaviour to');
-  }
-  if (
-    level.elements.some((element) => element.footprint.columns !== 1 || element.footprint.rows !== 1)
-  ) {
-    reasons.push('DS-7.2 the level places an element occupying more than one cell');
   }
   if (level.ballStart !== undefined) {
     reasons.push('DS-7.4 the level authors where the ball starts');
