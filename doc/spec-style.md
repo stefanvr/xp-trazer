@@ -45,6 +45,7 @@ orchestral, which is not what a sixty-millisecond tick wants to be.
 | Permanent brick | `#ff8a3d` — amber neon | Reads as structure, not as a target; deliberately not in the same hue family as the destructible brick |
 | Horizontal bats | `#22e0e0` — cyan neon | One control group |
 | Vertical bats | `#ff2fd6` — magenta neon | The other control group — a different hue from horizontal, so the two axes are told apart at a glance without reading a label |
+| Trap | `#ff2b2b` — red neon | The one hazard colour in the palette — reads as danger the instant it is seen, on either trap shape |
 
 No two elements the player must tell apart at a glance share a hue. Brightness is reserved for the
 ball because it is the one thing always in motion and never optional to see.
@@ -65,8 +66,9 @@ passing: color above is how the eye tells one *kind* of thing from another, and 
 one element differently from another of the same kind. Whichever wins, it is a decision with a
 reason, and the ids are carried so that it stays available to make.
 
-**The five element kinds no rule gives behaviour to have no color either** — **DS-7.1** names them,
-nothing draws them, and a level holding one is not played.
+**The three element kinds no rule gives behaviour to still have no color** — **DS-7.1** names them,
+nothing draws them, and a level holding one is not played. Trap left this table the way it left
+**DS-7.1**'s own — **DS-8** gave it a rule, so it earned the row above rather than staying nameless.
 
 ## Line and glow
 
@@ -98,14 +100,15 @@ leaving.
 
 ## Sound
 
-**Two sounds, and nothing else makes a noise.** [spec-domain.md](spec-domain.md)'s **DS-6.2**
-announces two events, and each has one sound.
+**Three sounds, and nothing else makes a noise.** [spec-domain.md](spec-domain.md)'s **DS-6.2**
+announces three events, and each has one sound.
 
 | What happens | What is heard |
 |---|---|
 | A collision that destroyed nothing — a boundary, a bat, a permanent brick | The **collision** sound |
 | An element destroyed | The **destruction** sound |
 | A collision that destroyed what it met | Nothing |
+| The ball destroyed by a trap | The **trap** sound |
 
 **A collision that destroyed what it met is silent, because its destruction is what is heard.** The
 ball meeting a destructible brick produces both events — **DS-6.6** — so without this rule two sounds
@@ -135,15 +138,23 @@ segment.
 | | 2 | pulse, duty 0.30 | 28 ms | 1050 → 730 Hz | 0.22 | 0 / 6 / 0.30 / 20 | 8000 Hz |
 | **Destruction** | 1 | pulse, duty 0.25 | 42 ms | 820 → 480 Hz | 0.43 | 0 / 8 / 0.35 / 24 | 5600 Hz |
 | | 2 | noise | 20 ms | — | 0.13 | 0 / 4 / 0.25 / 14 | 4200 Hz |
+| **Trap** | 1 | noise | 90 ms | — | 0.30 | 0 / 20 / 0.55 / 35 | 4300 Hz |
+| | 2 | sawtooth | 85 ms | 1800 → 180 Hz | 0.34 | 0 / 18 / 0.45 / 30 | 5200 Hz |
 
-The collision runs 73 ms and the destruction 62 ms. **Both are shorter than a tenth of a second, and
-that is the point** — the ball collides several times a second, and anything longer would overlap
-itself rather than mark an event.
+The collision runs 73 ms, the destruction 62 ms and the trap 175 ms. **The first two are shorter than
+a tenth of a second, and that is the point** — the ball collides several times a second, and anything
+longer would overlap itself rather than mark an event. **The trap is not bent to that rule, because
+it was never the trap's**: losing the ball to one is not something that repeats within the same
+breath, so its length is the recovered material's own.
 
 **A collision is pitched and a destruction is not.** The collision's triangle carries a note; the
 destruction ends in filtered noise with no pitch at all. That is what separates them at speed, the
 same way a hue separates two elements — and it is why neither may be retuned toward the other for
 being prettier alone.
+
+**The trap opens on noise and closes on a falling sawtooth**, the reverse of the destruction's own
+pitched-then-noise order — a harsher shape for a harsher event, and one more of the recovered
+material's own choices than this document's.
 
 ## What this leaves open
 
@@ -158,8 +169,8 @@ nothing was decided:
   collisions, and nothing above says whether they all sound, or how loud that is. Left open because
   it needs a running game to answer, and guessing at it now would be guessing.
 - **Every sound belonging to a mechanic the game does not have.** The recovered material carries
-  eight more — a bat firing, a bumper, a trap, aliens, a pickup, a lost ball. Each arrives with the
-  mechanic that causes it, and none of them is a decision this document has deferred.
+  seven more — a bat firing, a bumper, aliens, a pickup, a lost ball. Each arrives with the mechanic
+  that causes it, and none of them is a decision this document has deferred.
 - **HUD / UI chrome.** There is no score, no lives, no menu, no map — nothing needs a look for any of
   them yet.
 - **Typography beyond the one word above.** The level carries `CLEARED` and nothing else,
