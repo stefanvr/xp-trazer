@@ -61,11 +61,15 @@ Every event, what causes it, and what it leaves changed. Nothing else happens.
 | **Ball launched** | The player launches it | The ball travels, in a direction drawn from the seed. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
 | **Collision** | The ball and a boundary, a bat or a brick met — either of them may have been the one moving | The ball's direction changes, obeying the law of reflection. |
+| **Ball destroyed** | The ball met a trap | The ball returns held, at the ball start. |
 | **Element destroyed** | A collision with the ball | One fewer destructible element. |
 | **Level cleared** | The last destructible element was destroyed | The level is cleared, and nothing advances after it. |
 
 **A level is in one of three states and no others**: the ball is held, the ball is travelling, or the
-level is cleared. There is no way to lose, so nothing leaves the middle state except clearing.
+level is cleared. **Two things now leave the travelling state, and they do not leave it the same
+way**: clearing does not return, and a trap sends the ball back to held rather than forward —
+**DS-8** owns that. There is still no way to lose; a trap costs nothing yet, and nothing here ends a
+level except clearing.
 
 **Every event above is caused by something above it, or by the player.** That is what makes this list
 finished rather than merely long — an event nothing causes, or one whose result nothing reads, is
