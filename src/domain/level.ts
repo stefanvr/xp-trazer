@@ -18,7 +18,7 @@ export const BAT_LENGTH_PIXELS = BAT_LENGTH_CELLS * CELL_PIXELS;
 
 export type BrickKind = 'destructible' | 'permanent';
 
-/** A fixed thing a level places. In version one, every element is a brick. */
+/** A fixed thing a level places. Every element is a brick. */
 export type Element = { readonly kind: BrickKind };
 
 /** A cell is either empty or holds one element. */

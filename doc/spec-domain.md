@@ -7,8 +7,8 @@ Independent of any screen.
 [spec-app.md](spec-app.md); how it looks is [spec-style.md](spec-style.md); what it is built with is
 [spec-tech.md](spec-tech.md).
 
-**Scoped to version one.** Hazards, two modes, runs, lives and a map of levels are not part of it,
-and none of them is named here — a rule written three goals early is written from a worse
+**Not specified yet.** Hazards, two modes, runs, lives and a map of levels. None of them is named
+here — a rule written three goals early is written from a worse
 understanding, and this is the expensive place to be wrong.
 
 **This document states the desired state.** Where the code disagrees with a name below, the code is
@@ -28,7 +28,7 @@ The player moves bats. The ball moves itself.
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
 | **Boundary** | The level's edge. | `Boundary` |
 | **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
-| **Element** | A fixed thing a level places. In version one, every element is a brick. | `Element` |
+| **Element** | A fixed thing a level places. Every element is a brick. | `Element` |
 | **Brick** | An element that occupies space in the level. | `Brick` |
 | **Destructible brick** | A brick destroyed by a collision with the ball. | `DestructibleBrick` |
 | **Permanent brick** | A brick that is never destroyed, and that clearing ignores. | `PermanentBrick` |
@@ -46,7 +46,7 @@ The player moves bats. The ball moves itself.
 
 ## What happens
 
-Every event, what causes it, and what it leaves changed. Nothing else happens in version one.
+Every event, what causes it, and what it leaves changed. Nothing else happens.
 
 | Event | Caused by | Leaves changed |
 |---|---|---|
@@ -59,7 +59,7 @@ Every event, what causes it, and what it leaves changed. Nothing else happens in
 | **Level cleared** | The last destructible element was destroyed | The level is cleared, and nothing advances after it. |
 
 **A level is in one of three states and no others**: the ball is held, the ball is travelling, or the
-level is cleared. Version one has no way to lose, so nothing leaves the middle state except clearing.
+level is cleared. There is no way to lose, so nothing leaves the middle state except clearing.
 
 **Every event above is caused by something above it, or by the player.** That is what makes this list
 finished rather than merely long — an event nothing causes, or one whose result nothing reads, is
@@ -87,10 +87,10 @@ to the rule it meant or to nothing, never to a different rule.
 - **DS-1.8** A level authors at least one destructible element. One that authors none satisfies
   **DS-5.1** before it is played, so it is cleared before the player touches it.
 
-**A level may still author an element where a bat's held ball would rest, and version one does not
-refuse it.** Launching would drive the ball straight into that element on the first step — a brick
+**A level may still author an element where a bat's held ball would rest, and nothing here refuses
+it.** Launching would drive the ball straight into that element on the first step — a brick
 lost to the level's own layout rather than to the player — which is the same family of mistake as
-**DS-1.7** and **DS-1.8**: a position play could not produce. Left unrefused because version one has
+**DS-1.7** and **DS-1.8**: a position play could not produce. Left unrefused because there is
 exactly one authored level and it does not do this; a second level's author should meet this sentence
 before meeting the bug.
 
@@ -202,7 +202,7 @@ A level is what was authored and never changes. The game state is everything tha
 would mean a state that answers *what just happened*, which is true only until the next step and
 wrong for every reader who arrives after it.
 
-**The ball's speed is state, even though nothing in version one changes it.** **DS-2.5** fixes it for
+**The ball's speed is state, even though nothing here changes it.** **DS-2.5** fixes it for
 now, but speed is the kind of thing a later rule alters as a game goes on, and something that changes
 over time belongs to the state rather than to the level or to a constant. Putting it here costs
 nothing now and means such a rule adds a rule rather than a re-modelling.
@@ -233,7 +233,7 @@ this looks harmless: the simulation may not consult the clock, and a timestamp i
 **Nothing is authored and nothing is looked up.** A level authors elements and bats; events are
 produced by play, so there is no reference data here.
 
-## Not named, because version one does not need them
+## Not named, because nothing here needs them
 
 Named as absent rather than left to be rediscovered: **hazard**, **run**, **life**, **arcade**,
-**journey**, **map**, **unlocked**, **selection**. None of them is part of version one.
+**journey**, **map**, **unlocked**, **selection**. None of them is specified.

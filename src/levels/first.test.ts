@@ -10,7 +10,7 @@ import { destructibleCount, levelFromRows } from '../domain/level';
  * must satisfy is checked by `createGameState`, so starting one is the whole test — DS-1.3, DS-1.6
  * and DS-1.7 each refuse there.
  */
-describe('the level version one ships', () => {
+describe('the authored level the game ships', () => {
   it('satisfies every rule a level has to satisfy', () => {
     expect(() => createGameState(levelFromRows(FIRST_LEVEL), 0)).not.toThrow();
   });
