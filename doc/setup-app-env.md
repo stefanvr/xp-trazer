@@ -33,14 +33,21 @@ one that happens after it is merged, which makes `main` the place CI failures ar
 ### Verifying that it actually deployed
 
 ```bash
-bash scripts/verify-deployment.sh <the pages url> "$(git rev-parse origin/main)"
+bash scripts/verify-deployment.sh https://stefanvr.github.io/xp-trazer/ "$(git rev-parse origin/main)"
 ```
-
-The workflow runs this itself, and it is worth running by hand whenever something looks wrong.
 
 **It fetches the page and reads the `build-identifier` meta tag** — never asking GitHub whether the
 deployment succeeded (**SF-8**). Which failures that separates, and why the control API cannot, is in
 [lessons/github-pages.md](lessons/github-pages.md).
+
+The workflow runs it itself after publishing. It is also **the one command that says whether the
+default branch is actually live**, so two routines call it by hand: a session start runs it, and a
+landing that chose not to wait for its deployment is what leaves it something to find.
+
+**While a run is still in flight it reports `deployed <old sha>, expected <new sha>`** — the same
+message a genuinely stale deployment gives, because from outside the two are the same thing and only
+time separates them. Wait and run it again. If it still says so once the run should have finished,
+the deployment is stale rather than slow.
 
 ### The default branch is the host's opinion, not ours
 

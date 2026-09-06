@@ -2,9 +2,15 @@
 
 ## AI mandatory instructions for local dev environment
 
-Read it **before running any command**: doc/setup-ai-env.md 
+Read it **before running any command**: doc/setup-ai-env.md — its rules half is what a session needs
+to work here, and its evidence half is why each of those rules exists.
 
 ## Workflow
+
+### Session
+
+Every session opens with the `session` skill — quick by default, full on a machine not already known
+to work, or the moment a check answers badly.
 
 ### Bootstrap
 
@@ -12,8 +18,8 @@ A project is brought into being in this order:
 
 1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
    Everything it produces is draft and lands in `doc/brainstorm/`.
-2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the `scope`
-   skill in `create` mode.
+2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the
+   `scope-create` skill.
 3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
    `app` skill), `doc/spec-style.md` (the `style` skill), `doc/spec-tech.md` (the `tech` skill) —
    **in any order**. No dependency is implied between them, so none of them blocks another.
@@ -46,11 +52,11 @@ before it is written.
   indistinguishable from the outside. **Never on a branch a second person is working on**, where
   rewriting the history costs them theirs.
 * Always let the user approve a merge to main for release
-* On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/` and calls
-  `scope check`, which ticks the goals this landing finished and, where the landing reaches the
-  overarching goal, clears it and leaves a pointer to what comes next
+* On approval, run the `land` skill **before** merging, quick by default — it clears
+  `doc/scratchpad/` and calls `scope-check`, which ticks the goals this landing finished and, where
+  the landing reaches the overarching goal, clears it and leaves a pointer to what comes next
 * **Setting the next overarching goal is never part of a landing** — it is bootstrap step 2, run as
-  `scope create`, separately and whenever the owner chooses
+  `scope-create`, separately and whenever the owner chooses
 * **Merge with `--no-ff`, so every landing leaves one commit named for what landed** — `Merge
   <branch>: <what landed>`. A fast-forward loses the boundary, and that boundary is the only place
   the landing reads as one thing rather than as a run of commits. Never rewrite `main` to give an
@@ -121,7 +127,7 @@ It reaches code comments too, which cite the specifications and go stale the sam
 project does not use is a lesson held for the project that does — never a choice, and never a
 backlog.
 
-**Active lessons — read these at session start:**
+**Active lessons — the technologies this project uses that have one written:**
 
 * `doc/lessons/node.md`
 * `doc/lessons/playwright.md`
@@ -134,8 +140,6 @@ to read. Where the list and those two disagree, **the list is wrong**. It can on
 moments, and both are moments something else is already being edited: **a chosen technology gains a
 lesson file, or a lesson file's technology gets chosen.**
 
-**Reading order at session start.** `doc/setup-ai-env.md` before any command, then the active lessons
-above, then
-`doc/guide-collaboration.md` — it carries how the session opens — then `doc/guide-general.md` with
-`doc/guide-override.md` beside it, never instead of it, then `doc/scope.md`, then whichever document
-above owns the decision in front of you.
+**What a session reads at its start, and in which order, is the `session` skill's** — it differs by
+mode, and `doc/setup-ai-env.md` comes before any command in both. After the opening it is whichever
+document above owns the decision in front of you.
