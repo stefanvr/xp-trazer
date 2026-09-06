@@ -145,6 +145,42 @@ button.play:disabled {
   border-radius: 2px;
 }
 
+/*
+ * The level preview's rooms are up to 1280×800 — src/style.css's own rule for the played game, and
+ * every room needs it for the same reason: larger than the window on every mode. The canvas keeps
+ * its real pixel `width`/`height` attributes; only the box it is shown in shrinks.
+ *
+ * A fixed budget for the text above it (`calc(100vh - Nrem)`) was tried first and rejected: the lede
+ * wraps to a different number of lines depending on the window, so any fixed number is wrong for
+ * some width. `main.levels` instead fills the viewport as a column and gives the canvas's wrapper
+ * whatever is left after the text takes what it needs, so the canvas fits whatever remains.
+ */
+main.levels {
+  max-width: none;
+  box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main.levels .stage-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+main.levels #stage {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin-top: 0;
+}
+
 /* The dev index's list of pages — no bullets, one link per line, same width as the lede above it. */
 #pages {
   list-style: none;

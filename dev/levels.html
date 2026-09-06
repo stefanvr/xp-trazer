@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trazer — level preview</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="levels">
+      <h1>The original's rooms, previewed</h1>
+      <p class="lede">
+        Every room in <code>src/levels/rooms.generated.ts</code>, played as
+        <code>src/levels/porting.ts</code> plays it — the same conversion the game draws from, never a
+        second copy of it. ArrowUp and ArrowDown step to the previous or next room, cycling through
+        all 64 including the ones the rules cannot play. Each is drawn once, at its own size, by the
+        real <code>draw</code>: this is a preview, not a play, so nothing here steps a simulation.
+        Dev-only — this page is never built.
+      </p>
+      <p class="readout">
+        room <span data-testid="room">—</span>
+        &middot; <span data-testid="playable">—</span>
+      </p>
+      <div class="stage-wrap">
+        <canvas id="stage" width="320" height="200"></canvas>
+      </div>
+      <p><a href="./index.html">&larr; dev pages</a></p>
+    </main>
+    <script type="module" src="./levels.ts"></script>
+  </body>
+</html>
