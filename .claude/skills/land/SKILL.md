@@ -1,6 +1,6 @@
 ---
 name: land
-description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope skill, which marks what this landing finished and asks whether the overarching goal is reached. Use when the owner approves a merge to main, before merging.
+description: Run the cleanup a goal needs at the moment it lands — the point where a merge to main is approved. Reads doc/scratchpad/, gives every open item one of three fates, and clears the directory; then hands doc/scope.md to the scope-check skill, which marks what this landing finished and asks whether the overarching goal is reached. Use when the owner approves a merge to main, before merging.
 ---
 
 # Land
@@ -9,9 +9,10 @@ description: Run the cleanup a goal needs at the moment it lands — the point w
 main. One task — clearing `doc/scratchpad/`, on every landing. Further landing tasks go here as they
 earn their place.
 
-**Not here.** `doc/scope.md`. Marking which of its steps this landing finished, whether the
-overarching goal is reached, and what the next one is, all belong to [scope](../scope/SKILL.md);
-this skill calls it on every landing and writes nothing to that document itself.
+**Not here.** `doc/scope.md`. Marking which of its steps this landing finished and whether the
+overarching goal is reached belongs to [scope-check](../scope-check/SKILL.md), and what the next goal
+is to [scope-create](../scope-create/SKILL.md); this skill calls the first on every landing, never the
+second, and writes nothing to that document itself.
 Nor the git mechanics — branch before a goal, commit task-sized, push before returning, approval
 before merging, delete the branch after — all in [CLAUDE.md](../../CLAUDE.md), which is also where the
 hook that calls this skill lives.
@@ -67,14 +68,14 @@ state that looks like progress and is not.
 
 ## What this landing did to the scope
 
-**Run [scope](../scope/SKILL.md) in `check` mode on every landing, and stop reading here.** Not only
+**Run [scope-check](../scope-check/SKILL.md) on every landing, and stop reading here.** Not only
 when the overarching goal looks reached — a landing that finishes one step of a goal has changed the
-scope too, and `check` is what records it: it marks the steps this landing finished, and only then
+scope too, and that skill is what records it: it marks the steps this landing finished, and only then
 asks whether the goal itself is now reached.
 
 That skill owns the document, the marking, the proposal to the owner, and what it writes in the
 goal's place. **This skill writes nothing to `doc/scope.md` itself**, which is why every landing goes
-through `check` rather than reaching for the file when the marking looks obvious.
+through `scope-check` rather than reaching for the file when the marking looks obvious.
 
 **A scope holding no goal has nothing to check.** That is a state the project is allowed to sit in —
 a goal is cleared when it is reached, and the next one is set whenever the owner chooses — so open
@@ -82,7 +83,7 @@ the document, find no goal, and move on. It is not a finding, and it is not a re
 
 **Landing does not set the next goal.** Not by writing one, and not by clearing the way for one. A
 landing that decided what gets built next would be doing two jobs, and setting the overarching goal
-is bootstrap step 2 with its own place in the sequence — `scope create`, separately, whenever the
+is bootstrap step 2 with its own place in the sequence — `scope-create`, separately, whenever the
 owner chooses.
 
 ## What it touches

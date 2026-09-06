@@ -12,8 +12,8 @@ A project is brought into being in this order:
 
 1. **Brainstorm the global idea** — an interview with the owner, run by the `brainstorm` skill.
    Everything it produces is draft and lands in `doc/brainstorm/`.
-2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the `scope`
-   skill in `create` mode.
+2. **Scope the first version** — the overarching goal, written to `doc/scope.md` by the
+   `scope-create` skill.
 3. **Write the minimal specs** — `doc/spec-domain.md` (the `domain` skill), `doc/spec-app.md` (the
    `app` skill), `doc/spec-style.md` (the `style` skill), `doc/spec-tech.md` (the `tech` skill) —
    **in any order**. No dependency is implied between them, so none of them blocks another.
@@ -47,10 +47,10 @@ before it is written.
   rewriting the history costs them theirs.
 * Always let the user approve a merge to main for release
 * On approval, run the `land` skill **before** merging — it clears `doc/scratchpad/` and calls
-  `scope check`, which ticks the goals this landing finished and, where the landing reaches the
+  `scope-check`, which ticks the goals this landing finished and, where the landing reaches the
   overarching goal, clears it and leaves a pointer to what comes next
 * **Setting the next overarching goal is never part of a landing** — it is bootstrap step 2, run as
-  `scope create`, separately and whenever the owner chooses
+  `scope-create`, separately and whenever the owner chooses
 * **Merge with `--no-ff`, so every landing leaves one commit named for what landed** — `Merge
   <branch>: <what landed>`. A fast-forward loses the boundary, and that boundary is the only place
   the landing reads as one thing rather than as a run of commits. Never rewrite `main` to give an

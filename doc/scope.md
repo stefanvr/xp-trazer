@@ -11,13 +11,14 @@ archived, because the commit history already records what landed.
 
 **Reaching a goal and setting the next one are two steps, not one.** The goal is cleared when it is
 reached, leaving only a pointer to what comes next; the next goal is set later, whenever a new scope
-is chosen. `.claude/skills/scope/SKILL.md` owns both, and neither happens inside a landing.
+is chosen. A skill owns each — `.claude/skills/scope-check/SKILL.md` and
+`.claude/skills/scope-create/SKILL.md` — and neither happens inside a landing.
 
 **Expected to change mid-flight**, on the branch of whatever found the reason.
 
 **A goal broken into steps ticks each one as it lands**, in place and with its wording untouched, so
 what is left is read here rather than reconstructed from the history. The tick is written by
-`.claude/skills/scope/SKILL.md` in `check` mode, which every landing runs.
+`.claude/skills/scope-check/SKILL.md`, which every landing runs.
 
 **No backlog, no parked list, no next-up** — `.claude/skills/land/SKILL.md` carries the argument.
 
@@ -33,4 +34,4 @@ which is what owning them means, and how a decision was reached is in the histor
 ---
 
 **No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
-have left open, then `scope create` to set the next one.
+have left open, then `scope-create` to set the next one.
