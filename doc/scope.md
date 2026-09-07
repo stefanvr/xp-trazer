@@ -33,34 +33,5 @@ which is what owning them means, and how a decision was reached is in the histor
 
 ---
 
-## A level you can lose
-
-**Done means** a level can be lost as well as cleared — a trap destroys the ball, the last of a
-player's five lives ends the level, and the page draws a new room — and no bat can leave the ball on
-a path that repeats for ever.
-
-**Lives belong to a player, not to a level.** A level is drawn, played and replaced; a player is what
-a later arcade mode would carry a life count across from one room to the next, so this is where that
-separation starts rather than something arcade mode would have to retrofit into a level that never
-expected to outlive one room. This scope does not build arcade mode and decides nothing about it —
-only that the count this goal adds is asked of the right thing from the rule that first reads it.
-
-**The path is part of the edge rather than a goal beside it.** A ball keeps the heading it was
-launched on until something turns it, and today only the long face of a bat does: an end reverses one
-component and leaves the rest, so a ball can be put on a circuit it never leaves. Such a ball meets
-no trap and costs no life. A level that can be lost while still holding a state in which losing
-cannot happen is not the thing, so the two finish together or neither does.
-
-**Where it stops.** The glass refractor and the monster generator get no behaviour and stay conceded;
-they are a later scope's. A run's lives and score are remembered across the rooms it draws, and
-nothing else is — a new run starts exactly as the page's own first one does, and there is still no
-map and no selection.
-
-**It carries no unmade technology decision.** Nothing in it needs one.
-
-| ✓ | Step | What it delivers |
-|---|---|---|
-| ✓ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
-| ✓ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
-| ✓ | **A run has lives, a score, and a way to continue** | A run starts with five lives and no score. A ball destroyed spends one life; a level cleared adds a point and lets the player continue into the run's next level, keeping both. |
-| ✓ | **A run can end, and be started again** | A run out of lives shows its score, styled as a loss where a clear is styled as a win, and space starts a new run — five lives, no score, and a level of its own. |
+**No goal is set.** The last one was reached and cleared. Run `todo-discovery` for what the documents
+have left open, then `scope-create` to set the next one.
