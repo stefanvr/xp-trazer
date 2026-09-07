@@ -102,7 +102,8 @@ nothing to put in any of them, and adding one would be a surface with no step be
 
 The screen holds the level, and a line of readouts beside it: the build identifier that
 [spec-tech.md](spec-tech.md) keeps, the collision count, the position of a bat group the level
-actually has, how many destructible bricks are left, and which room is being played.
+actually has, how many destructible bricks are left, which room is being played, how many lives the
+run has left, and the run's score.
 
 **The bat readout follows a group the level has, and names which.** A level may author only one of
 the two groups, so a readout fixed to one of them reads zero for ever in every level without it —
