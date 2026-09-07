@@ -173,6 +173,12 @@ nothing was decided:
   that causes it, and none of them is a decision this document has deferred.
 - **HUD / UI chrome.** There is no score, no lives, no menu, no map — nothing needs a look for any of
   them yet.
+- **A trap embedded in the boundary, versus one merely beside it.** The rules already give the two
+  cases different exposure — a trap the level places at the edge is reachable from the room side
+  only, the same way the original's is — but nothing here gives them different looks: a trap's shape
+  and glow are the same wherever a level places it. Whether the original's border-embedded trap read
+  as fused with the wall it replaced, and whether this project's own boundary should ever do the
+  same, is undecided rather than answered by the palette above.
 - **Typography beyond the one word above.** The level carries `CLEARED` and nothing else,
   so the face is chosen and nothing else about type is — no scale, no second weight, no body text.
 - **What would make it visually wrong.** Asked in brainstorm, answered "no idea" — free rather than
