@@ -1,6 +1,6 @@
 import { createGameState, boundaryOf, type GameState } from '../src/domain/simulation';
 import { levelFromRows, type Level } from '../src/domain/level';
-import { draw } from '../src/render/draw';
+import { draw, drawGameOver } from '../src/render/draw';
 import {
   BACKGROUND,
   BALL,
@@ -21,8 +21,9 @@ import {
  * CSS glow standing in for the canvas `shadowBlur` the real renderer uses: a table row is not a
  * canvas, and the point of this page is the colours, not a second, smaller game.
  *
- * **CLEARED is the one thing a chip cannot show.** Typography has to be seen as text, so that panel
- * alone still calls the real `draw()` against a real, cleared `GameState` — the only rendering this
+ * **Typography is the one thing a chip cannot show.** CLEARED and the game-over score are both text,
+ * so those two panels still call the real renderer — `draw()` against a real, cleared `GameState` for
+ * the first, and `draw()` beside the real `drawGameOver()` for the second — the only rendering this
  * page still does.
  */
 
@@ -108,3 +109,14 @@ const clearedExtent = boundaryOf(clearedState);
 clearedCanvas.width = clearedExtent.width;
 clearedCanvas.height = clearedExtent.height;
 draw(context2dOf(clearedCanvas), clearedState);
+
+// Game over — the same level, played but not cleared, with the run's score drawn over it the way
+// drawGameOver actually draws it: a separate call, over draw()'s own, never inside it.
+const gameOverState = createGameState(clearedLevel, 0);
+const gameOverCanvas = required<HTMLCanvasElement>('#game-over');
+const gameOverExtent = boundaryOf(gameOverState);
+gameOverCanvas.width = gameOverExtent.width;
+gameOverCanvas.height = gameOverExtent.height;
+const gameOverContext = context2dOf(gameOverCanvas);
+draw(gameOverContext, gameOverState);
+drawGameOver(gameOverContext, gameOverExtent.width, gameOverExtent.height, 3);
