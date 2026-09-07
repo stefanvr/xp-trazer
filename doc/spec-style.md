@@ -103,21 +103,20 @@ leaving.
 
 ### Game over
 
+Two lines, stacked and both centred, rather than **Cleared**'s one.
+
 | What | Decision |
 |---|---|
-| The text | The run's score, as a plain number — there is no word beside it |
+| The text | `GAME OVER` on the first line, `SCORE: ` followed by the run's score on the second |
 | Face | The same system sans-serif stack as **Cleared**. Nothing about this needs a face of its own |
-| Size | The same one and a half cells tall |
+| Size | The same one and a half cells tall, both lines |
+| Tracking | The same wide tracking as **Cleared**, on both lines — `GAME OVER` is a run of uppercase letters for the same reason `CLEARED` is, and the score line keeps the same rhythm rather than reading as a second typeface |
 | Color | `#ff2b2b`, the trap's red. **It is the hue that already meant danger, and it comes free exactly when the danger has ended the run it threatened** — the same reasoning **Cleared**'s green follows, read in the hazard's hue rather than the objective's |
-| Placement | Centred on the level, drawn over everything — the same place **Cleared** appears, since the two are never on screen together |
+| Placement | Centred on the level as a pair, drawn over everything — the same place **Cleared** appears, since the two are never on screen together |
 | Glow | The same edge glow as everything else |
 
-**No tracking, because there are no letters to track.** **Cleared**'s tracking exists to keep a run of
-uppercase letters from reading as shouted; a number is not a word, and giving its digits the same
-spacing would be applying a rule to something it was never written for.
-
-**No panel, no box, no dimming — the same reason as Cleared's.** The level stays lit behind the score
-the way it stays lit behind the word; a run that is over is still the level the player was just
+**No panel, no box, no dimming — the same reason as Cleared's.** The level stays lit behind the two
+lines the way it stays lit behind the word; a run that is over is still the level the player was just
 playing.
 
 ## Sound
