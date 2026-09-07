@@ -7,13 +7,14 @@ import { BAT_LENGTH_PIXELS, CELL_PIXELS, elementAt, levelFromRows } from './leve
 const NOTHING_DESTROYED: ReadonlySet<number> = new Set();
 const RADIUS = 9;
 
-// Four columns, four rows. A destructible brick at (1,1) and a permanent one at (2,1).
-const LEVEL = levelFromRows(['-*..', '.dp.', '....', '....']);
+// Four columns, four rows. A destructible brick at (1,1), a permanent one at (2,1), a trap at (1,2).
+const LEVEL = levelFromRows(['-*..', '.dp.', '.h..', '....']);
 const NO_BATS = LEVEL.bats.map((bat) => ({ ...bat, position: -1000 }));
 
 // An element is named by its index in the level, not by the cell it sits in — DS-4.5.
 const DESTRUCTIBLE = elementAt(LEVEL, 1, 1)?.element ?? -1;
 const PERMANENT = elementAt(LEVEL, 2, 1)?.element ?? -1;
+const TRAP = elementAt(LEVEL, 1, 2)?.element ?? -1;
 
 const at = (x: number, y: number, bats = NO_BATS) =>
   obstacleAt(LEVEL, NOTHING_DESTROYED, bats, x, y, RADIUS);
@@ -59,6 +60,12 @@ describe('what the ball is inside', () => {
     expect(hit).toEqual({ kind: 'element', index: PERMANENT, destructible: false });
   });
 
+  it('finds a trap, and never calls it an element — DS-6.8 needs the two told apart', () => {
+    const hit = at(CELL_PIXELS + 16, 2 * CELL_PIXELS + 16);
+
+    expect(hit).toEqual({ kind: 'trap', index: TRAP });
+  });
+
   it('finds nothing where a brick has already been destroyed', () => {
     const gone = new Set([DESTRUCTIBLE]);
 
@@ -74,7 +81,18 @@ describe('what the ball is inside', () => {
       kind: 'bat',
       orientation: 'horizontal',
       along: 16 / BAT_LENGTH_PIXELS,
+      across: 0.5,
     });
+  });
+
+  it('says where across a bat is met, for DS-2.8 to read at an end', () => {
+    const bat = { orientation: 'horizontal', line: 3, position: 0 } as const;
+
+    const near = at(16, 3 * CELL_PIXELS + 4, [bat]);
+    const far = at(16, 3 * CELL_PIXELS + 20, [bat]);
+
+    expect(near?.kind === 'bat' && near.across).toBeCloseTo(4 / CELL_PIXELS);
+    expect(far?.kind === 'bat' && far.across).toBeCloseTo(20 / CELL_PIXELS);
   });
 
   it('reports the far end of a bat as one, not beyond it', () => {

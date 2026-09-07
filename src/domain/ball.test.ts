@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deflectedByBat, heldAt, launchVelocity, BALL_PIXELS_PER_SECOND } from './ball';
+import { deflectedByBat, deflectedByEnd, heldAt, launchVelocity, BALL_PIXELS_PER_SECOND } from './ball';
 import { CELL_PIXELS, levelFrom, levelFromRows } from './level';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
@@ -106,6 +106,43 @@ describe('a bat turning the ball', () => {
   it('gives a ball that was travelling on one axis a heading off it', () => {
     // The whole point: without this the ball retraces one line for ever.
     expect(deflectedByBat(straightUp, 'horizontal', 0.1).x).not.toBe(0);
+  });
+});
+
+describe("a bat's end turning the ball, which is DS-2.8", () => {
+  const travellingLeft = { x: -BALL_PIXELS_PER_SECOND, y: 0 };
+
+  it('sends it one way when met on the near half', () => {
+    expect(deflectedByEnd(travellingLeft, 'horizontal', 0.1).y).toBeLessThan(0);
+  });
+
+  it('sends it the other way when met on the far half', () => {
+    expect(deflectedByEnd(travellingLeft, 'horizontal', 0.9).y).toBeGreaterThan(0);
+  });
+
+  it('has no middle zone that leaves the ball alone, unlike a long face', () => {
+    // An end is one cell wide: DS-2.4 already reversed the axis along the bat's length here, so
+    // there is no third, unturned zone the way DS-2.6 has one on the long face.
+    expect(deflectedByEnd(travellingLeft, 'horizontal', 0.5).y).not.toBe(0);
+  });
+
+  it("turns the other axis for a vertical bat's end", () => {
+    const travellingUp = { x: 0, y: -BALL_PIXELS_PER_SECOND };
+
+    expect(deflectedByEnd(travellingUp, 'vertical', 0.1).x).toBeLessThan(0);
+    expect(deflectedByEnd(travellingUp, 'vertical', 0.9).x).toBeGreaterThan(0);
+  });
+
+  it('turns the ball without speeding it up, which DS-2.5 forbids', () => {
+    for (const across of [0, 0.1, 0.5, 0.9, 1]) {
+      const turned = deflectedByEnd(travellingLeft, 'horizontal', across);
+
+      expect(Math.hypot(turned.x, turned.y)).toBeCloseTo(BALL_PIXELS_PER_SECOND);
+    }
+  });
+
+  it("gives a ball that was travelling on one axis a heading off it, so a bat's end cannot repeat a line for ever", () => {
+    expect(deflectedByEnd(travellingLeft, 'horizontal', 0.1).y).not.toBe(0);
   });
 });
 

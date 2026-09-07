@@ -4,6 +4,7 @@ import { CELL_PIXELS, levelFrom, levelFromRows, ONE_CELL, type PlacedElement } f
 import { isPlayable, unplayableReasons } from './playable';
 import { FIRST_LEVEL } from '../levels/first';
 import { clearingProofLevel } from '../levels/clearing-proof';
+import { collisionProofLevel } from '../levels/collision-proof';
 
 const brick = (column: number, row: number): PlacedElement => ({
   kind: 'destructible',
@@ -32,6 +33,10 @@ describe('a level says whether it can be played', () => {
     expect(unplayableReasons(clearingProofLevel())).toEqual([]);
   });
 
+  it('says nothing is wrong with the level the collision proof plays', () => {
+    expect(unplayableReasons(collisionProofLevel())).toEqual([]);
+  });
+
   it('refuses a level that places a kind no rule gives behaviour to (DS-7.1)', () => {
     const level = levelFrom({
       ...playableParts,
@@ -40,6 +45,14 @@ describe('a level says whether it can be played', () => {
     expect(unplayableReasons(level)).toContain(
       'DS-7.1 the level places an element of a kind no rule gives behaviour to',
     );
+  });
+
+  it('plays a level placing a trap — DS-8 gives it a rule, so DS-7.1 no longer refuses it', () => {
+    const level = levelFrom({
+      ...playableParts,
+      elements: [...playableParts.elements, { ...brick(3, 3), kind: 'horizontalTrap' }],
+    });
+    expect(unplayableReasons(level)).toEqual([]);
   });
 
   it('plays a level whose element occupies more than one cell, which DS-4.4 now answers', () => {

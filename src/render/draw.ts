@@ -1,6 +1,6 @@
 import { boundaryOf, isCleared, type GameState } from '../domain/simulation';
 import { batRect } from '../domain/collision';
-import { CELL_PIXELS, cellsOf, elementAt, type Bat, type Level } from '../domain/level';
+import { CELL_PIXELS, cellsOf, elementAt, isTrapKind, type Bat, type Level } from '../domain/level';
 import {
   BACKGROUND,
   BALL,
@@ -11,9 +11,13 @@ import {
   CLEARED_TRACKING,
   CLEARED_WORD,
   DESTRUCTIBLE_BRICK,
+  GAME_OVER_TEXT,
+  GAME_OVER_WORD,
   GLOW_PIXELS,
   HORIZONTAL_BAT,
   PERMANENT_BRICK,
+  SCORE_LABEL,
+  TRAP,
   VERTICAL_BAT,
 } from './palette';
 
@@ -42,7 +46,11 @@ function drawElements(
     if (first === undefined || last === undefined) continue;
     if (elementAt(level, first.column, first.row)?.element !== index) continue;
 
-    const color = element.kind === 'destructible' ? DESTRUCTIBLE_BRICK : PERMANENT_BRICK;
+    const color = element.kind === 'destructible'
+      ? DESTRUCTIBLE_BRICK
+      : isTrapKind(element.kind)
+        ? TRAP
+        : PERMANENT_BRICK;
 
     context.shadowColor = color;
     context.fillStyle = color;
@@ -75,17 +83,42 @@ function drawBats(context: CanvasRenderingContext2D, bats: readonly Bat[]): void
 }
 
 /**
- * spec-style's one piece of text, and spec-app's reason for it: a ball that has merely stopped is
- * indistinguishable from a ball that has stopped working.
+ * Draws one line of tracked, centred text — spec-style's `CLEARED` and both lines of its *Game
+ * over*, which all track the same way.
  *
  * Letters are placed one at a time rather than through the context's `letterSpacing`, which is recent
  * enough that not every browser has it — and it fails by silently ignoring the value, which would
  * leave the word set solid with nothing to show that a decision had been dropped.
+ *
+ * Assumes `font`, `textAlign: 'center'` and `textBaseline: 'middle'` are already set: every caller
+ * shares them, so setting them once per caller rather than once per line is not repetition, it is one
+ * fewer place the two could disagree.
+ */
+function drawTrackedLine(
+  context: CanvasRenderingContext2D,
+  text: string,
+  centerX: number,
+  y: number,
+  tracking: number,
+): void {
+  const letters = [...text];
+  const widths = letters.map((letter) => context.measureText(letter).width);
+  const across = widths.reduce((sum, each) => sum + each, 0) + tracking * (letters.length - 1);
+
+  let at = centerX - across / 2;
+  for (const [index, letter] of letters.entries()) {
+    const advance = widths[index]!;
+    context.fillText(letter, at + advance / 2, y);
+    at += advance + tracking;
+  }
+}
+
+/**
+ * spec-style's `Cleared`, and spec-app's reason for it: a ball that has merely stopped is
+ * indistinguishable from a ball that has stopped working.
  */
 function drawCleared(context: CanvasRenderingContext2D, width: number, height: number): void {
   const size = CELL_PIXELS * CLEARED_TEXT_CELLS;
-  const tracking = size * CLEARED_TRACKING;
-  const letters = [...CLEARED_WORD];
 
   context.font = `${size}px ${CLEARED_FACE}`;
   context.textAlign = 'center';
@@ -93,15 +126,38 @@ function drawCleared(context: CanvasRenderingContext2D, width: number, height: n
   context.shadowColor = CLEARED_TEXT;
   context.fillStyle = CLEARED_TEXT;
 
-  const widths = letters.map((letter) => context.measureText(letter).width);
-  const across = widths.reduce((sum, each) => sum + each, 0) + tracking * (letters.length - 1);
+  drawTrackedLine(context, CLEARED_WORD, width / 2, height / 2, size * CLEARED_TRACKING);
+}
 
-  let at = (width - across) / 2;
-  for (const [index, letter] of letters.entries()) {
-    const advance = widths[index]!;
-    context.fillText(letter, at + advance / 2, height / 2);
-    at += advance + tracking;
-  }
+/**
+ * spec-style's *Game over*: two lines where **Cleared** draws one, in `GAME_OVER_TEXT` rather than
+ * `CLEARED_TEXT`, tracked the same way.
+ *
+ * A run and a level are separate things (doc/spec-domain.md's **DS-9**), so this takes what it needs
+ * rather than a `GameState` — nothing here is the renderer of a level.
+ */
+export function drawGameOver(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  score: number,
+): void {
+  const size = CELL_PIXELS * CLEARED_TEXT_CELLS;
+  const tracking = size * CLEARED_TRACKING;
+  // Half a line's height apart, so the two sit stacked rather than overlapping or drifting loose.
+  const lineOffset = size * 0.6;
+
+  context.save();
+  context.shadowBlur = GLOW_PIXELS;
+  context.shadowColor = GAME_OVER_TEXT;
+  context.fillStyle = GAME_OVER_TEXT;
+  context.font = `${size}px ${CLEARED_FACE}`;
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+
+  drawTrackedLine(context, GAME_OVER_WORD, width / 2, height / 2 - lineOffset, tracking);
+  drawTrackedLine(context, `${SCORE_LABEL} ${score}`, width / 2, height / 2 + lineOffset, tracking);
+  context.restore();
 }
 
 export function draw(context: CanvasRenderingContext2D, state: GameState): void {

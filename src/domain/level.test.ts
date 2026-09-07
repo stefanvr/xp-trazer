@@ -24,6 +24,13 @@ describe('a level authored from rows', () => {
     expect(elementAt(level, 0, 1)?.kind).toBe('permanent');
   });
 
+  it('reads a trap off the grid, DS-8 alongside DS-4.2 and DS-4.3\'s bricks', () => {
+    const level = levelFromRows(['*hv', '-..']);
+
+    expect(elementAt(level, 1, 0)?.kind).toBe('horizontalTrap');
+    expect(elementAt(level, 2, 0)?.kind).toBe('verticalTrap');
+  });
+
   it('leaves a cell empty where nothing was written', () => {
     const level = levelFromRows(['*d-']);
 

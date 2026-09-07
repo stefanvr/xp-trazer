@@ -27,8 +27,6 @@ import type { ImportedRoom } from './room-notation';
  */
 const PORTED_KIND: Partial<Record<ElementKind, ElementKind | undefined>> = {
   glassRefractor: undefined,
-  horizontalTrap: undefined,
-  verticalTrap: undefined,
   monsterGenerator: 'permanent',
   bumper: 'permanent',
 };

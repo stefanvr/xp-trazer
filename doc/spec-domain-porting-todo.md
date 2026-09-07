@@ -20,7 +20,7 @@ exactly this list and nothing else.
 |---|---|---|---|
 | P-1 | *Ended.* **DS-1.4** now places the held ball at the start the room authors, which is the rule this concession was waiting for. The number stays so a citation of it resolves | | |
 | P-2 | **DS-7.1** glass refractor | Left out of the played level | The refractor has behaviour |
-| P-3 | **DS-7.1** horizontal and vertical trap | Left out of the played level | A trap has behaviour |
+| P-3 | *Ended.* **DS-8** now gives a trap a rule — it destroys the ball rather than being left out. The number stays so a citation of it resolves | | |
 | P-4 | **DS-7.1** monster generator | Stands as a permanent brick, keeping its footprint and its place | The generator has behaviour |
 | P-5 | **DS-7.1** bumper | Stands as a permanent brick, keeping its footprint and its place | The bumper has behaviour |
 

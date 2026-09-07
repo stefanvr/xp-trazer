@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { draw } from './draw';
+import { draw, drawGameOver } from './draw';
 import { batRect } from '../domain/collision';
 import { createGameState } from '../domain/simulation';
 import { CELL_PIXELS, elementAt, levelFrom, levelFromRows } from '../domain/level';
-import { CLEARED_WORD } from './palette';
+import { CLEARED_WORD, GAME_OVER_TEXT, GAME_OVER_WORD, PERMANENT_BRICK, SCORE_LABEL, TRAP } from './palette';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -18,13 +18,24 @@ type Rect = { x: number; y: number; w: number; h: number };
 function recordingContext(): {
   context: CanvasRenderingContext2D;
   rects: Rect[];
+  fills: string[];
   letters: string[];
+  letterYs: number[];
 } {
   const rects: Rect[] = [];
+  const fills: string[] = [];
   const letters: string[] = [];
+  const letterYs: number[] = [];
+  let currentFill = '';
   const context = {
-    fillRect: (x: number, y: number, w: number, h: number) => void rects.push({ x, y, w, h }),
-    fillText: (text: string) => void letters.push(text),
+    fillRect: (x: number, y: number, w: number, h: number) => {
+      rects.push({ x, y, w, h });
+      fills.push(currentFill);
+    },
+    fillText: (text: string, _x: number, y: number) => {
+      letters.push(text);
+      letterYs.push(y);
+    },
     // Every letter the same width, which is all the placement arithmetic needs to be exercised.
     measureText: () => ({ width: 20 }),
     strokeRect: () => {},
@@ -33,7 +44,14 @@ function recordingContext(): {
     fill: () => {},
     save: () => {},
     restore: () => {},
-    fillStyle: '',
+    // fillStyle is read back by fillRect above, via an accessor — the recorder needs to see what
+    // the renderer set it to just before each shape, not only the shape itself.
+    get fillStyle() {
+      return currentFill;
+    },
+    set fillStyle(value: string) {
+      currentFill = value;
+    },
     strokeStyle: '',
     shadowColor: '',
     shadowBlur: 0,
@@ -42,7 +60,7 @@ function recordingContext(): {
     textAlign: '',
     textBaseline: '',
   };
-  return { context: context as unknown as CanvasRenderingContext2D, rects, letters };
+  return { context: context as unknown as CanvasRenderingContext2D, rects, fills, letters, letterYs };
 }
 
 describe('the renderer', () => {
@@ -92,6 +110,22 @@ describe('the renderer', () => {
     expect(short.rects.length).toBe(whole.rects.length - 1);
   });
 
+  it('colors a trap in the trap colour, not the permanent brick colour it fell back to', () => {
+    // A trap is neither 'destructible' nor absent, and used to fall into the ternary's else branch
+    // alongside a permanent brick — reading red in spec-style.md and amber on screen.
+    const trapLevel = levelFromRows(['-*...', '.....', '..h..', '..d..']);
+    const state = createGameState(trapLevel, 0);
+    const { context, rects, fills } = recordingContext();
+
+    draw(context, state);
+
+    const trapRect = rects.find((rect) => rect.x > 2 * CELL_PIXELS && rect.x < 3 * CELL_PIXELS && rect.y > 2 * CELL_PIXELS && rect.y < 3 * CELL_PIXELS);
+    const trapFill = fills[rects.indexOf(trapRect!)];
+
+    expect(trapFill).toBe(TRAP);
+    expect(trapFill).not.toBe(PERMANENT_BRICK);
+  });
+
   it('draws an element that covers two cells as one shape, a cell wider than a one-cell brick', () => {
     const brickOfWidth = (columns: number) =>
       levelFrom({
@@ -125,5 +159,38 @@ describe('the renderer', () => {
     expect(two.length).toBe(one.length);
     expect(brickIn(two)?.w).toBe((brickIn(one)?.w ?? 0) + CELL_PIXELS);
     expect(brickIn(two)?.h).toBe(brickIn(one)?.h);
+  });
+});
+
+describe('drawGameOver', () => {
+  it('draws GAME OVER and the score, in the game-over colour', () => {
+    const { context, letters } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    expect(letters.join('')).toBe(`${GAME_OVER_WORD}${SCORE_LABEL} 3`);
+    expect(context.fillStyle).toBe(GAME_OVER_TEXT);
+  });
+
+  it('draws GAME OVER above the score, on two lines rather than one', () => {
+    const { context, letterYs } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    const gameOverLine = [...GAME_OVER_WORD];
+    const gameOverY = letterYs.slice(0, gameOverLine.length);
+    const scoreY = letterYs.slice(gameOverLine.length);
+
+    expect(new Set(gameOverY).size).toBe(1);
+    expect(new Set(scoreY).size).toBe(1);
+    expect(gameOverY[0]).toBeLessThan(scoreY[0]!);
+  });
+
+  it('draws nothing else on the canvas it is given', () => {
+    const { context, rects } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    expect(rects).toEqual([]);
   });
 });

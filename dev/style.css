@@ -181,6 +181,50 @@ main.levels #stage {
   margin-top: 0;
 }
 
+/*
+ * The style page's palette table. A swatch is a flat chip in the real, imported colour — no canvas,
+ * no re-implementation — with a CSS box-shadow standing in for the glow every real shape gets from
+ * the renderer's own shadowBlur, since a table cell is not a canvas.
+ */
+#palette {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+}
+
+#palette th,
+#palette td {
+  text-align: left;
+  padding: 0.6rem 1rem 0.6rem 0;
+  border-bottom: 1px solid #123a4d;
+  vertical-align: middle;
+}
+
+#palette th {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.swatch {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 2px;
+  /* The background swatch is near-black on a near-black page — the border is what keeps its shape
+     visible as a swatch rather than a hole, without lightening the colour it is showing. */
+  border: 1px solid rgba(205, 234, 242, 0.15);
+  background: var(--swatch);
+  box-shadow: 0 0 12px var(--swatch);
+}
+
+#cleared {
+  display: block;
+  margin-top: 1rem;
+  border-radius: 2px;
+}
+
 /* The dev index's list of pages — no bullets, one link per line, same width as the lede above it. */
 #pages {
   list-style: none;

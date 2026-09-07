@@ -2,6 +2,7 @@ import {
   BAT_LENGTH_PIXELS,
   CELL_PIXELS,
   extentOf,
+  isTrapKind,
   type Bat,
   type Level,
   type Orientation,
@@ -14,7 +15,9 @@ import {
  * **Collision** is the *meeting*; this is the thing met. The vocabulary deliberately has no term for
  * it — a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain
  * already owns — so this type stays a code-internal helper and **DS-6.3** is written in those words
- * rather than in this one.
+ * rather than in this one. **`'trap'` is the one kind here DS-6.3 never names** — meeting one is not
+ * a collision at all (**DS-6.8**), which is exactly why the caller needs to tell it apart from
+ * `'element'` before deciding what happened.
  *
  * Every surface here is axis-aligned, because an element occupies whole cells — **DS-4.4** — and a
  * bat lies along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one
@@ -27,9 +30,20 @@ export type Rect = { readonly x: number; readonly y: number; readonly w: number;
 
 export type Obstacle =
   | { readonly kind: 'boundary' }
-  /** `along` is where the ball met the bat, 0 at its low end and 1 at its high one — **DS-2.6**. */
-  | { readonly kind: 'bat'; readonly orientation: Orientation; readonly along: number }
-  | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean };
+  /**
+   * `along` is where the ball met the bat along its length, 0 at its low end and 1 at its high one
+   * — **DS-2.6**, read at a long face. `across` is where it met it across the bat's own thickness,
+   * 0 to 1 — **DS-2.8**, read only at an end. Both are always given; which one applies is decided
+   * by which face was actually met, not by which of the two this type carries.
+   */
+  | {
+      readonly kind: 'bat';
+      readonly orientation: Orientation;
+      readonly along: number;
+      readonly across: number;
+    }
+  | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean }
+  | { readonly kind: 'trap'; readonly index: number };
 
 export function batRect(bat: Bat): Rect {
   const across = bat.line * CELL_PIXELS;
@@ -59,7 +73,7 @@ export function overlaps(rect: Rect, x: number, y: number, radius: number): bool
  * What the ball would be inside at this place, or nothing.
  *
  * The boundary is asked first because it can never be destroyed and never moves, so a hit there
- * needs no further search. Elements come next, then bats.
+ * needs no further search. Elements and traps come next, in the same grid scan, then bats.
  */
 export function obstacleAt(
   level: Level,
@@ -91,17 +105,25 @@ export function obstacleAt(
         h: CELL_PIXELS,
       };
       if (overlaps(rect, x, y, radius)) {
+        if (isTrapKind(cell.kind)) return { kind: 'trap', index: cell.element };
         return { kind: 'element', index: cell.element, destructible: cell.kind === 'destructible' };
       }
     }
   }
 
   for (const bat of bats) {
-    if (!overlaps(batRect(bat), x, y, radius)) continue;
+    const rect = batRect(bat);
+    if (!overlaps(rect, x, y, radius)) continue;
 
-    const reached = bat.orientation === 'horizontal' ? x : y;
-    const along = (reached - bat.position) / BAT_LENGTH_PIXELS;
-    return { kind: 'bat', orientation: bat.orientation, along: Math.min(Math.max(along, 0), 1) };
+    const horizontal = bat.orientation === 'horizontal';
+    const along = ((horizontal ? x : y) - bat.position) / BAT_LENGTH_PIXELS;
+    const across = ((horizontal ? y : x) - (horizontal ? rect.y : rect.x)) / CELL_PIXELS;
+    return {
+      kind: 'bat',
+      orientation: bat.orientation,
+      along: Math.min(Math.max(along, 0), 1),
+      across: Math.min(Math.max(across, 0), 1),
+    };
   }
 
   return undefined;

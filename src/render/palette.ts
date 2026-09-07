@@ -12,6 +12,7 @@ export const DESTRUCTIBLE_BRICK = '#33ff99';
 export const PERMANENT_BRICK = '#ff8a3d';
 export const HORIZONTAL_BAT = '#22e0e0';
 export const VERTICAL_BAT = '#ff2fd6';
+export const TRAP = '#ff2b2b';
 
 export const GLOW_PIXELS = 18;
 
@@ -28,3 +29,14 @@ export const CLEARED_TEXT_CELLS = 1.5;
 export const CLEARED_TRACKING = 0.25;
 export const CLEARED_FACE =
   'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+/**
+ * spec-style's other piece of text: two lines shown when a run is over. Deliberately the same value
+ * as `TRAP` — the hue that already meant danger, free exactly when the danger has ended the run it
+ * threatened, the same reasoning `CLEARED_TEXT` follows in the objective's hue instead.
+ */
+export const GAME_OVER_TEXT = TRAP;
+
+/** spec-style's *Game over*: the first line, uppercase. The second is `SCORE_LABEL` and a number. */
+export const GAME_OVER_WORD = 'GAME OVER';
+export const SCORE_LABEL = 'SCORE:';

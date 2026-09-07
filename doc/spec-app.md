@@ -18,8 +18,10 @@ kept between sessions. None of them is here, and nothing below assumes them.
 
 ### The activity
 
-**Play a level.** One, drawn at random from the original's rooms when the page opens. There is no
-menu, no selection, no map, and nothing kept between sessions.
+**Play a run.** A run plays levels one after another, each one drawn at random from the original's
+rooms, until it is over. The first level is drawn when the page opens; every level after it is drawn
+the same way, at the player's own pace. There is no menu, no selection, no map, and nothing kept
+between sessions.
 
 **Only a room the rules can play is ever drawn.** A room the rules cannot play yet is in the tree and
 is never put in front of the player — [spec-domain.md](spec-domain.md) says what makes a level
@@ -32,15 +34,20 @@ rather than a fault.
 | Step | Details |
 |---|---|
 | **Launch the ball** | The ball starts held, where the level puts it. Left and right move the horizontal bat group, up and down the vertical one, and both are live at once — so a player may place the bats before committing, though not aim, because the ball leaves on a heading it is given rather than one the player chooses. **Space** launches it. |
-| **Play until the level is cleared** | The same four keys keep moving both groups while the ball travels. The ball destroys the destructible bricks it collides with. When the last one is gone the level is cleared, stops, and shows the player that it is. |
+| **Play until the level is cleared or the run is over** | The same four keys keep moving both groups while the ball travels. The ball destroys the destructible bricks it collides with, and costs the run a life where it meets a trap instead. When the last brick is gone the level is cleared, the same way it always was; a life lost with none left ends the run instead, and shows the player its score in the same place. |
+| **Continue** | **Space**, pressed once: after a clear it starts the next level in the same run, keeping its lives and score; after the run is over it starts a new run instead — five lives, no score, and a level of its own. |
 
 **Placing the bats before launching is a detail and not a step.** A player can press Space
 immediately and the activity still completes, so it is something the launch step allows rather than
 something it requires.
 
-**That the cleared level says so is a step's detail; what it says and how it looks is
-[spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from a ball
-that has stopped working.
+**That the level says so — cleared, or the run over — is a step's detail; what it says and how it
+looks is [spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from
+a ball that has stopped working.
+
+**Continue is one step regardless of which brought the player to it.** A clear and a game over are
+two different reasons to see the same key do something next, not two activities — the same way
+launching is one step whether it is a run's first level or its fifth.
 
 ## Where the steps surface
 
@@ -50,12 +57,13 @@ or returned to — there is no second place for anything to be.
 | Step | How the player acts |
 |---|---|
 | **Launch the ball** | An arrow key **held** moves its bat group for as long as it is held. **Space**, pressed once, launches. |
-| **Play until the level is cleared** | The same four keys, the same way. The cleared indication appears on the level, where the player is already looking. |
+| **Play until the level is cleared or the run is over** | The same four keys, the same way. The cleared or game-over indication appears on the level, where the player is already looking. |
+| **Continue** | **Space**, pressed once — the same key that launches, read instead as continue while the level is cleared or the run is over. |
 
 **No step triggers a sound, and nothing animates.** Sound is not something the player does — it is
-what the world does back. What makes a noise happens inside *play until the level is cleared* rather
-than completing any step of it, and which things those are is [spec-style.md](spec-style.md)'s to
-say. No step waits for a sound, and none is prevented by one.
+what the world does back. What makes a noise happens inside *play until the level is cleared or the
+run is over* rather than completing any step of it, and which things those are is
+[spec-style.md](spec-style.md)'s to say. No step waits for a sound, and none is prevented by one.
 
 Still nothing to animate: the ball's motion is the simulation advancing, which
 [spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
@@ -69,7 +77,7 @@ cannot make a sound before that happens, so there is no unlock step for this doc
 ### Touch acts on the same steps, through on-screen buttons
 
 **No new step, and no new activity.** Touch does not change what a player does — it is a second way
-to act on the two steps above, for the screen where a keyboard is not to be had.
+to act on the three steps above, for the screen where a keyboard is not to be had.
 
 **Two bat groups, live at once, is what a keyboard's four held keys give for free and a touchscreen
 does not.** A drag on a bat, or a tap on a screen edge, both fail the same test: neither reliably
@@ -80,7 +88,8 @@ on a keyboard do: four directional, one per key they replace, and one to launch.
 | Step | How the player acts |
 |---|---|
 | **Launch the ball** | A directional button **held** moves its bat group for as long as it is held, exactly as its key does. The **launch** button, tapped once, launches. |
-| **Play until the level is cleared** | The same five buttons, the same way. |
+| **Play until the level is cleared or the run is over** | The same five buttons, the same way. |
+| **Continue** | The **launch** button, tapped once — the same button that launches, read the same second way space is. |
 
 **A button holds exactly the state its key holds, and nothing else.** `touchstart` sets the same flag
 `keydown` does; `touchend` clears it. [spec-domain.md](spec-domain.md)'s `Input` is not touched, and
@@ -93,7 +102,8 @@ nothing to put in any of them, and adding one would be a surface with no step be
 
 The screen holds the level, and a line of readouts beside it: the build identifier that
 [spec-tech.md](spec-tech.md) keeps, the collision count, the position of a bat group the level
-actually has, how many destructible bricks are left, and which room is being played.
+actually has, how many destructible bricks are left, which room is being played, how many lives the
+run has left, and the run's score.
 
 **The bat readout follows a group the level has, and names which.** A level may author only one of
 the two groups, so a readout fixed to one of them reads zero for ever in every level without it —

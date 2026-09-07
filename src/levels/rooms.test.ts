@@ -31,16 +31,20 @@ describe('the original\'s rooms, in the tree', () => {
     }
   });
 
-  it('says of every room whether it can be played, and no room as imported can be', () => {
+  it('says of every room whether it can be played, and 11 of them already can be as imported', () => {
     // Asked of the room *as imported*, which still places the kinds DS-7.1 gives no behaviour to.
     // What a room is played as is the ported level, and src/levels/porting.test.ts asks it there.
+    // 11 place nothing DS-7.1 still refuses — a trap alone no longer stands in the way, since DS-8
+    // gives it a rule — so the import plays them unmodified, before porting does anything at all.
     const playable = ROOMS.filter((room) => unplayableReasons(levelOf(room)).length === 0);
-    expect(playable).toEqual([]);
+    expect(playable).toHaveLength(11);
   });
 
-  it('names, for every room, the rule that stands between it and being played as imported', () => {
+  it('names DS-7.1 for every other room, as the rule still between it and being played as imported', () => {
     for (const room of ROOMS) {
-      expect(unplayableReasons(levelOf(room))).toContain(
+      const reasons = unplayableReasons(levelOf(room));
+      if (reasons.length === 0) continue; // One of the 11 above — DS-8 already plays this one.
+      expect(reasons).toContain(
         'DS-7.1 the level places an element of a kind no rule gives behaviour to',
       );
     }

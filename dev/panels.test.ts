@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { levelFor, PANELS } from './panels';
 import { heldAt } from '../src/domain/ball';
-import { BAT_LENGTH_PIXELS, isBrickKind } from '../src/domain/level';
+import { BAT_LENGTH_PIXELS, isReadableKind } from '../src/domain/level';
 import { unplayableReasons } from '../src/domain/playable';
 import { portedKind } from '../src/levels/porting';
 
@@ -41,8 +41,9 @@ describe('the levels the elements page plays', () => {
       const after = portedKind(panel.kind);
 
       // A kind the concession drops leaves the anchor brick alone in the level; one it stands in for
-      // appears as what it stands in as. Either way no DS-7.1 kind ever reaches the canvas.
-      expect(placed.filter((kind) => !isBrickKind(kind))).toEqual([]);
+      // appears as what it stands in as; a trap now reaches the canvas as itself. Either way no
+      // still-unbehaved DS-7.1 kind ever does.
+      expect(placed.filter((kind) => !isReadableKind(kind))).toEqual([]);
       if (after !== undefined) expect(placed).toContain(after);
     }
   });

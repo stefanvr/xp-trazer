@@ -137,12 +137,15 @@ test('destroying a brick is heard as the destruction and not as a collision', as
 
 test('a bounce is heard as the collision sound', async ({ page }) => {
   await recordAudio(page);
-  await page.goto('/');
+  // A real, randomly drawn room cannot be relied on for this any more: DS-8 lets a trap send the
+  // ball back to held, and a room can hold one on the only heading a fixed seed ever draws, looping
+  // every relaunch back into the same trap and never reaching a wall — observed here as a timeout
+  // waiting for a collision sound the built page never produced. collision-proof.ts is built so a
+  // wall is the nearest thing to meet on almost every heading, deterministically. spec-tech's A-2.
+  await page.goto('/?level=collision-proof');
 
   await page.keyboard.press('Space');
 
-  // The authored level has boundaries and permanent bricks, so a collision that destroys nothing
-  // arrives without steering. Polled rather than read once: which comes first depends on the seed.
   await expect.poll(async () => await asked(page), { timeout: 10_000 }).toContain(COLLISION_OPENS);
 });
 

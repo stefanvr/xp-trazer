@@ -10,6 +10,7 @@ import {
 } from './simulation';
 import { CELL_PIXELS, elementAt, levelFromRows } from './level';
 import { obstacleAt } from './collision';
+import { heldAt } from './ball';
 
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
 
@@ -177,6 +178,12 @@ describe('a bat moving into a travelling ball', () => {
     const next = advance(beside(), { ...NOTHING_HELD, right: true });
 
     expect(next.ball.velocity.x).toBeGreaterThan(0);
+  });
+
+  it('leaves it on a heading it did not arrive on, which is DS-2.8: this meeting is always an end', () => {
+    const next = advance(beside(), { ...NOTHING_HELD, right: true });
+
+    expect(next.ball.velocity.y).not.toBe(0);
   });
 
   it('counts it as the collision it is', () => {
@@ -395,6 +402,16 @@ describe('a travelling ball meeting something', () => {
     expect(next.ball.velocity.y).not.toBe(0);
   });
 
+  it("leaves a bat's end on a heading it did not arrive on, which is DS-2.8", () => {
+    // Straight left into the bat's right end, near half of its thickness — y=12 keeps the ball
+    // clear of the level's own boundary (radius 9), so this meets only the end. Without DS-2.8 it
+    // would come straight back rightward and retrace the same line for ever.
+    const next = advance(travelling({ x: 106, y: 12 }, { x: -240, y: 0 }), NOTHING_HELD);
+
+    expect(next.ball.velocity.x).not.toBe(0);
+    expect(next.ball.velocity.y).toBeLessThan(0);
+  });
+
   it('comes straight back off the middle of a bat', () => {
     const next = advance(travelling({ x: 48, y: 42 }, { x: 0, y: -240 }), NOTHING_HELD);
 
@@ -430,6 +447,46 @@ describe('a travelling ball meeting something', () => {
     };
 
     expect(advance(returning, NOTHING_HELD).ball.position.x).toBeGreaterThan(54);
+  });
+});
+
+describe('a ball meeting a trap', () => {
+  // A trap at column 1, row 3 — DS-8. Two destructible bricks, not one: pre-destroying one to test
+  // DS-8.2's "already destroyed stays destroyed" must not itself clear the level and stop the step
+  // these tests are about (DS-5.2) — the same reason "a travelling ball meeting something" above
+  // keeps a second brick in its own corner.
+  const level = levelFromRows(['-*....', '......', '..d...', '.h....', '......', '.....d']);
+
+  const travelling = (position: { x: number; y: number }, velocity: { x: number; y: number }) => {
+    const state = createGameState(level, 0);
+    return { ...state, ball: { ...state.ball, position, velocity, held: false } };
+  };
+
+  it('returns the ball held at the ball start, costing no collision — DS-8.2 and DS-6.8', () => {
+    const before = travelling({ x: 48, y: 86 }, { x: 0, y: 240 });
+    const next = advance(before, NOTHING_HELD);
+
+    expect(next.ball.held).toBe(true);
+    expect(next.ball.position).toEqual(heldAt(level));
+    expect(next.ball.velocity).toEqual({ x: 0, y: 0 });
+    expect(next.collisions).toBe(before.collisions);
+  });
+
+  it('announces the ball destroyed alone, never a collision — DS-6.8', () => {
+    const { events } = step(travelling({ x: 48, y: 86 }, { x: 0, y: 240 }), NOTHING_HELD);
+
+    expect(events).toEqual([{ kind: 'ball-destroyed' }]);
+  });
+
+  it('leaves what was already destroyed destroyed, even as the ball itself respawns', () => {
+    const before = travelling({ x: 48, y: 86 }, { x: 0, y: 240 });
+    const index = elementAt(level, 2, 2)?.element ?? -1;
+    const withOneGone = { ...before, destroyed: new Set([index]) };
+
+    const next = advance(withOneGone, NOTHING_HELD);
+
+    expect(next.ball.held).toBe(true);
+    expect(next.destroyed).toEqual(new Set([index]));
   });
 });
 
