@@ -297,9 +297,33 @@ back to.
 thing wherever it is met. What DS-4.2, DS-4.3 and DS-5.1 say about a brick, **DS-8.1** says instead
 for a trap — a trap is not a brick, and clearing has never counted it either way.
 
-**DS-8.2 is why this step needs no life to spend yet.** A destroyed ball has somewhere to go back to
-without anything else existing to pay for the trip — the level simply plays on, the way it does after
-any other collision. A cost is a later step's, not this rule's.
+**DS-8.2 is why the ball has somewhere to go back to.** It returns held, at the ball start, the same
+place any level starts it — nothing else about the level changes, and it simply plays on the way it
+does after any other collision. What a destroyed ball now costs the run is **DS-9.3**'s, not this
+rule's: DS-8.2 only ever said where the ball ends up.
+
+### DS-9 · Runs
+
+- **DS-9.1** A run is what carries a player's lives and score across levels. Replacing a level with a
+  new one — a fresh run's first, or the next one after a clear — does not reset either.
+- **DS-9.2** A run starts with five lives and a score of zero.
+- **DS-9.3** A ball destroyed (**DS-8.1**) spends one of the run's lives.
+- **DS-9.4** A level cleared (**DS-5.1**) adds one point to the run's score.
+- **DS-9.5** A run becomes game over the moment its lives reach zero.
+- **DS-9.6** A run that is game over does not advance its level any further — the same way **DS-5.2**
+  stops a cleared one, and for the same reason: nothing after it belongs to this level's play any
+  more.
+- **DS-9.7** A run is in exactly one of two states: playing, or game over.
+
+**A run, not a level, is what a life belongs to.** **DS-1.5** gives a level three states of its own;
+**DS-9.7** gives the run around it two more, and the two nest without touching each other — a run's
+level is always in one of its three whenever the run itself is playing, and stops changing the moment
+the run is not.
+
+**Nothing here needs a player that outlives a run.** Scope's own reason for moving the count off the
+level — that a level is drawn, played and replaced, and a life should not be — is satisfied by moving
+it up one level, to the run. A player who carries lives *across* runs is what a later arcade mode
+would add, and it would be the one to name that thing; nothing this goal does needs it to exist yet.
 
 ## What a level is, as data
 
