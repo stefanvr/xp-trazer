@@ -8,6 +8,7 @@ import {
 } from './domain/simulation';
 import { destructibleRemaining, type Level } from './domain/level';
 import { clearingProofLevel } from './levels/clearing-proof';
+import { collisionProofLevel } from './levels/collision-proof';
 import { roomDrawnFrom } from './levels/drawn-room';
 import { draw } from './render/draw';
 import { BACKGROUND, BOUNDARY } from './render/palette';
@@ -51,17 +52,21 @@ required('[data-testid="build-identifier"]').textContent = __BUILD_IDENTIFIER__;
 
 /**
  * The level the player meets is one of the original's rooms, drawn at random when the page opens —
- * doc/spec-app.md. `?level=clearing-proof` reaches the level that exists so the end-to-end suite can
- * watch a level be cleared: playing a real room to its last brick is not something a test can do in
- * reasonable time, and clearing that nothing asserts is clearing nobody notices break.
+ * doc/spec-app.md. Two names reach a level built for the end-to-end suite instead of a room:
+ * `?level=clearing-proof` watches a level be cleared, and `?level=collision-proof` watches a
+ * collision that destroys nothing reach the page. Neither is something a test can rely on a real
+ * room, drawn at random, to do in reasonable time — clearing-proof.ts and collision-proof.ts say
+ * why each needed one.
  *
  * The seam substitutes a level and can do nothing else: no rule, no constant, no behaviour is
- * reachable through it, and any value but the one name draws a room. It is not room selection — the
- * parameter names no room and cannot. `doc/spec-tech.md`'s **A-2** records it.
+ * reachable through it, and any value but these two names draws a room. It is not room selection —
+ * the parameter names no room and cannot. `doc/spec-tech.md`'s **A-2** records it.
  */
 function chosenLevel(seed: number): Level {
   const asked = new URLSearchParams(window.location.search).get('level');
-  return asked === 'clearing-proof' ? clearingProofLevel() : roomDrawnFrom(seed);
+  if (asked === 'clearing-proof') return clearingProofLevel();
+  if (asked === 'collision-proof') return collisionProofLevel();
+  return roomDrawnFrom(seed);
 }
 
 /**

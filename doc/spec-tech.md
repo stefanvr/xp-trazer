@@ -102,13 +102,23 @@ only the tests stop being trustworthy, while staying green.
 
 `?level=clearing-proof` loads a level built so the end-to-end suite can watch a level be cleared: one
 destructible element, with the ball starting in its very cell, so that the first step the ball
-travels meets it whichever heading DS-2.2 drew. Any other value, and the absent case, draw a room.
+travels meets it whichever heading DS-2.2 drew. `?level=collision-proof` loads a second one, built so
+the suite can watch a collision that destroys nothing reach the page: the ball starts in a corner, so
+a wall is the nearest thing to meet on almost every heading, and two destructible elements sit far
+enough away that a heading meeting one of them first still leaves the ball in an otherwise empty
+room, one wall away from the same result — two rather than one, since DS-5.2 stops a cleared level
+advancing at all, and a single brick met on the wrong heading would clear this one before proving
+anything. Any other value, and the absent case, draw a room.
 
-**Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing arriving on the page*
-is wiring, and wiring is only provable on the surface. A room the page might draw cannot be cleared
-by a test — the rooms hold 22 to 170 destructible elements, and an earlier hand-authored level of 28
-went to 20 in 150 unattended seconds, steering making it worse — so without a level built for it, the
-sign that a level has ended is asserted nowhere.
+**Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing, or a plain collision,
+arriving on the page* is wiring, and wiring is only provable on the surface. A room the page might
+draw cannot be relied on for either: the rooms hold 22 to 170 destructible elements, and an earlier
+hand-authored level of 28 went to 20 in 150 unattended seconds, steering making it worse, so without
+a level built for it the sign that a level has ended is asserted nowhere. **DS-8** adds a second
+reason a drawn room cannot be relied on: a trap can send the ball back to held, and a real room can
+now hold one on the only heading a fixed seed ever draws, looping every relaunch back into the same
+trap rather than ever reaching a wall — observed as an end-to-end test that timed out waiting for a
+collision sound a real, randomly drawn room several times did not produce within it.
 
 **What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
 behaviour is reachable through it, and it is not level selection — that is a product decision
@@ -123,8 +133,8 @@ proven on the dev server is proven about a build nobody is served. Gating on a b
 instead has the same fault, and costs more than it buys.
 
 **What the departure costs, and what contains it.** A visitor who guesses the parameter reaches a
-five-cell level with one brick. That is the whole exposure: the seam substitutes a level, and the
-paragraph above is what keeps it that way.
+small level with one brick — five cells for clearing-proof, sixty-four for collision-proof. That is
+the whole exposure: the seam substitutes a level, and the paragraph above is what keeps it that way.
 
 ### A-3 · The original's rooms are converted once and committed, and the export stays outside the tree
 
