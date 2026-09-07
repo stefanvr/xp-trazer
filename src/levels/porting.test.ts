@@ -4,7 +4,7 @@ import { ROOMS } from './rooms.generated';
 import { portedLevel } from './porting';
 import { bat as placedBat, element as placedElement, levelOf, type ImportedRoom } from './room-notation';
 import { unplayableReasons } from '../domain/playable';
-import { isBrickKind } from '../domain/level';
+import { isBrickKind, isReadableKind } from '../domain/level';
 
 /**
  * The concessions listed in doc/spec-domain-porting-todo.md, asserted one at a time. That document
@@ -28,12 +28,26 @@ describe('what an imported room gives up so that it can be played', () => {
     }
   });
 
-  it('leaves out the refractor and the traps, and keeps nothing of them (P-2, P-3)', () => {
+  it('leaves out the refractor, and keeps nothing of it (P-2)', () => {
     for (const imported of ROOMS) {
-      const kinds = kindsIn(imported.origin.room);
-      expect(kinds.has('glassRefractor')).toBe(false);
-      expect(kinds.has('horizontalTrap')).toBe(false);
-      expect(kinds.has('verticalTrap')).toBe(false);
+      expect(kindsIn(imported.origin.room).has('glassRefractor')).toBe(false);
+    }
+  });
+
+  it('keeps a trap as itself, where it stood and as big (P-3 ended)', () => {
+    for (const kind of ['horizontalTrap', 'verticalTrap'] as const) {
+      const imported = ROOMS.find((candidate) =>
+        candidate.elements.some((element) => element.kind === kind),
+      );
+      const original = imported?.elements.find((element) => element.kind === kind);
+      const stood = portedLevel(imported!).elements.find(
+        (element) => element.column === original?.column && element.row === original?.row,
+      );
+
+      expect(original).not.toBeUndefined();
+      expect(stood?.kind).toBe(kind);
+      expect(stood?.footprint).toEqual(original?.footprint);
+      expect(stood?.colorId).toBe(original?.colorId);
     }
   });
 
@@ -80,7 +94,7 @@ describe('what an imported room gives up so that it can be played', () => {
 
   it('gives a played room only kinds the rules read', () => {
     for (const imported of ROOMS) {
-      for (const kind of kindsIn(imported.origin.room)) expect(isBrickKind(kind)).toBe(true);
+      for (const kind of kindsIn(imported.origin.room)) expect(isReadableKind(kind)).toBe(true);
     }
   });
 
@@ -110,7 +124,11 @@ describe('how many of the original rooms can be played', () => {
     expect(unplayableReasons(portedLevel(room(29)))).toContain('DS-4.4 two elements share a cell');
   });
 
-  it('plays no room that the import alone would have played, since none of them is playable', () => {
-    expect(ROOMS.filter((imported) => unplayableReasons(levelOf(imported)).length === 0)).toEqual([]);
+  it('plays 11 rooms the import alone already plays, now that DS-8 gives a trap a rule', () => {
+    // The other 53 still need porting's concessions — src/levels/rooms.test.ts asserts the same 11
+    // from the other side, over the room as imported rather than as ported.
+    expect(ROOMS.filter((imported) => unplayableReasons(levelOf(imported)).length === 0)).toHaveLength(
+      11,
+    );
   });
 });

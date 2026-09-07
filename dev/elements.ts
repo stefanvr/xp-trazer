@@ -45,13 +45,14 @@ import { play } from '../src/audio/play';
  */
 
 /**
- * What a panel's caption says happened to the kind under test. `undefined` for the two bricks —
- * `portedKind` only ever concedes a **DS-7.1** kind, and a brick passes through it unchanged, so
- * asking would say nothing a reader does not already see on the canvas.
+ * What a panel's caption says happened to the kind under test. `undefined` for the two bricks and
+ * for a trap — neither is conceded, so asking would say nothing a reader does not already see on
+ * the canvas. `portedKind` only ever concedes a **DS-7.1** kind, so a kind that passes through it
+ * unchanged is a kind with a rule now, not a concession.
  */
 function concessionNote(kind: ElementKind): string | undefined {
-  if (kind === 'destructible' || kind === 'permanent') return undefined;
   const after = portedKind(kind);
+  if (after === kind) return undefined;
   return after === undefined
     ? 'left out of the played level — doc/spec-domain-porting-todo.md'
     : `stands in as a ${after} brick, keeping its footprint — doc/spec-domain-porting-todo.md`;
