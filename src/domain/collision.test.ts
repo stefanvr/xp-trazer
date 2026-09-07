@@ -7,13 +7,14 @@ import { BAT_LENGTH_PIXELS, CELL_PIXELS, elementAt, levelFromRows } from './leve
 const NOTHING_DESTROYED: ReadonlySet<number> = new Set();
 const RADIUS = 9;
 
-// Four columns, four rows. A destructible brick at (1,1) and a permanent one at (2,1).
-const LEVEL = levelFromRows(['-*..', '.dp.', '....', '....']);
+// Four columns, four rows. A destructible brick at (1,1), a permanent one at (2,1), a trap at (1,2).
+const LEVEL = levelFromRows(['-*..', '.dp.', '.h..', '....']);
 const NO_BATS = LEVEL.bats.map((bat) => ({ ...bat, position: -1000 }));
 
 // An element is named by its index in the level, not by the cell it sits in — DS-4.5.
 const DESTRUCTIBLE = elementAt(LEVEL, 1, 1)?.element ?? -1;
 const PERMANENT = elementAt(LEVEL, 2, 1)?.element ?? -1;
+const TRAP = elementAt(LEVEL, 1, 2)?.element ?? -1;
 
 const at = (x: number, y: number, bats = NO_BATS) =>
   obstacleAt(LEVEL, NOTHING_DESTROYED, bats, x, y, RADIUS);
@@ -57,6 +58,12 @@ describe('what the ball is inside', () => {
     const hit = at(2 * CELL_PIXELS + 16, CELL_PIXELS + 16);
 
     expect(hit).toEqual({ kind: 'element', index: PERMANENT, destructible: false });
+  });
+
+  it('finds a trap, and never calls it an element — DS-6.8 needs the two told apart', () => {
+    const hit = at(CELL_PIXELS + 16, 2 * CELL_PIXELS + 16);
+
+    expect(hit).toEqual({ kind: 'trap', index: TRAP });
   });
 
   it('finds nothing where a brick has already been destroyed', () => {

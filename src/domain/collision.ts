@@ -2,6 +2,7 @@ import {
   BAT_LENGTH_PIXELS,
   CELL_PIXELS,
   extentOf,
+  isTrapKind,
   type Bat,
   type Level,
   type Orientation,
@@ -14,7 +15,9 @@ import {
  * **Collision** is the *meeting*; this is the thing met. The vocabulary deliberately has no term for
  * it — a collision names one of **Boundary**, **Bat** or **Brick** directly, using words the domain
  * already owns — so this type stays a code-internal helper and **DS-6.3** is written in those words
- * rather than in this one.
+ * rather than in this one. **`'trap'` is the one kind here DS-6.3 never names** — meeting one is not
+ * a collision at all (**DS-6.8**), which is exactly why the caller needs to tell it apart from
+ * `'element'` before deciding what happened.
  *
  * Every surface here is axis-aligned, because an element occupies whole cells — **DS-4.4** — and a
  * bat lies along one. That is what lets **DS-2.4**'s reflection be exact: a collision reverses one
@@ -39,7 +42,8 @@ export type Obstacle =
       readonly along: number;
       readonly across: number;
     }
-  | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean };
+  | { readonly kind: 'element'; readonly index: number; readonly destructible: boolean }
+  | { readonly kind: 'trap'; readonly index: number };
 
 export function batRect(bat: Bat): Rect {
   const across = bat.line * CELL_PIXELS;
@@ -69,7 +73,7 @@ export function overlaps(rect: Rect, x: number, y: number, radius: number): bool
  * What the ball would be inside at this place, or nothing.
  *
  * The boundary is asked first because it can never be destroyed and never moves, so a hit there
- * needs no further search. Elements come next, then bats.
+ * needs no further search. Elements and traps come next, in the same grid scan, then bats.
  */
 export function obstacleAt(
   level: Level,
@@ -101,6 +105,7 @@ export function obstacleAt(
         h: CELL_PIXELS,
       };
       if (overlaps(rect, x, y, radius)) {
+        if (isTrapKind(cell.kind)) return { kind: 'trap', index: cell.element };
         return { kind: 'element', index: cell.element, destructible: cell.kind === 'destructible' };
       }
     }

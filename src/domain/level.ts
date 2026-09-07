@@ -9,10 +9,10 @@
  * has nothing to be held by.
  *
  * **What a level places is `elements`; what the rules read is `cells`.** Everything **DS-7** carries
- * lives in the first — a kind no rule gives behaviour to (**DS-7.1**), a footprint larger than one
- * cell (**DS-7.2**), a color id (**DS-7.3**) — and the grid is derived from it, holding only the
- * one-cell bricks the rules can read. That is the whole of the difference between the two, and it is
- * why nothing carried is dropped and nothing carried reaches a rule.
+ * lives in the first — a kind no rule gives behaviour to (**DS-7.1**), a color id (**DS-7.3**) — and
+ * the grid is derived from it, holding only the bricks and traps a rule can read. That is the whole
+ * of the difference between the two, and it is why nothing carried is dropped and nothing carried
+ * reaches a rule.
  */
 
 /** A cell has a fixed size, so a level's extent follows from its grid — doc/spec-domain.md. */
@@ -24,30 +24,37 @@ export const BAT_LENGTH_PIXELS = BAT_LENGTH_CELLS * CELL_PIXELS;
 
 export type BrickKind = 'destructible' | 'permanent';
 
-/**
- * The five kinds **DS-7.1** carries. A level may place one; it occupies its cells and nothing else
- * about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say nothing about
- * it.
- */
-export type UnbehavedKind =
-  | 'glassRefractor'
-  | 'monsterGenerator'
-  | 'horizontalTrap'
-  | 'verticalTrap'
-  | 'bumper';
+/** The two kinds **DS-8** gives a rule to — doc/spec-domain.md's **Trap**. Orientation is shape only. */
+export type TrapKind = 'horizontalTrap' | 'verticalTrap';
 
-export type ElementKind = BrickKind | UnbehavedKind;
+export const TRAP_KINDS: readonly TrapKind[] = ['horizontalTrap', 'verticalTrap'];
+
+export function isTrapKind(kind: ElementKind): kind is TrapKind {
+  return kind === 'horizontalTrap' || kind === 'verticalTrap';
+}
+
+/**
+ * The three kinds **DS-7.1** still carries. A level may place one; it occupies its cells and nothing
+ * else about it is true — it is not a brick, so **DS-4.2**, **DS-4.3** and **DS-5.1** say nothing
+ * about it. Horizontal trap and vertical trap left this list for **DS-8**.
+ */
+export type UnbehavedKind = 'glassRefractor' | 'monsterGenerator' | 'bumper';
+
+export type ElementKind = BrickKind | TrapKind | UnbehavedKind;
 
 export const UNBEHAVED_KINDS: readonly UnbehavedKind[] = [
   'glassRefractor',
   'monsterGenerator',
-  'horizontalTrap',
-  'verticalTrap',
   'bumper',
 ];
 
 export function isBrickKind(kind: ElementKind): kind is BrickKind {
   return kind === 'destructible' || kind === 'permanent';
+}
+
+/** A kind a rule reads at all — the only kinds a level's grid ever holds. */
+export function isReadableKind(kind: ElementKind): kind is BrickKind | TrapKind {
+  return isBrickKind(kind) || isTrapKind(kind);
 }
 
 /**
@@ -75,11 +82,11 @@ export type PlacedElement = {
 };
 
 /**
- * What a cell holds: a brick, and only ever one that occupies exactly that cell. Everything else a
- * level places is in `elements` and reaches no rule.
+ * What a cell holds: a brick or a trap, and only ever one that occupies exactly that cell.
+ * Everything else a level places is in `elements` and reaches no rule.
  */
 export type Element = {
-  readonly kind: BrickKind;
+  readonly kind: BrickKind | TrapKind;
   readonly colorId: ColorId;
   /**
    * Which of the level's elements this cell holds — **DS-4.5**, an element is one thing wherever it
@@ -187,13 +194,16 @@ export function cellsOf(level: Level, index: number): readonly { column: number;
  * whose cells hold elements and that it authors its bats; how one is written down is this module's
  * business, and a different format would change nothing the specification claims.
  *
- * `.` empty · `d` destructible brick · `p` permanent brick · `-` a horizontal bat's low end ·
- * `|` a vertical bat's low end · `*` the ball start, which **DS-1.4** requires of every level. A bat
- * glyph and the ball start both leave their cell empty: neither is an element.
+ * `.` empty · `d` destructible brick · `p` permanent brick · `h` a horizontal trap · `v` a vertical
+ * trap · `-` a horizontal bat's low end · `|` a vertical bat's low end · `*` the ball start, which
+ * **DS-1.4** requires of every level. A bat glyph and the ball start both leave their cell empty:
+ * neither is an element.
  */
-const ELEMENT_FOR_GLYPH = new Map<string, BrickKind>([
+const ELEMENT_FOR_GLYPH = new Map<string, BrickKind | TrapKind>([
   ['d', 'destructible'],
   ['p', 'permanent'],
+  ['h', 'horizontalTrap'],
+  ['v', 'verticalTrap'],
 ]);
 const ORIENTATION_FOR_GLYPH = new Map<string, Orientation>([
   ['-', 'horizontal'],
@@ -216,10 +226,10 @@ export type LevelParts = {
 /**
  * Builds a level from what it places, deriving the grid the rules read.
  *
- * **A cell holds an element only where a rule can read it**: a brick, on the grid. Every cell of its
- * footprint holds it — **DS-4.4** — and each of them names the same element, which is **DS-4.5**.
- * A kind with no behaviour (**DS-7.1**) stays in `elements` and reaches nothing, which is what
- * carrying it means.
+ * **A cell holds an element only where a rule can read it**: a brick or a trap, on the grid. Every
+ * cell of its footprint holds it — **DS-4.4** — and each of them names the same element, which is
+ * **DS-4.5**. A kind with no behaviour (**DS-7.1**) stays in `elements` and reaches nothing, which
+ * is what carrying it means.
  *
  * It refuses none of it. A level assembled here may break **DS-1.3**, **DS-1.7**, **DS-1.8** or
  * **DS-4.4**'s *no two elements share a cell* — where two do, the last one placed is what the grid
@@ -233,7 +243,7 @@ export function levelFrom(parts: LevelParts): Level {
 
   const cells: Cell[] = Array.from({ length: columns * rows }, () => undefined);
   for (const [index, element] of elements.entries()) {
-    if (!isBrickKind(element.kind)) continue;
+    if (!isReadableKind(element.kind)) continue;
     for (let row = element.row; row < element.row + element.footprint.rows; row += 1) {
       for (
         let column = element.column;

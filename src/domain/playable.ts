@@ -8,7 +8,9 @@
  *
  * **DS-7.2, DS-7.4 and DS-7.5 were once answered here and are not any more**, which is this module
  * shrinking as intended: the first two gained rules that read them, and the third lost the rule that
- * gave it force when **DS-1.6** was withdrawn.
+ * gave it force when **DS-1.6** was withdrawn. **DS-7.1 itself now shrinks the same way, one kind at
+ * a time**: a trap no longer produces this reason, because **DS-8** reads it — the reason still
+ * fires for the three kinds that remain in DS-7.1's own table.
  *
  * **It is derived, never stored.** A level says what it places; whether that can be played follows
  * from the rules, so a level cannot carry a marker that has gone stale against them. When a rule
@@ -24,7 +26,7 @@ import {
   BAT_LENGTH_CELLS,
   CELL_PIXELS,
   destructibleCount,
-  isBrickKind,
+  isReadableKind,
   type Bat,
   type Level,
 } from './level';
@@ -105,7 +107,7 @@ export function unplayableReasons(level: Level): readonly UnplayableReason[] {
     reasons.push('DS-1.8 the level authors no destructible element');
   }
   if (elementsShareACell(level)) reasons.push('DS-4.4 two elements share a cell');
-  if (level.elements.some((element) => !isBrickKind(element.kind))) {
+  if (level.elements.some((element) => !isReadableKind(element.kind))) {
     reasons.push('DS-7.1 the level places an element of a kind no rule gives behaviour to');
   }
 

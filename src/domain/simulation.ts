@@ -100,7 +100,7 @@ export type GameState = {
 };
 
 /**
- * Something that happened in the world — doc/spec-domain.md's **Event**, and **DS-6.2**: two are
+ * Something that happened in the world — doc/spec-domain.md's **Event**, and **DS-6.2**: three are
  * announced and no other is.
  *
  * **`met` says brick and the other event says element, and that is the specification's own wording**
@@ -110,7 +110,7 @@ export type GameState = {
 export type Event =
   | {
       readonly kind: 'collision';
-      /** **DS-6.3** — what the ball met. */
+      /** **DS-6.3** — what the ball met. Never a trap — **DS-6.8** is what that announces instead. */
       readonly met: 'boundary' | 'bat' | 'brick';
       /** **DS-6.4** — whether this collision destroyed what it met. False wherever nothing can be. */
       readonly destroyed: boolean;
@@ -123,6 +123,11 @@ export type Event =
        * cell of a four-cell brick would leave three behind.
        */
       readonly cells: readonly { readonly column: number; readonly row: number }[];
+    }
+  | {
+      /** **DS-6.8** — a trap destroyed the ball. Carries nothing: DS-8.2 sends it to the one place
+       * it can go, and there is nothing else about it yet worth naming. */
+      readonly kind: 'ball-destroyed';
     };
 
 /**
@@ -353,8 +358,12 @@ export function step(state: GameState, input: Input): Stepped {
    * axis (DS-3.1), so its end is the face normal to that same axis: a horizontal bat's end is met by
    * the x-only call, a vertical bat's by the y-only one. Met the other way, the same bat is offering
    * its long face instead — **DS-2.6**'s to turn, not **DS-2.8**'s.
+   *
+   * **Returns whether this meeting destroyed the ball.** A trap is not a surface DS-2.4 reflects
+   * off — DS-8.1 destroys the ball instead — so the position found by halving is thrown away rather
+   * than kept, and the caller stops offering the ball anything further this step.
    */
-  const advance = (dx: number, dy: number, ownAxis: Orientation, reverse: () => void): void => {
+  const advance = (dx: number, dy: number, ownAxis: Orientation, reverse: () => void): boolean => {
     const asFarAs = (part: number) =>
       obstacleAt(level, destroyed, bats, x + dx * part, y + dy * part, ball.radius);
 
@@ -362,7 +371,13 @@ export function step(state: GameState, input: Input): Stepped {
     if (hit === undefined) {
       x += dx;
       y += dy;
-      return;
+      return false;
+    }
+
+    // DS-8.1 — a trap destroys the ball. DS-6.8: announced alone, never as a collision.
+    if (hit.kind === 'trap') {
+      events.push({ kind: 'ball-destroyed' });
+      return true;
     }
 
     let clear = 0;
@@ -409,14 +424,33 @@ export function step(state: GameState, input: Input): Stepped {
       // DS-6.5 with DS-4.5 — the element went as a whole, so every cell it held is named.
       events.push({ kind: 'element-destroyed', cells: cellsOf(level, hit.index) });
     }
+    return false;
   };
 
-  advance(velocityX * STEP_SECONDS, 0, 'horizontal', () => {
-    velocityX = -velocityX;
-  });
-  advance(0, velocityY * STEP_SECONDS, 'vertical', () => {
-    velocityY = -velocityY;
-  });
+  // The `||` short-circuits: a trap met on the x-axis stops the y-axis ever being offered anything —
+  // DS-8.2's ball has already gone back to held, and there is nothing left this step to turn it on.
+  const destroyedByTrap =
+    advance(velocityX * STEP_SECONDS, 0, 'horizontal', () => {
+      velocityX = -velocityX;
+    }) ||
+    advance(0, velocityY * STEP_SECONDS, 'vertical', () => {
+      velocityY = -velocityY;
+    });
+
+  if (destroyedByTrap) {
+    // DS-8.2 — the ball returns held, exactly where DS-1.4 puts a level's own. Nothing else about
+    // the game changes: an element already destroyed (in `destroyed`) stays destroyed.
+    return {
+      state: {
+        ...state,
+        bats,
+        ball: { ...ball, position: heldAt(level), velocity: { x: 0, y: 0 }, held: true },
+        collisions,
+        destroyed,
+      },
+      events,
+    };
+  }
 
   return {
     state: {
