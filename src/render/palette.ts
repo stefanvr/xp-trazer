@@ -31,8 +31,12 @@ export const CLEARED_FACE =
   'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 /**
- * spec-style's other piece of text: a run's score, shown when it is over. Deliberately the same
- * value as `TRAP` — the hue that already meant danger, free exactly when the danger has ended the
- * run it threatened, the same reasoning `CLEARED_TEXT` follows in the objective's hue instead.
+ * spec-style's other piece of text: two lines shown when a run is over. Deliberately the same value
+ * as `TRAP` — the hue that already meant danger, free exactly when the danger has ended the run it
+ * threatened, the same reasoning `CLEARED_TEXT` follows in the objective's hue instead.
  */
 export const GAME_OVER_TEXT = TRAP;
+
+/** spec-style's *Game over*: the first line, uppercase. The second is `SCORE_LABEL` and a number. */
+export const GAME_OVER_WORD = 'GAME OVER';
+export const SCORE_LABEL = 'SCORE:';

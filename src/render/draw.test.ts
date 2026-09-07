@@ -3,7 +3,7 @@ import { draw, drawGameOver } from './draw';
 import { batRect } from '../domain/collision';
 import { createGameState } from '../domain/simulation';
 import { CELL_PIXELS, elementAt, levelFrom, levelFromRows } from '../domain/level';
-import { CLEARED_WORD, GAME_OVER_TEXT, PERMANENT_BRICK, TRAP } from './palette';
+import { CLEARED_WORD, GAME_OVER_TEXT, GAME_OVER_WORD, PERMANENT_BRICK, SCORE_LABEL, TRAP } from './palette';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -20,17 +20,22 @@ function recordingContext(): {
   rects: Rect[];
   fills: string[];
   letters: string[];
+  letterYs: number[];
 } {
   const rects: Rect[] = [];
   const fills: string[] = [];
   const letters: string[] = [];
+  const letterYs: number[] = [];
   let currentFill = '';
   const context = {
     fillRect: (x: number, y: number, w: number, h: number) => {
       rects.push({ x, y, w, h });
       fills.push(currentFill);
     },
-    fillText: (text: string) => void letters.push(text),
+    fillText: (text: string, _x: number, y: number) => {
+      letters.push(text);
+      letterYs.push(y);
+    },
     // Every letter the same width, which is all the placement arithmetic needs to be exercised.
     measureText: () => ({ width: 20 }),
     strokeRect: () => {},
@@ -55,7 +60,7 @@ function recordingContext(): {
     textAlign: '',
     textBaseline: '',
   };
-  return { context: context as unknown as CanvasRenderingContext2D, rects, fills, letters };
+  return { context: context as unknown as CanvasRenderingContext2D, rects, fills, letters, letterYs };
 }
 
 describe('the renderer', () => {
@@ -158,13 +163,27 @@ describe('the renderer', () => {
 });
 
 describe('drawGameOver', () => {
-  it('draws the score as text, in the game-over colour', () => {
+  it('draws GAME OVER and the score, in the game-over colour', () => {
     const { context, letters } = recordingContext();
 
     drawGameOver(context, 320, 240, 3);
 
-    expect(letters).toEqual(['3']);
+    expect(letters.join('')).toBe(`${GAME_OVER_WORD}${SCORE_LABEL} 3`);
     expect(context.fillStyle).toBe(GAME_OVER_TEXT);
+  });
+
+  it('draws GAME OVER above the score, on two lines rather than one', () => {
+    const { context, letterYs } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    const gameOverLine = [...GAME_OVER_WORD];
+    const gameOverY = letterYs.slice(0, gameOverLine.length);
+    const scoreY = letterYs.slice(gameOverLine.length);
+
+    expect(new Set(gameOverY).size).toBe(1);
+    expect(new Set(scoreY).size).toBe(1);
+    expect(gameOverY[0]).toBeLessThan(scoreY[0]!);
   });
 
   it('draws nothing else on the canvas it is given', () => {
