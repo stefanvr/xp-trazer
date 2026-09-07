@@ -18,8 +18,10 @@ kept between sessions. None of them is here, and nothing below assumes them.
 
 ### The activity
 
-**Play a level.** One, drawn at random from the original's rooms when the page opens. There is no
-menu, no selection, no map, and nothing kept between sessions.
+**Play a run.** A run plays levels one after another, each one drawn at random from the original's
+rooms, until it is over. The first level is drawn when the page opens; every level after it is drawn
+the same way, at the player's own pace. There is no menu, no selection, no map, and nothing kept
+between sessions.
 
 **Only a room the rules can play is ever drawn.** A room the rules cannot play yet is in the tree and
 is never put in front of the player — [spec-domain.md](spec-domain.md) says what makes a level
@@ -32,15 +34,20 @@ rather than a fault.
 | Step | Details |
 |---|---|
 | **Launch the ball** | The ball starts held, where the level puts it. Left and right move the horizontal bat group, up and down the vertical one, and both are live at once — so a player may place the bats before committing, though not aim, because the ball leaves on a heading it is given rather than one the player chooses. **Space** launches it. |
-| **Play until the level is cleared** | The same four keys keep moving both groups while the ball travels. The ball destroys the destructible bricks it collides with. When the last one is gone the level is cleared, stops, and shows the player that it is. |
+| **Play until the level is cleared or the run is over** | The same four keys keep moving both groups while the ball travels. The ball destroys the destructible bricks it collides with, and costs the run a life where it meets a trap instead. When the last brick is gone the level is cleared, the same way it always was; a life lost with none left ends the run instead, and shows the player its score in the same place. |
+| **Continue** | **Space**, pressed once: after a clear it starts the next level in the same run, keeping its lives and score; after the run is over it starts a new run instead — five lives, no score, and a level of its own. |
 
 **Placing the bats before launching is a detail and not a step.** A player can press Space
 immediately and the activity still completes, so it is something the launch step allows rather than
 something it requires.
 
-**That the cleared level says so is a step's detail; what it says and how it looks is
-[spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from a ball
-that has stopped working.
+**That the level says so — cleared, or the run over — is a step's detail; what it says and how it
+looks is [spec-style.md](spec-style.md)'s.** A ball that has merely stopped is indistinguishable from
+a ball that has stopped working.
+
+**Continue is one step regardless of which brought the player to it.** A clear and a game over are
+two different reasons to see the same key do something next, not two activities — the same way
+launching is one step whether it is a run's first level or its fifth.
 
 ## Where the steps surface
 
