@@ -108,17 +108,25 @@ a wall is the nearest thing to meet on almost every heading, and two destructibl
 enough away that a heading meeting one of them first still leaves the ball in an otherwise empty
 room, one wall away from the same result — two rather than one, since DS-5.2 stops a cleared level
 advancing at all, and a single brick met on the wrong heading would clear this one before proving
-anything. Any other value, and the absent case, draw a room.
+anything. `?level=game-over-proof` loads a third, the same trick aimed at a trap instead of a brick:
+the ball starts in the trap's own cell, so every launch costs a life whichever heading it is drawn
+on, deterministically enough for the suite to run a run to game over without steering anything. One
+destructible element sits elsewhere on it, never reached, so DS-1.8 is satisfied and the level can
+never clear out from under a test that means to lose it instead; one bat, because DS-1.3 wants one
+and nothing in the level uses it. Any other value, and the absent case, draw a room.
 
-**Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing, or a plain collision,
-arriving on the page* is wiring, and wiring is only provable on the surface. A room the page might
-draw cannot be relied on for either: the rooms hold 22 to 170 destructible elements, and an earlier
-hand-authored level of 28 went to 20 in 150 unattended seconds, steering making it worse, so without
-a level built for it the sign that a level has ended is asserted nowhere. **DS-8** adds a second
-reason a drawn room cannot be relied on: a trap can send the ball back to held, and a real room can
-now hold one on the only heading a fixed seed ever draws, looping every relaunch back into the same
-trap rather than ever reaching a wall — observed as an end-to-end test that timed out waiting for a
-collision sound a real, randomly drawn room several times did not produce within it.
+**Why it exists.** A-1 keeps behaviour testable over plain state, but *clearing, a plain collision, or
+a run reaching game over, arriving on the page* is wiring, and wiring is only provable on the surface.
+A room the page might draw cannot be relied on for any of them: the rooms hold 22 to 170 destructible
+elements, and an earlier hand-authored level of 28 went to 20 in 150 unattended seconds, steering
+making it worse, so without a level built for it the sign that a level has ended is asserted nowhere.
+**DS-8** adds a second reason a drawn room cannot be relied on: a trap can send the ball back to held,
+and a real room can now hold one on the only heading a fixed seed ever draws, looping every relaunch
+back into the same trap rather than ever reaching a wall — observed as an end-to-end test that timed
+out waiting for a collision sound a real, randomly drawn room several times did not produce within
+it. **DS-9** is a third: a drawn room may hold no trap at all, or one only a heading the seed never
+draws can reach, so five ball-destroyed events inside a bounded number of launches is a game a real
+room cannot be relied on to produce, in either direction.
 
 **What it may never become.** A seam that substitutes a level, and nothing more. No rule, constant or
 behaviour is reachable through it, and it is not level selection — that is a product decision
