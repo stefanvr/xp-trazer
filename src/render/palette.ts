@@ -29,3 +29,10 @@ export const CLEARED_TEXT_CELLS = 1.5;
 export const CLEARED_TRACKING = 0.25;
 export const CLEARED_FACE =
   'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+/**
+ * spec-style's other piece of text: a run's score, shown when it is over. Deliberately the same
+ * value as `TRAP` — the hue that already meant danger, free exactly when the danger has ended the
+ * run it threatened, the same reasoning `CLEARED_TEXT` follows in the objective's hue instead.
+ */
+export const GAME_OVER_TEXT = TRAP;

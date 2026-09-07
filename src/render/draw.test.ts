@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { draw } from './draw';
+import { draw, drawGameOver } from './draw';
 import { batRect } from '../domain/collision';
 import { createGameState } from '../domain/simulation';
 import { CELL_PIXELS, elementAt, levelFrom, levelFromRows } from '../domain/level';
-import { CLEARED_WORD, PERMANENT_BRICK, TRAP } from './palette';
+import { CLEARED_WORD, GAME_OVER_TEXT, PERMANENT_BRICK, TRAP } from './palette';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
 
@@ -154,5 +154,24 @@ describe('the renderer', () => {
     expect(two.length).toBe(one.length);
     expect(brickIn(two)?.w).toBe((brickIn(one)?.w ?? 0) + CELL_PIXELS);
     expect(brickIn(two)?.h).toBe(brickIn(one)?.h);
+  });
+});
+
+describe('drawGameOver', () => {
+  it('draws the score as text, in the game-over colour', () => {
+    const { context, letters } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    expect(letters).toEqual(['3']);
+    expect(context.fillStyle).toBe(GAME_OVER_TEXT);
+  });
+
+  it('draws nothing else on the canvas it is given', () => {
+    const { context, rects } = recordingContext();
+
+    drawGameOver(context, 320, 240, 3);
+
+    expect(rects).toEqual([]);
   });
 });

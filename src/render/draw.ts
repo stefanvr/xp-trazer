@@ -11,6 +11,7 @@ import {
   CLEARED_TRACKING,
   CLEARED_WORD,
   DESTRUCTIBLE_BRICK,
+  GAME_OVER_TEXT,
   GLOW_PIXELS,
   HORIZONTAL_BAT,
   PERMANENT_BRICK,
@@ -107,6 +108,31 @@ function drawCleared(context: CanvasRenderingContext2D, width: number, height: n
     context.fillText(letter, at + advance / 2, height / 2);
     at += advance + tracking;
   }
+}
+
+/**
+ * spec-style's other piece of text: a run's score, drawn where **Cleared** would be, in
+ * `GAME_OVER_TEXT` rather than `CLEARED_TEXT`. A number rather than a word, so — unlike
+ * `drawCleared` — there is nothing to track: **spec-style.md**'s *Game over* section.
+ *
+ * A run and a level are separate things (doc/spec-domain.md's **DS-9**), so this takes what it needs
+ * rather than a `GameState` — nothing here is the renderer of a level.
+ */
+export function drawGameOver(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  score: number,
+): void {
+  context.save();
+  context.shadowBlur = GLOW_PIXELS;
+  context.shadowColor = GAME_OVER_TEXT;
+  context.fillStyle = GAME_OVER_TEXT;
+  context.font = `${CELL_PIXELS * CLEARED_TEXT_CELLS}px ${CLEARED_FACE}`;
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(String(score), width / 2, height / 2);
+  context.restore();
 }
 
 export function draw(context: CanvasRenderingContext2D, state: GameState): void {
