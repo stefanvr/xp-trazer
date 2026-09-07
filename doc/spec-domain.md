@@ -23,9 +23,15 @@ The domain's words are the code's words, and nothing is renamed in transit.
 **What moves a thing is what separates the kinds.** A level places elements, and nothing moves them.
 The player moves bats. The ball moves itself.
 
+**Object has no code of its own yet.** Nothing unions an element, a bat and the boundary into one
+type today, and nothing needs to. When something does, it cannot be spelled `Object` — TypeScript
+reserves that name for the language's own type — so the identifier is a decision for whenever code
+first needs one, not a decision this table makes early.
+
 | Term | What it is | In code |
 |---|---|---|
 | **Level** | The closed space play happens inside, and the authored arrangement in it. Nothing leaves it. | `Level` |
+| **Object** | The overarching kind for everything a level places or is bounded by — an element, a bat, or the boundary. A later kind, such as a bonus, joins it without widening the word. | — |
 | **Boundary** | The level's edge. | `Boundary` |
 | **Cell** | The unit a level's grid is made of. Either empty, or holding one element. | `Cell` |
 | **Element** | A fixed thing a level places. | `Element` |
