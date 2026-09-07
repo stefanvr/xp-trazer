@@ -60,7 +60,7 @@ map and no selection.
 
 | ✓ | Step | What it delivers |
 |---|---|---|
-| ☐ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
-| ☐ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
-| ☐ | **A run has lives, a score, and a way to continue** | A run starts with five lives and no score. A ball destroyed spends one life; a level cleared adds a point and lets the player continue into the run's next level, keeping both. |
-| ☐ | **A run can end, and be started again** | A run out of lives shows its score, styled as a loss where a clear is styled as a win, and space starts a new run — five lives, no score, and a level of its own. |
+| ✓ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
+| ✓ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
+| ✓ | **A run has lives, a score, and a way to continue** | A run starts with five lives and no score. A ball destroyed spends one life; a level cleared adds a point and lets the player continue into the run's next level, keeping both. |
+| ✓ | **A run can end, and be started again** | A run out of lives shows its score, styled as a loss where a clear is styled as a win, and space starts a new run — five lives, no score, and a level of its own. |
