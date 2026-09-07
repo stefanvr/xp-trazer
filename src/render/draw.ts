@@ -1,6 +1,6 @@
 import { boundaryOf, isCleared, type GameState } from '../domain/simulation';
 import { batRect } from '../domain/collision';
-import { CELL_PIXELS, cellsOf, elementAt, type Bat, type Level } from '../domain/level';
+import { CELL_PIXELS, cellsOf, elementAt, isTrapKind, type Bat, type Level } from '../domain/level';
 import {
   BACKGROUND,
   BALL,
@@ -14,6 +14,7 @@ import {
   GLOW_PIXELS,
   HORIZONTAL_BAT,
   PERMANENT_BRICK,
+  TRAP,
   VERTICAL_BAT,
 } from './palette';
 
@@ -42,7 +43,11 @@ function drawElements(
     if (first === undefined || last === undefined) continue;
     if (elementAt(level, first.column, first.row)?.element !== index) continue;
 
-    const color = element.kind === 'destructible' ? DESTRUCTIBLE_BRICK : PERMANENT_BRICK;
+    const color = element.kind === 'destructible'
+      ? DESTRUCTIBLE_BRICK
+      : isTrapKind(element.kind)
+        ? TRAP
+        : PERMANENT_BRICK;
 
     context.shadowColor = color;
     context.fillStyle = color;
