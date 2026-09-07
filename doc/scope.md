@@ -52,8 +52,9 @@ no trap and costs no life. A level that can be lost while still holding a state 
 cannot happen is not the thing, so the two finish together or neither does.
 
 **Where it stops.** The glass refractor and the monster generator get no behaviour and stay conceded;
-they are a later scope's. Nothing is remembered between rooms — a lost level draws a new one the way
-opening the page does — and there is still no map and no selection.
+they are a later scope's. A run's lives and score are remembered across the rooms it draws, and
+nothing else is — a new run starts exactly as the page's own first one does, and there is still no
+map and no selection.
 
 **It carries no unmade technology decision.** Nothing in it needs one.
 
@@ -61,5 +62,5 @@ opening the page does — and there is still no map and no selection.
 |---|---|---|
 | ☐ | **A bat's ends turn the ball** | A ball that meets the end of a bat leaves on a heading it was not on, so no launch produces a circuit. Stands on its own, and is provable before anything else here exists. |
 | ☐ | **A trap destroys the ball** | Both trap kinds stop being carried and inert, and become the first thing in the world that can take the ball. Ends **P-3**, and the two kinds need telling apart by eye for the first time. |
-| ☐ | **A player has lives, and runs out of them** | A destroyed ball costs the player one of five, and the level goes on until the last is gone. This is the state the domain says today does not exist, and the count has to be readable from outside or nothing can assert it. |
-| ☐ | **Losing is shown, and the page draws a new room** | The player is told the level was lost, where they are already looking, and then meets another room as though the page had been opened again. |
+| ☐ | **A run has lives, a score, and a way to continue** | A run starts with five lives and no score. A ball destroyed spends one life; a level cleared adds a point and lets the player continue into the run's next level, keeping both. |
+| ☐ | **A run can end, and be started again** | A run out of lives shows its score, styled as a loss where a clear is styled as a win, and space starts a new run — five lives, no score, and a level of its own. |
