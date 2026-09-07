@@ -55,6 +55,10 @@ first needs one, not a decision this table makes early.
 | **Collision** | The ball meeting a boundary, a bat or a brick — never a trap, which destroys the ball instead of colliding with it. | `Collision` |
 | **Seed** | The value every random choice is drawn from, so a level start can be repeated exactly. | `seed` |
 | **Game state** | Everything that changes while a level is played. | `GameState` |
+| **Run** | One continuous play-through: the lives and score a player carries as levels are cleared and replaced, until it ends. | `Run` |
+| **Lives** | The run's count of remaining chances. Starts at five; a ball destroyed spends one. | `lives` |
+| **Score** | The run's count of points. A level cleared adds one. | `score` |
+| **Game over** | What a run becomes when its lives reach zero. | `gameOver` |
 
 ## What happens
 
@@ -62,20 +66,25 @@ Every event, what causes it, and what it leaves changed. Nothing else happens.
 
 | Event | Caused by | Leaves changed |
 |---|---|---|
-| **Level started** | The game begins | The level exists. The ball is held, at the ball start the level authors. |
+| **Run started** | The player begins playing — opening the page, or restarting a run that is game over | The run's lives are five, and its score is zero. |
+| **Level started** | A run beginning, or the player continuing a run whose level was just cleared | The level exists. The ball is held, at the ball start the level authors. |
 | **Bat group moved** | The player moves a group | Every bat of that orientation has moved, stopping at the boundary, at an element or at another bat. A travelling ball a bat moved into collides with it; a held ball is not on a bat and does not move with one. |
 | **Ball launched** | The player launches it | The ball travels, in a direction drawn from the seed. |
 | **Ball moved** | The simulation advanced one step | The ball is somewhere new. |
 | **Collision** | The ball and a boundary, a bat or a brick met — either of them may have been the one moving | The ball's direction changes, obeying the law of reflection. |
-| **Ball destroyed** | The ball met a trap | The ball returns held, at the ball start. |
+| **Ball destroyed** | The ball met a trap | The ball returns held, at the ball start, and the run has one fewer life. |
 | **Element destroyed** | A collision with the ball | One fewer destructible element. |
-| **Level cleared** | The last destructible element was destroyed | The level is cleared, and nothing advances after it. |
+| **Level cleared** | The last destructible element was destroyed | The level is cleared, nothing advances after it, and the run's score gains one point. |
+| **Game over** | A ball destroyed left the run with no lives | The run is game over, and nothing in it advances further. |
 
 **A level is in one of three states and no others**: the ball is held, the ball is travelling, or the
 level is cleared. **Two things now leave the travelling state, and they do not leave it the same
 way**: clearing does not return, and a trap sends the ball back to held rather than forward —
-**DS-8** owns that. There is still no way to lose; a trap costs nothing yet, and nothing here ends a
-level except clearing.
+**DS-8** owns that. **A run wraps this in two states of its own** — playing, or game over — and
+**DS-9** owns those. Losing a life does not touch which of a level's three states it is in: the ball
+simply returns held, the way any trap always sent it, and a level still ends, on its own account, only
+by being cleared. What ends when a run runs out of lives is the run, and it stops that level's play
+rather than giving the level a fourth state of its own.
 
 **Every event above is caused by something above it, or by the player.** That is what makes this list
 finished rather than merely long — an event nothing causes, or one whose result nothing reads, is
