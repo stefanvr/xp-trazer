@@ -57,12 +57,13 @@ or returned to — there is no second place for anything to be.
 | Step | How the player acts |
 |---|---|
 | **Launch the ball** | An arrow key **held** moves its bat group for as long as it is held. **Space**, pressed once, launches. |
-| **Play until the level is cleared** | The same four keys, the same way. The cleared indication appears on the level, where the player is already looking. |
+| **Play until the level is cleared or the run is over** | The same four keys, the same way. The cleared or game-over indication appears on the level, where the player is already looking. |
+| **Continue** | **Space**, pressed once — the same key that launches, read instead as continue while the level is cleared or the run is over. |
 
 **No step triggers a sound, and nothing animates.** Sound is not something the player does — it is
-what the world does back. What makes a noise happens inside *play until the level is cleared* rather
-than completing any step of it, and which things those are is [spec-style.md](spec-style.md)'s to
-say. No step waits for a sound, and none is prevented by one.
+what the world does back. What makes a noise happens inside *play until the level is cleared or the
+run is over* rather than completing any step of it, and which things those are is
+[spec-style.md](spec-style.md)'s to say. No step waits for a sound, and none is prevented by one.
 
 Still nothing to animate: the ball's motion is the simulation advancing, which
 [spec-domain.md](spec-domain.md) owns, not an effect this document asks for.
@@ -76,7 +77,7 @@ cannot make a sound before that happens, so there is no unlock step for this doc
 ### Touch acts on the same steps, through on-screen buttons
 
 **No new step, and no new activity.** Touch does not change what a player does — it is a second way
-to act on the two steps above, for the screen where a keyboard is not to be had.
+to act on the three steps above, for the screen where a keyboard is not to be had.
 
 **Two bat groups, live at once, is what a keyboard's four held keys give for free and a touchscreen
 does not.** A drag on a bat, or a tap on a screen edge, both fail the same test: neither reliably
@@ -87,7 +88,8 @@ on a keyboard do: four directional, one per key they replace, and one to launch.
 | Step | How the player acts |
 |---|---|
 | **Launch the ball** | A directional button **held** moves its bat group for as long as it is held, exactly as its key does. The **launch** button, tapped once, launches. |
-| **Play until the level is cleared** | The same five buttons, the same way. |
+| **Play until the level is cleared or the run is over** | The same five buttons, the same way. |
+| **Continue** | The **launch** button, tapped once — the same button that launches, read the same second way space is. |
 
 **A button holds exactly the state its key holds, and nothing else.** `touchstart` sets the same flag
 `keydown` does; `touchend` clears it. [spec-domain.md](spec-domain.md)'s `Input` is not touched, and
