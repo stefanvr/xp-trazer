@@ -374,6 +374,21 @@ now, but speed is the kind of thing a later rule alters as a game goes on, and s
 over time belongs to the state rather than to the level or to a constant. Putting it here costs
 nothing now and means such a rule adds a rule rather than a re-modelling.
 
+## What a run holds
+
+A run is what plays levels one after another. A level's own game state, above, is replaced whole each
+time a level starts; a run's state is what survives that replacement.
+
+- **How many lives remain.**
+- **The run's score.**
+- **Whether the run is playing or game over.**
+
+**A run reads only two things about the level it is holding: that it was cleared, and that a ball was
+destroyed with no lives left to spend.** Everything else about how the current level is going — the
+ball, the bats, which elements are gone — stays inside that level's own state; the run does not
+duplicate it, and only acts on those two moments to decide whether to add a point and start the next
+level, or to end.
+
 ## What an event is, as data
 
 **An event is a value, and there are three kinds.**
@@ -405,11 +420,12 @@ produced by play, so there is no reference data here.
 
 ## Not named, because nothing here needs them
 
-Named as absent rather than left to be rediscovered: **run**, **life**, **arcade**, **journey**,
-**map**, **unlocked**, **selection**. None of them is specified.
+Named as absent rather than left to be rediscovered: **arcade**, **journey**, **map**, **unlocked**,
+**selection**. None of them is specified.
 
 **DS-7 still names three element kinds and does not break this.** A kind with no rule is a word for
 something a level places, not a mechanic — nothing above says what a glass refractor refracts or what
 a generator generates, and **map** is named there only as what an origin would one day be read by.
 **Hazard and trap left this list the way trap left DS-7.1's table**: **DS-8** says what one does, so
-neither is a word withheld any more.
+neither is a word withheld any more. **Run and life left it the same way**: **DS-9** now says what
+each is, and gives the run a score besides.
