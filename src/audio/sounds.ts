@@ -1,7 +1,7 @@
 import type { Event } from '../domain/simulation';
 
 /**
- * The one place a sound doc/spec-style.md decides lives — the two sounds' values, and which event
+ * The one place a sound doc/spec-style.md decides lives — the three sounds' values, and which event
  * makes which. The same job `../render/palette.ts` does for the colors, and for the same reason:
  * that document owns what these are, and one copy here is what stops a second one drifting.
  *
@@ -13,7 +13,10 @@ import type { Event } from '../domain/simulation';
 export type Wave =
   | { readonly kind: 'triangle' }
   | { readonly kind: 'pulse'; readonly duty: number }
-  | { readonly kind: 'noise' };
+  | { readonly kind: 'noise' }
+  /** `'sawtooth'` is a native `OscillatorType`, spelled the way `./play.ts` passes it straight
+   * through — the trap sound's second segment, and nothing here needed before it. */
+  | { readonly kind: 'sawtooth' };
 
 /** A sweep from one frequency to another across the segment. Noise has no pitch, so it has none. */
 export type Sweep = { readonly from: number; readonly to: number };
@@ -91,7 +94,38 @@ export const DESTRUCTION: Sound = [
   },
 ];
 
-export const SOUNDS = { collision: COLLISION, destruction: DESTRUCTION } as const;
+/**
+ * Recovered rather than invented — `gamma_trap` in the SFX pack the collision and destruction
+ * sounds already came from. It opens on noise and closes on a falling sawtooth, the reverse of the
+ * destruction's own order, and runs longer than either: the tenth-of-a-second rule they follow is
+ * about an event that can repeat several times a second, and losing the ball to a trap does not.
+ */
+export const TRAP: Sound = [
+  {
+    wave: { kind: 'noise' },
+    milliseconds: 90,
+    sweep: undefined,
+    gain: 0.3,
+    attack: 0,
+    decay: 20,
+    sustain: 0.55,
+    release: 35,
+    lowPass: 4300,
+  },
+  {
+    wave: { kind: 'sawtooth' },
+    milliseconds: 85,
+    sweep: { from: 1800, to: 180 },
+    gain: 0.34,
+    attack: 0,
+    decay: 18,
+    sustain: 0.45,
+    release: 30,
+    lowPass: 5200,
+  },
+];
+
+export const SOUNDS = { collision: COLLISION, destruction: DESTRUCTION, trap: TRAP } as const;
 
 export type SoundName = keyof typeof SOUNDS;
 
@@ -106,5 +140,6 @@ export type SoundName = keyof typeof SOUNDS;
  */
 export function soundFor(event: Event): SoundName | undefined {
   if (event.kind === 'element-destroyed') return 'destruction';
+  if (event.kind === 'ball-destroyed') return 'trap';
   return event.destroyed ? undefined : 'collision';
 }
