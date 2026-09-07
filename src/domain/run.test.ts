@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { continueRun, createRun, isGameOver, stepRun, STARTING_LIVES, type Run } from './run';
 import { levelFrom, ONE_CELL, type Level } from './level';
+import { gameOverProofLevel } from '../levels/game-over-proof';
 import type { Input } from './simulation';
 
 /** Tests are named as the behaviour claimed, not as the function under test — guide-design.md. */
@@ -8,22 +9,8 @@ import type { Input } from './simulation';
 const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
 const LAUNCH: Input = { ...NOTHING_HELD, launch: true };
 
-/**
- * The ball starts inside the trap's own cell — clearing-proof.ts's own trick, aimed at a trap rather
- * than a brick — so the first step it travels meets it whichever way it was sent. One destructible
- * brick elsewhere satisfies DS-1.8 without ever being reachable, so the level is never cleared out
- * from under these tests.
- */
-const DESTROYS_THE_BALL: Level = levelFrom({
-  columns: 5,
-  rows: 5,
-  elements: [
-    { kind: 'horizontalTrap', column: 2, row: 2, footprint: ONE_CELL, colorId: undefined },
-    { kind: 'destructible', column: 0, row: 0, footprint: ONE_CELL, colorId: undefined },
-  ],
-  bats: [{ orientation: 'horizontal', line: 4, position: 0 }],
-  ballStart: { column: 2, row: 2 },
-});
+// Built for exactly this: the ball starts in the trap's own cell, so every launch destroys it.
+const DESTROYS_THE_BALL: Level = gameOverProofLevel();
 
 /** The same trick, aimed at the level's one destructible brick — clearing it is what the level does. */
 const CLEARS_IN_ONE_STEP: Level = levelFrom({
