@@ -29,25 +29,30 @@ spec-app.md to exist.
 
 ## What the visual page shows
 
-One panel per row in spec-style.md's palette table — a shape or swatch in that color, glowing the way
-the spec says everything glows, labelled with the element's name and role. When the table gains a row,
-the page is missing a row until this routine runs again.
+One row per line in spec-style.md's palette table — a flat colour chip, labelled with the object's
+name and role. When the table gains a row, the page is missing a row until this routine runs again.
+
+**Typography is the one exception.** A chip has no face, size or tracking to show, so the word a
+cleared level shows gets its own panel instead, drawn by calling the project's actual render function.
 
 ## How the visual page stays real, not a mockup
 
-- **An element the domain already models is drawn by calling the project's actual render function**,
-  not a re-implementation of it — `draw()` in [src/render/draw.ts](../../../src/render/draw.ts),
-  against a real state reached by real steps.
-- **An element spec-style.md names ahead of the domain owning it is drawn directly**,
-  shape and color taken straight from the spec, and labelled as not yet backed by a domain type. Never
-  invent a domain type to justify drawing it; that is [build](../build/SKILL.md)'s "a proof contains no
-  product decisions" showing up here too.
 - **Every color spec-style.md names lives in one module** — [src/render/palette.ts](../../../src/render/palette.ts)
-  — imported by the real renderer, by the application's own stylesheet, and by this page. Two copies
-  of a hex the specification decides is exactly the drift this routine exists to catch, so there must
-  never be a second copy. **Chrome is not one of those**: spec-style.md leaves UI chrome unowned, so
-  this page's own background and text stay in `dev/style.css`. The application's page is not chrome —
-  its background sits against what the specification decides, so it takes the specification's value.
+  — imported by the real renderer, by the application's own stylesheet, and by this page's table. Two
+  copies of a hex the specification decides is exactly the drift this routine exists to catch, so
+  there must never be a second copy. A chip's glow is a CSS box-shadow in that same imported value,
+  standing in for the canvas `shadowBlur` the real renderer uses — a table row is not a canvas, and
+  approximating the glow costs nothing a second copy of the hex would.
+- **An object spec-style.md names ahead of the domain owning it still gets a row**, colour taken
+  straight from the spec, and labelled as not yet backed by a domain type. Never invent a domain type
+  to justify the row; that is [build](../build/SKILL.md)'s "a proof contains no product decisions"
+  showing up here too.
+- **The one panel that is not a table row — typography — is drawn by calling the project's actual
+  render function**, not a re-implementation of it — `draw()` in
+  [src/render/draw.ts](../../../src/render/draw.ts), against a real state reached by real steps.
+- **Chrome is not one of those.** spec-style.md leaves UI chrome unowned, so this page's own
+  background, table and text stay in `dev/style.css`. The application's page is not chrome — its
+  background sits against what the specification decides, so it takes the specification's value.
 
 ## What the sound page shows
 

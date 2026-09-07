@@ -17,7 +17,7 @@ import { expect, test, type Page } from '@playwright/test';
  */
 
 const DEV_PAGES = [
-  { name: 'style', path: '/dev/style.html', canvas: '#gallery canvas' },
+  { name: 'style', path: '/dev/style.html', canvas: '#cleared' },
   { name: 'elements', path: '/dev/elements.html', canvas: '#stage' },
   { name: 'rooms', path: '/dev/levels.html', canvas: '#stage' },
   // No canvas: the audio page is heard rather than seen. Loading is all there is to assert.
@@ -49,10 +49,6 @@ for (const { name, path, canvas } of DEV_PAGES) {
     // The same reading `smoke.spec.ts` takes of the played page, and for the same reasons: counting
     // distinct colours knows none of them, where thresholding a channel would couple this to
     // whatever spec-style currently says. Polled, because `goto` resolves before the first frame.
-    //
-    // The richest canvas on the page, not the first: the style page's opening panel is a flat fill
-    // by design — the void is the one row the domain does not model — so one colour there is the
-    // page working.
     await expect
       .poll(async () =>
         page.evaluate((selector) => {

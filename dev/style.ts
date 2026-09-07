@@ -1,122 +1,94 @@
-import { createGameState, step, boundaryOf, type GameState, type Input } from '../src/domain/simulation';
+import { createGameState, boundaryOf, type GameState } from '../src/domain/simulation';
 import { levelFromRows, type Level } from '../src/domain/level';
 import { draw } from '../src/render/draw';
-import { BACKGROUND } from '../src/render/palette';
+import {
+  BACKGROUND,
+  BALL,
+  BOUNDARY,
+  DESTRUCTIBLE_BRICK,
+  HORIZONTAL_BAT,
+  PERMANENT_BRICK,
+  TRAP,
+  VERTICAL_BAT,
+} from '../src/render/palette';
 
 /**
- * The `preview` skill's page: one panel per row doc/spec-style.md names — its palette table, and the
- * one word its typography section decides.
+ * The `preview` skill's page: doc/spec-style.md's palette table, as a table, and the one word its
+ * typography section decides.
  *
- * **Everything the domain models is drawn by calling the real render function**, against a real
- * `GameState` reached by real steps. Nothing here re-implements a shape or repeats a color: a panel
- * that painted its own brick could go on looking right after the renderer stopped, which is the
- * drift this page exists to catch.
+ * **Every colour is the real value from src/render/palette.ts** — imported, never re-typed — so a
+ * row's swatch can never show a colour the game does not paint with. A swatch is a flat chip with a
+ * CSS glow standing in for the canvas `shadowBlur` the real renderer uses: a table row is not a
+ * canvas, and the point of this page is the colours, not a second, smaller game.
  *
- * The consequence is that no panel shows its element alone — a level always has a bat, a ball, a
- * boundary and something to destroy, because the rules require all four. Each panel is arranged so
- * that its own row is what the eye lands on, and says what else is in frame.
+ * **CLEARED is the one thing a chip cannot show.** Typography has to be seen as text, so that panel
+ * alone still calls the real `draw()` against a real, cleared `GameState` — the only rendering this
+ * page still does.
  */
 
-const NOTHING_HELD: Input = { left: false, right: false, up: false, down: false, launch: false };
+type Row = { readonly name: string; readonly role: string; readonly color: string };
 
-type Panel = {
-  readonly name: string;
-  readonly role: string;
-  readonly note?: string;
-  /** Absent for the one row the domain does not model — the void itself. */
-  readonly rows?: readonly string[];
-  readonly arrange?: (state: GameState) => GameState;
-  /** Spans the gallery, for a panel that has to be seen at its own size. */
-  readonly wide?: boolean;
-};
-
-/** A real state, reached by real steps — never assembled by hand. */
-function after(state: GameState, times: number, input: Partial<Input>): GameState {
-  let reached = state;
-  for (let taken = 0; taken < times; taken += 1) {
-    // This page is about what a state looks like, so it takes the state and drops the events.
-    reached = step(reached, { ...NOTHING_HELD, ...input }).state;
-  }
-  return reached;
-}
-
-function everyDestructible(level: Level): ReadonlySet<number> {
-  // Elements, not cells — DS-4.5, and what a game holds destroyed.
-  return new Set(
-    level.cells.flatMap((cell) => (cell?.kind === 'destructible' ? [cell.element] : [])),
-  );
-}
-
-// Seven cells by five, which is the smallest that leaves a bat room to move and a brick room to sit.
-//
-// **Every panel authors its ball start — DS-1.4 — one row under the bat's middle**, which is where a
-// held ball rests and so where the eye expects it. A row without a `*` is not a panel with the ball
-// somewhere else; it is one `levelFromRows` refuses, and every panel here was written before the
-// rule existed.
-const PLAIN = ['-......', '.*.....', '...d...', '.......', '.......'];
-
-const panels: readonly Panel[] = [
-  {
-    name: 'Level background',
-    role: 'The void everything else sits on',
-    note: 'The one panel not drawn by the renderer — the void is not an element the domain models',
-  },
+/** One row per line of doc/spec-style.md's palette table, in the document's own order. */
+const PALETTE: readonly Row[] = [
+  { name: 'Level background', role: 'The void everything else sits on', color: BACKGROUND },
   {
     name: 'Boundary / wall',
     role: 'Marks the closed level without competing with play elements',
-    note: 'Its bat, ball and brick are in frame because a level cannot be built without them',
-    rows: PLAIN,
+    color: BOUNDARY,
   },
-  {
-    name: 'Ball',
-    role: 'The one thing that must read first, everywhere, at any speed',
-    note: 'Launched and left to travel, so it is out in the open rather than resting on its bat',
-    rows: PLAIN,
-    arrange: (state) => after(after(state, 1, { launch: true }), 40, {}),
-  },
+  { name: 'Ball', role: 'The one thing that must read first, everywhere, at any speed', color: BALL },
   {
     name: 'Destructible brick',
     role: 'The objective — what clearing removes',
-    // Row 1 holds the ball start and no brick: a brick there would be where the held ball rests.
-    rows: ['-......', '.*.....', '.ddddd.', '.ddddd.', '.......'],
+    color: DESTRUCTIBLE_BRICK,
   },
   {
     name: 'Permanent brick',
     role: 'Reads as structure, not as a target',
-    note: 'The single green brick is the one DS-1.8 requires — and it is the comparison the spec asks for',
-    rows: ['-......', '.*.....', '.ppppp.', '.ppppp.', '......d'],
+    color: PERMANENT_BRICK,
   },
-  {
-    name: 'Horizontal bats',
-    role: 'One control group',
-    note: 'Driven right by real steps, so it sits where the player could put it',
-    rows: PLAIN,
-    arrange: (state) => after(state, 23, { right: true }),
-  },
+  { name: 'Horizontal bats', role: 'One control group', color: HORIZONTAL_BAT },
   {
     name: 'Vertical bats',
-    role: 'The other control group — told apart from horizontal by hue alone',
-    note: 'Driven down by real steps',
-    rows: ['|......', '.*.....', '...d...', '.......', '.......'],
-    arrange: (state) => after(state, 23, { down: true }),
+    role: 'The other control group, told apart from horizontal by hue alone',
+    color: VERTICAL_BAT,
   },
-  {
-    name: 'CLEARED',
-    role: 'What a cleared level says — spec-style.md’s typography section',
-    note: 'Shown at its own size, because the whole decision is how the type reads',
-    rows: ['-...........', '.*..........', '....dddd....', '............', '............'],
-    arrange: (state) => ({ ...state, destroyed: everyDestructible(state.level) }),
-    wide: true,
-  },
+  { name: 'Trap', role: 'The one hazard colour in the palette', color: TRAP },
 ];
-
-const PLAIN_WIDTH = 224;
-const PLAIN_HEIGHT = 160;
 
 function required<T extends Element>(selector: string): T {
   const element = document.querySelector<T>(selector);
   if (!element) throw new Error(`the document is missing ${selector}`);
   return element;
+}
+
+const body = required('#palette tbody');
+
+for (const row of PALETTE) {
+  const tr = document.createElement('tr');
+
+  const swatchCell = document.createElement('td');
+  const swatch = document.createElement('span');
+  swatch.className = 'swatch';
+  swatch.style.setProperty('--swatch', row.color);
+  swatchCell.append(swatch);
+
+  const nameCell = document.createElement('td');
+  nameCell.textContent = row.name;
+
+  const roleCell = document.createElement('td');
+  roleCell.textContent = row.role;
+
+  tr.append(swatchCell, nameCell, roleCell);
+  body.append(tr);
+}
+
+// Typography — the one word a cleared level shows, drawn by the real renderer against a real,
+// cleared GameState, since a colour chip has no face, size or tracking to show.
+function everyDestructible(level: Level): ReadonlySet<number> {
+  return new Set(
+    level.cells.flatMap((cell) => (cell?.kind === 'destructible' ? [cell.element] : [])),
+  );
 }
 
 function context2dOf(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
@@ -125,46 +97,14 @@ function context2dOf(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
   return context;
 }
 
-const gallery = required('#gallery');
+const clearedLevel = levelFromRows(['-...........', '.*..........', '....dddd....', '............', '............']);
+const clearedState: GameState = {
+  ...createGameState(clearedLevel, 0),
+  destroyed: everyDestructible(clearedLevel),
+};
 
-for (const panel of panels) {
-  const canvas = document.createElement('canvas');
-
-  if (panel.rows === undefined) {
-    canvas.width = PLAIN_WIDTH;
-    canvas.height = PLAIN_HEIGHT;
-    const context = context2dOf(canvas);
-    context.fillStyle = BACKGROUND;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-  } else {
-    const started = createGameState(levelFromRows(panel.rows), 0);
-    const state = panel.arrange ? panel.arrange(started) : started;
-    const extent = boundaryOf(state);
-    canvas.width = extent.width;
-    canvas.height = extent.height;
-    draw(context2dOf(canvas), state);
-  }
-
-  const figure = document.createElement('figure');
-  if (panel.wide) figure.className = 'wide';
-  figure.append(canvas);
-
-  const caption = document.createElement('figcaption');
-  const name = document.createElement('span');
-  name.className = 'name';
-  name.textContent = panel.name;
-  const role = document.createElement('span');
-  role.className = 'role';
-  role.textContent = panel.role;
-  caption.append(name, role);
-
-  if (panel.note) {
-    const note = document.createElement('span');
-    note.className = 'note';
-    note.textContent = panel.note;
-    caption.append(note);
-  }
-
-  figure.append(caption);
-  gallery.append(figure);
-}
+const clearedCanvas = required<HTMLCanvasElement>('#cleared');
+const clearedExtent = boundaryOf(clearedState);
+clearedCanvas.width = clearedExtent.width;
+clearedCanvas.height = clearedExtent.height;
+draw(context2dOf(clearedCanvas), clearedState);

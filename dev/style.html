@@ -10,13 +10,27 @@
     <main>
       <h1>doc/spec-style.md, demonstrated</h1>
       <p class="lede">
-        One panel per row the specification names — its palette table, and the one word its
-        typography section decides. Every element the domain models is drawn by calling the real
-        render function against a real game state, so no panel can keep looking right after the
-        renderer stops. Dev-only — this page is never built (see <code>dev/style.html</code>'s entry
-        in <code>.claude/skills/preview/SKILL.md</code>).
+        The palette table, and the one word its typography section decides. Every colour below is
+        imported from <code>src/render/palette.ts</code>, never re-typed, so a swatch can never show
+        a colour the game does not paint with. Dev-only — this page is never built (see
+        <code>dev/style.html</code>'s entry in <code>.claude/skills/preview/SKILL.md</code>).
       </p>
-      <div id="gallery"></div>
+      <table id="palette">
+        <thead>
+          <tr>
+            <th scope="col">Colour</th>
+            <th scope="col">Object</th>
+            <th scope="col">Role</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h2>Cleared</h2>
+      <p class="lede">
+        The word a cleared level shows, at its own size — drawn by the real renderer, since a colour
+        chip has no face, size or tracking to show.
+      </p>
+      <canvas id="cleared"></canvas>
       <p><a href="./index.html">&larr; dev pages</a></p>
     </main>
     <script type="module" src="./style.ts"></script>
