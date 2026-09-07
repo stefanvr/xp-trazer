@@ -80,9 +80,12 @@ add a rule here.
 
 ## Typography
 
-Exactly one piece of text goes on the level: the word a cleared level shows.
-[spec-app.md](spec-app.md) asks for it — *"a ball that has merely stopped is indistinguishable from a
-ball that has stopped working"* — and leaves what it says and looks like here.
+Two pieces of text go on the level — never at once, since a level cannot both be cleared and end its
+run at the same moment. [spec-app.md](spec-app.md) asks for each — *"a ball that has merely stopped is
+indistinguishable from a ball that has stopped working"* — and leaves what they say and look like
+here.
+
+### Cleared
 
 | What | Decision |
 |---|---|
@@ -97,6 +100,25 @@ ball that has stopped working"* — and leaves what it says and looks like here.
 **No panel, no box, no dimming behind it.** The level stays lit and the word sits on it. A cleared
 level is still the thing the player was looking at, and covering it would make finishing look like
 leaving.
+
+### Game over
+
+| What | Decision |
+|---|---|
+| The text | The run's score, as a plain number — there is no word beside it |
+| Face | The same system sans-serif stack as **Cleared**. Nothing about this needs a face of its own |
+| Size | The same one and a half cells tall |
+| Color | `#ff2b2b`, the trap's red. **It is the hue that already meant danger, and it comes free exactly when the danger has ended the run it threatened** — the same reasoning **Cleared**'s green follows, read in the hazard's hue rather than the objective's |
+| Placement | Centred on the level, drawn over everything — the same place **Cleared** appears, since the two are never on screen together |
+| Glow | The same edge glow as everything else |
+
+**No tracking, because there are no letters to track.** **Cleared**'s tracking exists to keep a run of
+uppercase letters from reading as shouted; a number is not a word, and giving its digits the same
+spacing would be applying a rule to something it was never written for.
+
+**No panel, no box, no dimming — the same reason as Cleared's.** The level stays lit behind the score
+the way it stays lit behind the word; a run that is over is still the level the player was just
+playing.
 
 ## Sound
 
@@ -171,8 +193,10 @@ nothing was decided:
 - **Every sound belonging to a mechanic the game does not have.** The recovered material carries
   seven more — a bat firing, a bumper, aliens, a pickup, a lost ball. Each arrives with the mechanic
   that causes it, and none of them is a decision this document has deferred.
-- **HUD / UI chrome.** There is no score, no lives, no menu, no map — nothing needs a look for any of
-  them yet.
+- **HUD / UI chrome.** No menu, no map — nothing needs a look for either yet. The readout line already
+  reads plainly, uncoloured, the same way collisions and bricks left do; lives and score join it there
+  without a decision of their own. The one place score gets a look of its own is **Game over**, above,
+  where it is drawn on the level itself rather than in the readout line.
 - **A trap embedded in the boundary, versus one merely beside it.** The rules already give the two
   cases different exposure — a trap the level places at the edge is reachable from the room side
   only, the same way the original's is — but nothing here gives them different looks: a trap's shape
